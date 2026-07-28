@@ -1,0 +1,24 @@
+version: 1.0.0
+defaults: {naming_convention: '[domain] - action', input_validation: required, output_normalization: required, error_handling: explicit_path, credential_rules: placeholder_or_encrypted_reference_only, logging_rules: audit_safe, sensitive_data_rules: redact_and_minimize, retry_behavior: policy_controlled, idempotency_behavior: required_for_writes}
+nodes:
+  Webhook: {allowed_use: verified_ingress, prohibited_use: unverified_financial_authorization}
+  Respond_to_Webhook: {allowed_use: accepted_or_rejected_response, prohibited_use: expose_private_data}
+  HTTP_Request: {allowed_use: shared_api_calls, prohibited_use: invent_provider_endpoints}
+  Code: {allowed_use: small_documented_normalization, prohibited_use: secrets_or_large_business_logic}
+  Edit_Fields: {allowed_use: shaping, prohibited_use: silent_zero_conversion}
+  If: {allowed_use: policy_gate, prohibited_use: bypass_confirmation}
+  Switch: {allowed_use: route_selection, prohibited_use: unknown_provider_assumption}
+  Merge: {allowed_use: approved_data_join, prohibited_use: credential_join}
+  Loop_Over_Items: {allowed_use: paged_records, prohibited_use: unbounded_execution}
+  Wait: {allowed_use: approval_or_schedule, prohibited_use: credential_wait}
+  Execute_Workflow: {allowed_use: approved_subworkflow, prohibited_use: circular_call}
+  Error_Trigger: {allowed_use: recovery, prohibited_use: suppress_errors}
+  Stop_and_Error: {allowed_use: permanent_failure, prohibited_use: ambiguous_submission_retry}
+  Schedule_Trigger: {allowed_use: approved_schedule, prohibited_use: unapproved_autonomy}
+  Form_Trigger: {allowed_use: placeholder, prohibited_use: sensitive_credentials}
+  Email: {allowed_use: approved_notifications, prohibited_use: unsolicited_outreach}
+  Google_Drive: {allowed_use: approved_file_reference, prohibited_use: raw_private_logs}
+  Google_Sheets: {allowed_use: approved_sheet_reference, prohibited_use: secret_storage}
+  HubSpot: {allowed_use: CRM_upsert, prohibited_use: unverified_external_write}
+  Notion: {allowed_use: internal_task, prohibited_use: customer_dashboard}
+  generic_provider_nodes: {allowed_use: approved_provider_action, prohibited_use: live_unapproved_configuration}

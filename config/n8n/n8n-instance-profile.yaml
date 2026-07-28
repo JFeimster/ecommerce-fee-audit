@@ -1,0 +1,19 @@
+version: 1.0.0
+instance_role: orchestration_only
+environments: [development, staging, production]
+base_url: https://n8n.example.invalid
+webhook_base_url: https://n8n-webhooks.example.invalid
+api_route_base_url: https://api.example.invalid
+production_readiness: placeholder
+execution_data_retention: configurable
+timezone: UTC
+concurrency: configurable
+queue_mode: placeholder
+encryption_key_requirement: required_server_side
+credential_storage_requirement: encrypted_n8n_store
+workflow_activation_policy: inactive_until_approved
+environment_separation: required
+owner: internal_operator
+operator_roles: [internal_operator, administrator]
+audit_log_expectations: required
+backup_expectations: configurable

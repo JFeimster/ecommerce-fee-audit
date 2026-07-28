@@ -1,0 +1,3 @@
+version: 1.0.0
+defaults: {ultimate_route: '/api/webhooks/{provider}', function_slot: 8, signature_verification: required, idempotency: required, fallback: dead_letter_or_manual_queue}
+sources: [wix, tally, hubspot, notion, partner_api, generic_webhook, ecommerce_platform, payment_processor, accounting_platform, advertising_platform, internal_agent]

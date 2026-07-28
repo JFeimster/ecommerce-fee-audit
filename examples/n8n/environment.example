@@ -1,0 +1,4 @@
+EFA_API_BASE_URL=https://api.example.invalid
+EFA_ENVIRONMENT=placeholder
+WIX_SITE_ID=cc61a0cb-edcd-43dc-bdda-42c76443dcd6
+CLOUD_STORAGE_BUCKET=placeholder

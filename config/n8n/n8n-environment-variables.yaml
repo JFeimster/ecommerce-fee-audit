@@ -1,0 +1,19 @@
+version: 1.0.0
+variables:
+  EFA_API_BASE_URL: {classification: required, value: https://api.example.invalid}
+  EFA_PUBLIC_SITE_URL: {classification: public_safe, value: https://site.example.invalid}
+  EFA_DASHBOARD_URL: {classification: public_safe, value: https://dashboard.example.invalid}
+  WIX_SITE_ID: {classification: internal_configuration, value: cc61a0cb-edcd-43dc-bdda-42c76443dcd6}
+  WIX_MEMBER_URL: {classification: public_safe, value: https://www.distilledfunding.com/}
+  TALLY_FORM_IDS: {classification: credential_reference, value: placeholder}
+  HUBSPOT_OBJECT_IDS: {classification: internal_configuration, value: placeholder}
+  NOTION_DATABASE_IDS: {classification: internal_configuration, value: placeholder}
+  SUPPORT_EMAIL: {classification: required, value: support@example.invalid}
+  ALERT_DESTINATION: {classification: internal_configuration, value: placeholder}
+  CLOUD_STORAGE_BUCKET: {classification: credential_reference, value: placeholder}
+  EFA_ENVIRONMENT: {classification: required, value: placeholder}
+  N8N_WEBHOOK_BASE_URL: {classification: server_only, value: https://n8n-webhooks.example.invalid}
+  DEFAULT_PRODUCT_ID: {classification: internal_configuration, value: free_platform_fee_audit_starter}
+  RETRY_CONFIGURATION: {classification: internal_configuration, value: placeholder}
+  CONFIDENCE_THRESHOLDS: {classification: internal_configuration, value: placeholder}
+  FEATURE_FLAGS: {classification: internal_configuration, value: placeholder}

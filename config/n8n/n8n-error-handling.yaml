@@ -1,0 +1,2 @@
+version: 1.0.0
+policy: {workflow_error_handling: required, node_continue_on_fail: only_nonconsequential, retryable_failures: [provider_outage, rate_limit, transient_network], permanent_failures: [malformed_payload, missing_required_fields, invalid_signature], ambiguous_external_submissions: verify_idempotency_or_provider_status_before_retry, credential_expiration: reauthorize, duplicate_execution: return_existing_result, dead_letter_routing: required, manual_requeue: audited, compensation_workflow: configured, operator_notification: configured}

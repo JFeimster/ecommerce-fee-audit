@@ -1,0 +1,3 @@
+version: 1.0.0
+operations: [audit_creation, upload_finalization, connector_sync, report_delivery, dispute_package_submission, funding_application_submission, crm_record_creation, notion_record_creation, follow_up_sequence_start, entitlement_activation, cancellation_processing, webhook_intake]
+defaults: {source_key: provider_event_or_request_id, fallback_key: canonical_subject_and_timestamp_window, storage: placeholder_durable_store, duplicate_behavior: return_existing_or_skip, conflict_behavior: manual_review, retention_window: configurable, provider_status_verification: required_for_ambiguous_submission, replay_behavior: audited_and_idempotent}
