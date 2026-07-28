@@ -1,0 +1,48 @@
+name: Manual Production Deploy
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+environment:
+  name: production
+
+jobs:
+  validate-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Validate required site files
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f site/index.html
+          test -f site/embed.html
+          test -f site/styles.css
+          test -f site/script.js
+          test -f site/vercel.json
+      - name: Require Vercel Deploy Hook secret
+        shell: bash
+        env:
+          DEPLOY_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -z "$DEPLOY_HOOK" ]; then
+            echo 'VERCEL_DEPLOY_HOOK_URL is not configured in the production environment.' >&2
+            exit 1
+          fi
+      - name: Trigger Vercel production deployment
+        shell: bash
+        env:
+          DEPLOY_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK_URL }}
+        run: |
+          set -euo pipefail
+          curl --fail-with-body --silent --show-error --request POST "$DEPLOY_HOOK" | tee vercel-deploy-response.json
+      - name: Upload deployment response
+        uses: actions/upload-artifact@v7
+        with:
+          name: vercel-deploy-response
+          path: vercel-deploy-response.json
+          retention-days: 7
