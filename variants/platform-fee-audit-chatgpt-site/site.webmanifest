@@ -1,0 +1,10 @@
+{
+  "name": "AI Platform Fee Audit Copilot",
+  "short_name": "Fee Audit",
+  "description": "AI-assisted ecommerce platform fee audit and payout reconciliation education.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f8f4eb",
+  "theme_color": "#ffe83d",
+  "icons": [{"src":"assets/icons/favicon.svg","sizes":"any","type":"image/svg+xml","purpose":"any"}]
+}

@@ -1,0 +1,801 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ecommerce Platform Fee Audit | Find Margin Leaks</title>
+  <meta name="description" content="Reconcile Shopify, Amazon, Stripe, payouts, reserves, and SKU margin with an AI-assisted ecommerce platform fee audit.">
+  <meta name="theme-color" content="#f4efe3">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <link rel="canonical" href="https://platform-fee-audit.vercel.app/">
+  <link rel="icon" href="./assets/icons/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="./site.webmanifest">
+  <link rel="stylesheet" href="./styles.css">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Ecommerce Platform Fee Audit | Find Margin Leaks">
+  <meta property="og:description" content="Turn messy platform exports into a reconciled explanation of where ecommerce revenue went—and which SKUs still make money.">
+  <meta property="og:url" content="https://platform-fee-audit.vercel.app/">
+  <meta property="og:image" content="https://platform-fee-audit.vercel.app/assets/images/og-platform-fee-audit.png">
+  <meta property="og:image:alt" content="AI Platform Fee Audit Copilot audit board showing sales, payouts, fees, reserves, and SKU margin.">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "AI Platform Fee Audit Copilot",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Web",
+    "url": "https://platform-fee-audit.vercel.app/",
+    "description": "An AI-assisted ecommerce finance-operations workflow designed to help reconcile platform payouts, classify deductions, analyze SKU contribution margin, and organize funding-readiness summaries.",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD",
+      "description": "Public Custom GPT access; separate guided and managed services may be available."
+    }
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What files are useful for a platform fee audit?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A basic payout reconciliation typically uses a payout or settlement report, matching bank deposits, and an order or transaction export. A fuller margin review may also use refunds, advertising, cost of goods, fulfillment, shipping, reserve, and financing-remittance records."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does the Copilot guarantee fee recovery or funding approval?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. The Copilot is designed to support analysis, documentation, and readiness summaries. It does not guarantee fee recovery, dispute success, eligibility, terms, or funding approval."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does this website collect financial exports?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. The public website and its embed do not collect or transmit raw financial exports. Users should redact credentials and unnecessary personal information before sharing files through any separately approved workflow."
+        }
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+
+  <header class="site-header" data-header>
+    <div class="nav-shell">
+      <a class="brand" href="#top" aria-label="AI Platform Fee Audit Copilot home">
+        <span class="brand-mark" aria-hidden="true">$</span>
+        <span>
+          <strong>FEE AUDIT</strong>
+          <small>PLATFORM MARGIN CONTROL</small>
+        </span>
+      </a>
+
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav" data-nav-toggle>
+        <span class="sr-only">Toggle navigation</span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </button>
+
+      <nav class="primary-nav" id="primary-nav" aria-label="Primary navigation" data-nav>
+        <a href="#audit-board">Audit Board</a>
+        <a href="#workflow">Workflow</a>
+        <a href="#audit-radar">Audit Radar</a>
+        <a href="#offers">Service Lanes</a>
+        <a href="#privacy">Privacy</a>
+        <a class="button button-small button-black" href="https://www.distilledfunding.com/apply" target="_blank" rel="noopener noreferrer">Request Review</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <section class="hero section" id="top">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow sticker sticker-yellow">AI PLATFORM FEE AUDIT COPILOT</p>
+          <h1>Gross sales are not cash.<br><span class="marker">Payouts are not profit.</span></h1>
+          <p class="hero-lead">Turn messy platform exports into a reconciled explanation of where ecommerce revenue went, which SKUs still make money, and whether the business has a margin problem or a cash-timing problem.</p>
+
+          <!-- APPROVED CTA URLS: update exact URLs globally if access or review destinations change. -->
+          <div class="hero-actions">
+            <a class="button button-primary" href="https://chatgpt.com/g/g-6a68083042408191a63f291b0c5a7d9f-ai-platform-fee-audit-copilot" target="_blank" rel="noopener noreferrer">
+              Open the Copilot
+              <span aria-hidden="true">↗</span>
+            </a>
+            <a class="button button-secondary" href="https://www.distilledfunding.com/apply" target="_blank" rel="noopener noreferrer">
+              Request a Finance-Ops Review
+            </a>
+          </div>
+
+          <p class="trust-microcopy">
+            <span aria-hidden="true">●</span>
+            Audit the fees before you fund the leak.
+          </p>
+
+          <div class="pain-strip" aria-label="Core platform fee audit problem">
+            <span>PROCESSING</span>
+            <span>REFERRAL</span>
+            <span>FULFILLMENT</span>
+            <span>ADS</span>
+            <span>RETURNS</span>
+            <span>RESERVES</span>
+            <span>REMITTANCES</span>
+            <span>PAYOUT DELAYS</span>
+          </div>
+        </div>
+
+        <div class="hero-visual" aria-label="Illustrative audit control board">
+          <div class="tape-label">ILLUSTRATIVE AUDIT BOARD</div>
+          <div class="audit-console">
+            <div class="console-head">
+              <span>MONEY TRAIL / PERIOD 04</span>
+              <span class="status-pill">REVIEW REQUIRED</span>
+            </div>
+
+            <div class="money-stack" aria-label="Illustrative gross-to-cash waterfall">
+              <div class="money-row">
+                <span>Gross sales</span>
+                <strong>100%</strong>
+              </div>
+              <div class="money-row deduction">
+                <span>Permanent fees + operating deductions</span>
+                <strong>−?</strong>
+              </div>
+              <div class="money-row hold">
+                <span>Temporary reserves + timing</span>
+                <strong>−?</strong>
+              </div>
+              <div class="money-row deposit">
+                <span>Cash deposited</span>
+                <strong>RECONCILE</strong>
+              </div>
+            </div>
+
+            <div class="console-grid">
+              <article class="mini-card pink">
+                <span>01</span>
+                <strong>PAYOUT</strong>
+                <small>Settlement → bank</small>
+              </article>
+              <article class="mini-card cyan">
+                <span>02</span>
+                <strong>LEAKAGE</strong>
+                <small>Fees → variance</small>
+              </article>
+              <article class="mini-card green">
+                <span>03</span>
+                <strong>SKU MARGIN</strong>
+                <small>Revenue → contribution</small>
+              </article>
+              <article class="mini-card purple">
+                <span>04</span>
+                <strong>CASH TIMING</strong>
+                <small>Holds → working capital</small>
+              </article>
+            </div>
+
+            <div class="stamp">FOLLOW THE MONEY</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="platform-strip" aria-label="Supported audit data categories">
+      <div class="marquee-track">
+        <span>SHOPIFY</span><span>AMAZON</span><span>STRIPE</span><span>ADVERTISING</span><span>RESERVES + HOLDS</span><span>BANK DEPOSITS</span>
+        <span aria-hidden="true">SHOPIFY</span><span aria-hidden="true">AMAZON</span><span aria-hidden="true">STRIPE</span><span aria-hidden="true">ADVERTISING</span><span aria-hidden="true">RESERVES + HOLDS</span><span aria-hidden="true">BANK DEPOSITS</span>
+      </div>
+    </section>
+
+    <section class="section" id="audit-board">
+      <div class="container">
+        <div class="section-heading split-heading">
+          <div>
+            <p class="eyebrow">THE AUDIT ORDER</p>
+            <h2>Do not debate profit until the money trail stops lying.</h2>
+          </div>
+          <p>Platform dashboards are built to report activity. Operators need a control board that explains what became cash, what stayed temporary, and what quietly became permanent cost.</p>
+        </div>
+
+        <div class="priority-board">
+          <article class="priority-card accent-yellow">
+            <div class="priority-number">01</div>
+            <p class="card-kicker">FIRST / CONTROL</p>
+            <h3>Payout reconciliation</h3>
+            <p>Match orders or charges to settlements, settlements to platform payouts, and payouts to bank deposits. Separate true discrepancies from timing noise.</p>
+            <ul class="check-list">
+              <li>Date-range and currency validation</li>
+              <li>Duplicate transaction detection</li>
+              <li>Payout-to-bank variance review</li>
+            </ul>
+          </article>
+
+          <article class="priority-card accent-pink">
+            <div class="priority-number">02</div>
+            <p class="card-kicker">SECOND / CLASSIFY</p>
+            <h3>Fee leakage</h3>
+            <p>Sort permanent fees from refunds, taxes, reserves, financing deductions, reimbursements, and unresolved adjustments before calling anything “lost.”</p>
+            <ul class="check-list">
+              <li>Effective fee-rate analysis</li>
+              <li>Category and period variance</li>
+              <li>Unresolved adjustment queue</li>
+            </ul>
+          </article>
+
+          <article class="priority-card accent-green">
+            <div class="priority-number">03</div>
+            <p class="card-kicker">THIRD / ECONOMICS</p>
+            <h3>SKU contribution margin</h3>
+            <p>Calculate what remains after product cost, fulfillment, shipping, returns, advertising, and attributable platform costs—not just gross margin theater.</p>
+            <ul class="check-list">
+              <li>SKU and channel scorecards</li>
+              <li>Negative-margin flags</li>
+              <li>Refund and ad-spend drag</li>
+            </ul>
+          </article>
+
+          <article class="priority-card accent-cyan">
+            <div class="priority-number">04</div>
+            <p class="card-kicker">FOURTH / DIAGNOSE</p>
+            <h3>Cash-timing diagnosis</h3>
+            <p>Determine whether the pressure comes from margin, reserve timing, inventory cash conversion, payout delays, data quality, or working-capital structure.</p>
+            <ul class="check-list">
+              <li>Reserve and hold exposure</li>
+              <li>Inventory timing gaps</li>
+              <li>Funding-readiness implications</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-dark" id="workflow">
+      <div class="container">
+        <div class="section-heading split-heading">
+          <div>
+            <p class="eyebrow sticker sticker-orange">HOW THE AUDIT WORKS</p>
+            <h2>Upload the chaos.<br>Get the money trail.</h2>
+          </div>
+          <p>The Copilot is designed to support file-first analysis. Start with the smallest useful dataset, normalize the exports, reconcile the cash, then expand into margin and funding-readiness questions.</p>
+        </div>
+
+        <ol class="workflow-grid">
+          <li class="workflow-card">
+            <span class="workflow-step">01</span>
+            <div>
+              <p class="card-kicker">DEFINE</p>
+              <h3>Set the audit target</h3>
+              <p>Choose the platform, audit period, currency, primary pain, available files, and a reasonable materiality threshold.</p>
+            </div>
+          </li>
+          <li class="workflow-card">
+            <span class="workflow-step">02</span>
+            <div>
+              <p class="card-kicker">NORMALIZE</p>
+              <h3>Clean the exports</h3>
+              <p>Map inconsistent columns, preserve source descriptions, validate required fields, and catch duplicates before totals start multiplying fiction.</p>
+            </div>
+          </li>
+          <li class="workflow-card">
+            <span class="workflow-step">03</span>
+            <div>
+              <p class="card-kicker">RECONCILE</p>
+              <h3>Trace gross to bank</h3>
+              <p>Connect transactions to settlements, payouts, deposits, reserves, releases, refunds, disputes, reimbursements, and financing remittances.</p>
+            </div>
+          </li>
+          <li class="workflow-card">
+            <span class="workflow-step">04</span>
+            <div>
+              <p class="card-kicker">DIAGNOSE</p>
+              <h3>Find the real constraint</h3>
+              <p>Separate margin leaks from data gaps and timing pressure. Rank exceptions by impact, confidence, urgency, and difficulty to fix.</p>
+            </div>
+          </li>
+          <li class="workflow-card">
+            <span class="workflow-step">05</span>
+            <div>
+              <p class="card-kicker">ACT</p>
+              <h3>Build the operator plan</h3>
+              <p>Organize corrective actions, documentation gaps, human-review questions, and a compliance-safe funding-readiness summary when requested.</p>
+            </div>
+          </li>
+        </ol>
+
+        <div class="section-actions">
+          <a class="button button-primary" href="https://chatgpt.com/g/g-6a68083042408191a63f291b0c5a7d9f-ai-platform-fee-audit-copilot" target="_blank" rel="noopener noreferrer">Start the Audit in ChatGPT <span aria-hidden="true">↗</span></a>
+          <a class="text-link light-link" href="./assets/downloads/platform-fee-audit-preflight-checklist.txt" download>Download the preflight checklist ↓</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section radar-section" id="audit-radar">
+      <div class="container">
+        <div class="section-heading centered-heading">
+          <p class="eyebrow sticker sticker-cyan">AUDIT RADAR</p>
+          <h2>Pick the mess. Get the right first lane.</h2>
+          <p>This educational router does not calculate losses, approve funding, perform underwriting, or identify a platform error. It points you toward the first audit lane to investigate with source data.</p>
+        </div>
+
+        <div class="radar-shell">
+          <form class="radar-form" data-radar-form>
+            <div class="form-grid">
+              <div class="field">
+                <label for="platform">Platform</label>
+                <select id="platform" name="platform" required>
+                  <option value="">Select a platform</option>
+                  <option value="shopify">Shopify / DTC</option>
+                  <option value="amazon">Amazon FBA / FBM</option>
+                  <option value="stripe">Stripe / subscriptions</option>
+                  <option value="multi">Multi-channel marketplaces</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label for="pain">Biggest pain</label>
+                <select id="pain" name="pain" required>
+                  <option value="">Select the pressure point</option>
+                  <option value="payout">Payouts do not match bank deposits</option>
+                  <option value="fees">Fees and adjustments feel too high</option>
+                  <option value="margin">I do not know which SKUs make money</option>
+                  <option value="reserve">Reserves, holds, disputes, or reimbursements</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label for="urgency">Urgency</label>
+                <select id="urgency" name="urgency" required>
+                  <option value="">Select urgency</option>
+                  <option value="close">Monthly close / routine control</option>
+                  <option value="cash">Cash pressure within 30 days</option>
+                  <option value="decision">Pricing, inventory, or channel decision</option>
+                  <option value="funding">Preparing for a finance review</option>
+                </select>
+              </div>
+            </div>
+
+            <button class="button button-black radar-submit" type="submit">Run Audit Radar</button>
+          </form>
+
+          <section class="radar-result" aria-live="polite" aria-atomic="true" data-radar-result>
+            <div class="radar-result-top">
+              <span class="result-label">RECOMMENDED LANE</span>
+              <span class="result-code" data-result-code>01 / CONTROL</span>
+            </div>
+            <h3 data-result-title>Payout reconciliation</h3>
+            <p data-result-description>Start by matching settlements and payouts to bank deposits. If the money trail is not clean, every margin opinion is wearing clown shoes.</p>
+
+            <div class="result-grid">
+              <div>
+                <strong>Minimum useful files</strong>
+                <p data-result-files>Payout or settlement report, matching bank deposits, and order or transaction export.</p>
+              </div>
+              <div>
+                <strong>First human check</strong>
+                <p data-result-check>Confirm date ranges, currencies, duplicate rows, and whether deposits are netted or combined.</p>
+              </div>
+            </div>
+
+            <div class="result-actions">
+              <a class="button button-primary" href="https://chatgpt.com/g/g-6a68083042408191a63f291b0c5a7d9f-ai-platform-fee-audit-copilot" target="_blank" rel="noopener noreferrer">Open the Copilot</a>
+              <a class="button button-ghost" href="https://www.distilledfunding.com/apply" target="_blank" rel="noopener noreferrer">Request Human Review</a>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-paper" id="outputs">
+      <div class="container">
+        <div class="section-heading split-heading">
+          <div>
+            <p class="eyebrow">WHAT COMES BACK</p>
+            <h2>Not another dashboard.<br>An operator-ready audit pack.</h2>
+          </div>
+          <p>Outputs depend on the completeness and quality of the source data. Every material assumption, exclusion, and unresolved item should stay visible.</p>
+        </div>
+
+        <div class="deliverables-board">
+          <article class="deliverable feature-deliverable">
+            <span class="tag tag-pink">EXECUTIVE VIEW</span>
+            <h3>Gross-to-net money trail</h3>
+            <p>A reconciled explanation of gross activity, permanent deductions, temporary holds, payouts, deposits, and unresolved variance.</p>
+            <div class="waterfall-mini" aria-hidden="true">
+              <span style="--h: 100%">GROSS</span>
+              <span style="--h: 76%">NET</span>
+              <span style="--h: 64%">PAYOUT</span>
+              <span style="--h: 61%">BANK</span>
+            </div>
+          </article>
+
+          <article class="deliverable">
+            <span class="tag tag-yellow">DATA QUALITY</span>
+            <h3>Validation report</h3>
+            <p>Missing fields, mismatched periods, duplicate IDs, currency problems, and exclusions that could distort the answer.</p>
+          </article>
+
+          <article class="deliverable">
+            <span class="tag tag-cyan">FEE CONTROL</span>
+            <h3>Fee and variance breakdown</h3>
+            <p>Platform and category views with permanent fees separated from reserves, taxes, remittances, timing differences, and unresolved adjustments.</p>
+          </article>
+
+          <article class="deliverable">
+            <span class="tag tag-green">UNIT ECONOMICS</span>
+            <h3>SKU margin scorecard</h3>
+            <p>Contribution profit and contribution margin by SKU or channel, including negative-margin flags and major cost drivers.</p>
+          </article>
+
+          <article class="deliverable">
+            <span class="tag tag-purple">CASH CONTROL</span>
+            <h3>Reserve and hold tracker</h3>
+            <p>Opening balance, new holds, releases, aging, dispute activity, expected timing, and cash impact.</p>
+          </article>
+
+          <article class="deliverable">
+            <span class="tag tag-orange">NEXT MOVES</span>
+            <h3>Exception and action queue</h3>
+            <p>Ranked issues, evidence gaps, corrective actions, platform-support questions, and decisions requiring human review.</p>
+          </article>
+
+          <article class="deliverable">
+            <span class="tag tag-black">READINESS</span>
+            <h3>Funding-readiness summary</h3>
+            <p>A compliance-safe explanation of margin, cash timing, inventory needs, reserve exposure, data reliability, and unresolved risks.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section offers-section" id="offers">
+      <div class="container">
+        <div class="section-heading centered-heading">
+          <p class="eyebrow sticker sticker-pink">CHOOSE YOUR RESPONSIBILITY LEVEL</p>
+          <h2>DIY, DWY, and DFY—without consulting soup.</h2>
+          <p>These are different operating models, not the same product wearing three meeting calendars.</p>
+        </div>
+
+        <div class="offer-grid">
+          <article class="offer-card diy">
+            <div class="offer-top">
+              <span class="offer-code">DIY</span>
+              <span class="responsibility">YOU RUN THE AUDIT</span>
+            </div>
+            <h3>Fee Audit Lab</h3>
+            <p class="offer-summary">For operators who want the system, prompts, and controls—and are prepared to do the file prep and decision work.</p>
+            <dl class="offer-facts">
+              <div><dt>Your responsibility</dt><dd>Prepare, redact, upload, validate, and apply the findings.</dd></div>
+              <div><dt>Human review</dt><dd>Group education and audit clinics; no private interpretation by default.</dd></div>
+              <div><dt>Cadence</dt><dd>Self-paced with monthly close routines.</dd></div>
+              <div><dt>Scope</dt><dd>GPT workflows, templates, platform playbooks, checklists, and public-safe downloads.</dd></div>
+              <div><dt>Deliverables</dt><dd>Your completed audit workbook and action list.</dd></div>
+            </dl>
+            <a class="button button-black" href="https://chatgpt.com/g/g-6a68083042408191a63f291b0c5a7d9f-ai-platform-fee-audit-copilot" target="_blank" rel="noopener noreferrer">Open Fee Audit Lab</a>
+          </article>
+
+          <article class="offer-card dwy featured">
+            <div class="featured-ribbon">HUMAN INTERPRETATION</div>
+            <div class="offer-top">
+              <span class="offer-code">DWY</span>
+              <span class="responsibility">WE REVIEW IT WITH YOU</span>
+            </div>
+            <h3>Margin Recovery Desk</h3>
+            <p class="offer-summary">For founders who can produce the exports but need a second brain on exceptions, data gaps, and the corrective-action plan.</p>
+            <dl class="offer-facts">
+              <div><dt>Your responsibility</dt><dd>Provide organized source files, context, and timely answers.</dd></div>
+              <div><dt>Human review</dt><dd>Private exception review, data-gap analysis, and interpretation.</dd></div>
+              <div><dt>Cadence</dt><dd>Guided monthly audit or defined project period.</dd></div>
+              <div><dt>Scope</dt><dd>Private Notion workspace, reconciliation review, margin diagnosis, and prioritized fixes.</dd></div>
+              <div><dt>Deliverables</dt><dd>Reviewed exception log, decision notes, and corrective-action plan.</dd></div>
+            </dl>
+            <a class="button button-primary" href="https://www.distilledfunding.com/apply" target="_blank" rel="noopener noreferrer">Request Guided Review</a>
+          </article>
+
+          <article class="offer-card dfy">
+            <div class="offer-top">
+              <span class="offer-code">DFY</span>
+              <span class="responsibility">WE RUN THE CONTROL DESK</span>
+            </div>
+            <h3>Ecommerce Finance Ops Desk</h3>
+            <p class="offer-summary">For inventory-heavy businesses that need recurring control coverage without hiring a full internal finance-operations team.</p>
+            <dl class="offer-facts">
+              <div><dt>Your responsibility</dt><dd>Maintain source access, approve assumptions, and own final business decisions.</dd></div>
+              <div><dt>Human review</dt><dd>Managed reconciliation, variance interpretation, and recurring escalation.</dd></div>
+              <div><dt>Cadence</dt><dd>Recurring monthly control cycle.</dd></div>
+              <div><dt>Scope</dt><dd>Payout reconciliation, fee variance, reserves, SKU margin, cash timing, and readiness support.</dd></div>
+              <div><dt>Deliverables</dt><dd>Recurring control pack, exception queue, and management summary.</dd></div>
+            </dl>
+            <a class="button button-black" href="https://www.distilledfunding.com/apply" target="_blank" rel="noopener noreferrer">Request Managed Ops</a>
+          </article>
+        </div>
+
+        <p class="offer-note">Availability, scope, eligibility, and terms vary. A review request is not an engagement, funding approval, or guarantee of fee recovery.</p>
+      </div>
+    </section>
+
+    <section class="section fit-section" id="fit">
+      <div class="container fit-grid">
+        <article class="fit-card best-fit">
+          <p class="eyebrow">BEST FOR</p>
+          <h2>Operators with revenue, exports, and unanswered cash questions.</h2>
+          <ul class="large-check-list">
+            <li>Shopify and DTC operators</li>
+            <li>Amazon FBA and FBM sellers</li>
+            <li>Stripe-powered ecommerce and subscription businesses</li>
+            <li>Multi-channel marketplace sellers</li>
+            <li>Inventory-heavy small businesses</li>
+            <li>Ecommerce agencies and fractional finance operators</li>
+            <li>Scrappy founders who cannot justify a full finance team</li>
+          </ul>
+        </article>
+
+        <article class="fit-card not-fit">
+          <p class="eyebrow">NOT FOR</p>
+          <h2>People shopping for magic, cover stories, or guaranteed outcomes.</h2>
+          <ul class="large-x-list">
+            <li>Automatic bookkeeping or final accounting entries</li>
+            <li>Tax, legal, lending, or underwriting conclusions</li>
+            <li>Guaranteed recovery of disputed fees</li>
+            <li>Guaranteed funding approval or specific terms</li>
+            <li>Direct account access without approved authorization</li>
+            <li>Concealing losses, altering records, or misleading a lender</li>
+            <li>Declaring a platform error without evidence and human review</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="section privacy-section" id="privacy">
+      <div class="container">
+        <div class="privacy-board">
+          <div class="privacy-copy">
+            <p class="eyebrow sticker sticker-green">PRIVACY / REDACTION</p>
+            <h2>Bring transaction evidence.<br>Leave the keys to the kingdom out of it.</h2>
+            <p>Redact credentials and unnecessary personal information before uploading files. The public site and embed do not collect or transmit raw financial exports.</p>
+          </div>
+
+          <div class="privacy-columns">
+            <div class="privacy-card danger-card">
+              <h3>Never upload</h3>
+              <ul>
+                <li>Passwords or bank login credentials</li>
+                <li>API keys, session tokens, or authentication cookies</li>
+                <li>Full card numbers or CVV codes</li>
+                <li>Social Security numbers</li>
+                <li>Unredacted customer payment data</li>
+                <li>Anything unrelated to the audit</li>
+              </ul>
+            </div>
+            <div class="privacy-card data-card">
+              <h3>May be needed</h3>
+              <ul>
+                <li>Transaction and payout IDs</li>
+                <li>Order IDs, dates, and amounts</li>
+                <li>SKU and product-cost data</li>
+                <li>Platform descriptions and fee categories</li>
+                <li>Reserve, refund, dispute, and reimbursement records</li>
+                <li>Matching bank deposit references</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="privacy-notice">
+            <strong>PUBLIC-SITE BOUNDARY:</strong>
+            <span>No financial-file upload exists here. A secure, explicitly approved workflow would be required before this site could collect raw exports.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reality-section" id="reality-check">
+      <div class="container">
+        <div class="section-heading split-heading">
+          <div>
+            <p class="eyebrow">REALITY CHECK</p>
+            <h2>AI can organize the evidence.<br>Humans still own the judgment.</h2>
+          </div>
+          <p>The useful line is not “AI does finance.” The useful line is “AI can support a repeatable review while assumptions, approvals, and external actions remain visible.”</p>
+        </div>
+
+        <div class="reality-grid">
+          <article class="reality-card can-card">
+            <h3>The Copilot can support</h3>
+            <ul class="check-list">
+              <li>Data validation and column normalization</li>
+              <li>Payout and deposit reconciliation</li>
+              <li>Fee classification and variance analysis</li>
+              <li>Contribution-profit and margin calculations</li>
+              <li>Documentation organization</li>
+              <li>Funding-readiness summaries</li>
+            </ul>
+          </article>
+
+          <article class="reality-card cannot-card">
+            <h3>It does not replace</h3>
+            <ul class="x-list">
+              <li>Accounting judgment or final entries</li>
+              <li>Tax or legal advice</li>
+              <li>Platform-support decisions</li>
+              <li>Lending or underwriting judgment</li>
+              <li>Human approval before disputes or external writes</li>
+              <li>Consent before data sharing or funding-lead creation</li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="approval-strip">
+          <span class="approval-stamp">HUMAN APPROVAL REQUIRED</span>
+          <p>Before accusing a platform of an incorrect fee, sending a dispute, sharing financial data, writing to an external system, creating a funding lead, or making pricing, inventory, advertising, or borrowing decisions.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section funding-section" id="funding-readiness">
+      <div class="container funding-grid">
+        <div>
+          <p class="eyebrow sticker sticker-purple">FUNDING-READINESS CONNECTION</p>
+          <h2>Capital can bridge a documented timing gap.<br>It cannot negotiate with broken unit economics.</h2>
+          <p>A completed audit may help explain whether the business faces a temporary payout gap, reserve timing, inventory cash conversion, profitable growth pressure, channel-cost drag, refund pressure, or negative contribution margin.</p>
+          <p>The readiness summary is designed to organize the facts—not approve funding, predict terms, or replace lender judgment. Eligibility varies and terms may change.</p>
+        </div>
+
+        <div class="diagnosis-board" aria-label="Funding-readiness diagnosis board">
+          <div class="diagnosis-row good">
+            <span>Documented timing gap</span>
+            <strong>CAPITAL MAY HELP</strong>
+          </div>
+          <div class="diagnosis-row good">
+            <span>Profitable inventory need</span>
+            <strong>REVIEW FIT</strong>
+          </div>
+          <div class="diagnosis-row caution">
+            <span>Incomplete source data</span>
+            <strong>FIX DATA FIRST</strong>
+          </div>
+          <div class="diagnosis-row danger">
+            <span>Negative contribution margin</span>
+            <strong>DO NOT FUND THE LEAK</strong>
+          </div>
+          <a class="button button-black" href="https://www.distilledfunding.com/apply" target="_blank" rel="noopener noreferrer">Request a Funding or Finance-Ops Review</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section faq-section" id="faq">
+      <div class="container">
+        <div class="section-heading split-heading">
+          <div>
+            <p class="eyebrow">FAQ / OBJECTIONS</p>
+            <h2>Before the spreadsheet starts throwing furniture.</h2>
+          </div>
+        </div>
+
+        <div class="faq-list" data-faq-list>
+          <article class="faq-item">
+            <h3>
+              <button type="button" aria-expanded="false">
+                What files should I start with?
+                <span aria-hidden="true">+</span>
+              </button>
+            </h3>
+            <div class="faq-answer" hidden>
+              <p>For a basic payout reconciliation, start with the payout or settlement report, matching bank deposits, and the order or transaction export for the same period. Add refunds, advertising, product costs, fulfillment, shipping, reserves, and financing records only when the audit scope requires them.</p>
+            </div>
+          </article>
+
+          <article class="faq-item">
+            <h3>
+              <button type="button" aria-expanded="false">
+                Will it tell me exactly how much a platform owes me?
+                <span aria-hidden="true">+</span>
+              </button>
+            </h3>
+            <div class="faq-answer" hidden>
+              <p>It may help identify unexplained variance, duplicate deductions, missing reimbursements, or support questions. It should not declare a platform error or amount owed without complete source evidence and human review.</p>
+            </div>
+          </article>
+
+          <article class="faq-item">
+            <h3>
+              <button type="button" aria-expanded="false">
+                Is this bookkeeping or tax software?
+                <span aria-hidden="true">+</span>
+              </button>
+            </h3>
+            <div class="faq-answer" hidden>
+              <p>No. It is an AI-assisted finance-operations audit workflow. It can support reconciliation, classification, calculations, and documentation, but it does not replace accounting judgment, final entries, or tax advice.</p>
+            </div>
+          </article>
+
+          <article class="faq-item">
+            <h3>
+              <button type="button" aria-expanded="false">
+                Does the public router upload or store my files?
+                <span aria-hidden="true">+</span>
+              </button>
+            </h3>
+            <div class="faq-answer" hidden>
+              <p>No. The public site and embed collect no financial files. The router only uses the three selections made in the browser to display an educational recommendation.</p>
+            </div>
+          </article>
+
+          <article class="faq-item">
+            <h3>
+              <button type="button" aria-expanded="false">
+                Can this help with funding readiness?
+                <span aria-hidden="true">+</span>
+              </button>
+            </h3>
+            <div class="faq-answer" hidden>
+              <p>After the audit, it can support a summary of cash timing, unit economics, reserve exposure, data quality, inventory needs, and unresolved risks. That summary is not underwriting, an approval, or a guarantee of eligibility or terms.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="final-cta" aria-labelledby="final-cta-title">
+      <div class="container final-cta-grid">
+        <div>
+          <p class="eyebrow">THE MONEY TRAIL FIRST</p>
+          <h2 id="final-cta-title">Find out whether you need more capital—or need to stop feeding the leak.</h2>
+        </div>
+        <div class="final-cta-actions">
+          <a class="button button-primary" href="https://chatgpt.com/g/g-6a68083042408191a63f291b0c5a7d9f-ai-platform-fee-audit-copilot" target="_blank" rel="noopener noreferrer">Open AI Platform Fee Audit Copilot <span aria-hidden="true">↗</span></a>
+          <a class="button button-white" href="https://www.distilledfunding.com/apply" target="_blank" rel="noopener noreferrer">Request Human Review</a>
+          <small>Educational and operational support only. No recovery, funding, tax, legal, accounting, lending, or underwriting guarantee.</small>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div>
+        <a class="brand footer-brand" href="#top">
+          <span class="brand-mark" aria-hidden="true">$</span>
+          <span><strong>FEE AUDIT</strong><small>PLATFORM MARGIN CONTROL</small></span>
+        </a>
+        <p>AI-assisted ecommerce finance-operations workflows for reconciling payouts, classifying deductions, analyzing SKU contribution margin, and documenting cash-timing pressure.</p>
+      </div>
+
+      <nav aria-label="Footer navigation">
+        <h2>Navigate</h2>
+        <a href="#audit-board">Audit Board</a>
+        <a href="#workflow">Workflow</a>
+        <a href="#audit-radar">Audit Radar</a>
+        <a href="#offers">Service Lanes</a>
+        <a href="./embed.html">Embed Module</a>
+      </nav>
+
+      <div>
+        <h2>Access</h2>
+        <a href="https://chatgpt.com/g/g-6a68083042408191a63f291b0c5a7d9f-ai-platform-fee-audit-copilot" target="_blank" rel="noopener noreferrer">Open the Copilot ↗</a>
+        <a href="https://www.distilledfunding.com/apply" target="_blank" rel="noopener noreferrer">Request Review ↗</a>
+        <a href="./assets/downloads/platform-fee-audit-preflight-checklist.txt" download>Audit Prep Checklist ↓</a>
+      </div>
+    </div>
+
+    <div class="container legal-bar">
+      <p>© <span data-year></span> Ecommerce Fee Audit / Moonshine Capital. All rights reserved.</p>
+      <p>Designed to help with educational and operational analysis. Not accounting, tax, legal, lending, underwriting, platform-support, or funding-approval advice. Eligibility varies. Terms may change.</p>
+    </div>
+  </footer>
+
+  <script src="./script.js" defer></script>
+</body>
+</html>

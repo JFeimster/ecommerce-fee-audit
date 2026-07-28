@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Platform Fee Audit Radar</title>
+  <meta name="description" content="Educational ecommerce platform fee audit router for payout reconciliation, fee leakage, SKU margin, and reserve tracking.">
+  <meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="icon" href="./assets/icons/favicon.svg" type="image/svg+xml">
+  <style>
+    :root {
+      --afa-paper: #f4efe3;
+      --afa-white: #fffdf6;
+      --afa-ink: #090909;
+      --afa-muted: #5c584f;
+      --afa-yellow: #ffd84d;
+      --afa-cyan: #22d3ee;
+      --afa-pink: #ff5fa2;
+      --afa-green: #6ee75d;
+      --afa-border: 3px solid var(--afa-ink);
+      --afa-shadow: 7px 7px 0 var(--afa-ink);
+      --afa-font: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --afa-display: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+      --afa-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { background: transparent; }
+
+    body {
+      margin: 0;
+      min-width: 280px;
+      background: transparent;
+      color: var(--afa-ink);
+      font-family: var(--afa-font);
+      line-height: 1.45;
+    }
+
+    a,
+    button,
+    select { font: inherit; }
+
+    a:focus-visible,
+    button:focus-visible,
+    select:focus-visible {
+      outline: 4px solid var(--afa-cyan);
+      outline-offset: 3px;
+    }
+
+    .afa-module {
+      width: min(calc(100% - 18px), 1200px);
+      margin: 9px auto 16px;
+      overflow: hidden;
+      background: var(--afa-white);
+      border: var(--afa-border);
+      box-shadow: var(--afa-shadow);
+    }
+
+    .afa-head {
+      display: grid;
+      gap: 10px;
+      padding: 18px;
+      background: var(--afa-yellow);
+      border-bottom: var(--afa-border);
+    }
+
+    .afa-kicker,
+    .afa-result-label {
+      width: fit-content;
+      margin: 0;
+      padding: 4px 7px;
+      background: var(--afa-ink);
+      color: #fff;
+      font-family: var(--afa-mono);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .afa-head h1,
+    .afa-result h2 {
+      margin: 0;
+      font-family: var(--afa-display);
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      line-height: 0.95;
+      text-transform: uppercase;
+    }
+
+    .afa-head h1 { font-size: clamp(38px, 9vw, 78px); }
+    .afa-result h2 { font-size: clamp(32px, 7vw, 60px); }
+
+    .afa-head p,
+    .afa-result p {
+      max-width: 880px;
+      margin: 0;
+      color: var(--afa-muted);
+      font-weight: 650;
+    }
+
+    .afa-form {
+      display: grid;
+      gap: 13px;
+      padding: 18px;
+      background: var(--afa-cyan);
+      border-bottom: var(--afa-border);
+    }
+
+    .afa-fields {
+      display: grid;
+      gap: 12px;
+    }
+
+    .afa-field label {
+      display: block;
+      margin-bottom: 5px;
+      font-family: var(--afa-mono);
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .afa-field select {
+      width: 100%;
+      min-height: 48px;
+      padding: 8px;
+      background: #fff;
+      border: 2px solid var(--afa-ink);
+      border-radius: 0;
+      color: var(--afa-ink);
+      font-weight: 750;
+    }
+
+    .afa-button {
+      display: inline-flex;
+      min-height: 48px;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 14px;
+      background: var(--afa-ink);
+      border: 2px solid var(--afa-ink);
+      box-shadow: 4px 4px 0 #fff;
+      color: #fff;
+      font-family: var(--afa-mono);
+      font-size: 12px;
+      font-weight: 900;
+      text-align: center;
+      text-decoration: none;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    .afa-button:hover {
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0 #fff;
+    }
+
+    .afa-button-alt {
+      background: var(--afa-yellow);
+      box-shadow: 4px 4px 0 var(--afa-ink);
+      color: var(--afa-ink);
+    }
+
+    .afa-result {
+      display: grid;
+      gap: 13px;
+      padding: 18px;
+    }
+
+    .afa-result-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .afa-result-card {
+      padding: 12px;
+      background: var(--afa-paper);
+      border: 2px solid var(--afa-ink);
+    }
+
+    .afa-result-card strong {
+      display: block;
+      margin-bottom: 4px;
+      font-family: var(--afa-mono);
+      font-size: 11px;
+      text-transform: uppercase;
+    }
+
+    .afa-actions {
+      display: grid;
+      gap: 10px;
+    }
+
+    .afa-privacy {
+      margin: 0;
+      padding: 10px 18px;
+      background: var(--afa-ink);
+      color: #fff;
+      font-family: var(--afa-mono);
+      font-size: 10px;
+      font-weight: 750;
+    }
+
+    .afa-privacy strong { color: var(--afa-green); }
+
+    @media (min-width: 680px) {
+      .afa-fields {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .afa-form {
+        grid-template-columns: 1fr auto;
+        align-items: end;
+      }
+
+      .afa-result-grid,
+      .afa-actions {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (min-width: 960px) {
+      .afa-head,
+      .afa-form,
+      .afa-result {
+        padding: 22px 26px;
+      }
+
+      .afa-result {
+        grid-template-columns: 1.25fr 0.75fr;
+      }
+
+      .afa-result > .afa-result-label,
+      .afa-result > h2,
+      .afa-result > p,
+      .afa-result > .afa-actions {
+        grid-column: 1;
+      }
+
+      .afa-result-grid {
+        grid-column: 2;
+        grid-row: 1 / span 5;
+        align-content: center;
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .afa-module { width: calc(100% - 12px); margin-top: 6px; }
+      .afa-head,
+      .afa-form,
+      .afa-result { padding: 14px; }
+      .afa-button { width: 100%; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { scroll-behavior: auto !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="afa-module" aria-labelledby="afa-title">
+    <header class="afa-head">
+      <p class="afa-kicker">EMBEDDABLE AUDIT SIGNAL</p>
+      <h1 id="afa-title">Find the first money-trail problem to audit.</h1>
+      <p>Choose the platform, biggest pain, and urgency. This public router gives an educational starting lane before any files are shared.</p>
+    </header>
+
+    <form class="afa-form" id="afa-form">
+      <div class="afa-fields">
+        <div class="afa-field">
+          <label for="afa-platform">Platform</label>
+          <select id="afa-platform" name="platform" required>
+            <option value="">Select platform</option>
+            <option value="shopify">Shopify / DTC</option>
+            <option value="amazon">Amazon FBA / FBM</option>
+            <option value="stripe">Stripe / subscriptions</option>
+            <option value="multi">Multi-channel</option>
+          </select>
+        </div>
+
+        <div class="afa-field">
+          <label for="afa-pain">Biggest pain</label>
+          <select id="afa-pain" name="pain" required>
+            <option value="">Select pain</option>
+            <option value="payout">Payouts vs. bank</option>
+            <option value="fees">Fees and adjustments</option>
+            <option value="margin">SKU or channel margin</option>
+            <option value="reserve">Reserves and disputes</option>
+          </select>
+        </div>
+
+        <div class="afa-field">
+          <label for="afa-urgency">Urgency</label>
+          <select id="afa-urgency" name="urgency" required>
+            <option value="">Select urgency</option>
+            <option value="close">Monthly close</option>
+            <option value="cash">30-day cash pressure</option>
+            <option value="decision">Business decision</option>
+            <option value="funding">Finance review</option>
+          </select>
+        </div>
+      </div>
+      <button class="afa-button" type="submit">Run Signal</button>
+    </form>
+
+    <section class="afa-result" aria-live="polite" aria-atomic="true">
+      <p class="afa-result-label">RECOMMENDED LANE</p>
+      <h2 id="afa-result-title">Payout reconciliation</h2>
+      <p id="afa-result-copy">Start with settlement-to-payout and payout-to-bank matching. Do not diagnose margin from an unreconciled money trail.</p>
+
+      <div class="afa-result-grid">
+        <div class="afa-result-card">
+          <strong>Start with</strong>
+          <p id="afa-result-files">Payout or settlement report, matching bank deposits, and order or transaction export.</p>
+        </div>
+        <div class="afa-result-card">
+          <strong>Boundary</strong>
+          <p>This does not calculate actual losses, identify a platform error, approve funding, or perform underwriting.</p>
+        </div>
+      </div>
+
+      <!-- PARTNER EMBED CTAS: keep target="_blank" and rel protections when replacing URLs. -->
+      <div class="afa-actions">
+        <a class="afa-button afa-button-alt" href="https://chatgpt.com/g/g-6a68083042408191a63f291b0c5a7d9f-ai-platform-fee-audit-copilot" target="_blank" rel="noopener noreferrer">Open Copilot ↗</a>
+        <a class="afa-button" href="https://www.distilledfunding.com/apply" target="_blank" rel="noopener noreferrer">Request Review ↗</a>
+      </div>
+    </section>
+
+    <p class="afa-privacy"><strong>PRIVACY:</strong> This module collects no files and sends no financial data. Redact credentials and unnecessary personal information before using any separately approved upload workflow.</p>
+  </main>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const form = document.getElementById("afa-form");
+      const title = document.getElementById("afa-result-title");
+      const copy = document.getElementById("afa-result-copy");
+      const files = document.getElementById("afa-result-files");
+
+      const lanes = {
+        payout: {
+          title: "Payout reconciliation",
+          copy: "Start with settlement-to-payout and payout-to-bank matching. Do not diagnose margin from an unreconciled money trail.",
+          files: "Payout or settlement report, matching bank deposits, and order or transaction export."
+        },
+        fees: {
+          title: "Fee leakage review",
+          copy: "Classify permanent fees separately from refunds, taxes, reserves, remittances, reimbursements, timing differences, and unresolved adjustments.",
+          files: "Detailed fee or balance transactions, prior-period summaries, refunds, disputes, and reimbursement records."
+        },
+        margin: {
+          title: "SKU contribution margin",
+          copy: "Calculate what each SKU or channel keeps after product cost, platform fees, fulfillment, shipping, returns, advertising, and attributable software.",
+          files: "SKU-level orders, COGS, fulfillment, shipping, refunds, advertising, and platform fee exports."
+        },
+        reserve: {
+          title: "Reserve + dispute tracking",
+          copy: "Build the reserve roll-forward: opening balance, new holds, releases, amounts applied, aging, documentation, and cash impact.",
+          files: "Reserve or hold activity, payouts, disputes, reimbursements, negative balances, and matching deposits."
+        }
+      };
+
+      const urgency = {
+        close: "Use a prior comparison period when available.",
+        cash: "Prioritize cash-affecting exceptions without assuming funding is the fix.",
+        decision: "Require human review before pricing, inventory, ad, or channel changes.",
+        funding: "Complete the audit before preparing a readiness summary; eligibility varies."
+      };
+
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        if (!form.reportValidity()) return;
+
+        const data = new FormData(form);
+        const lane = lanes[String(data.get("pain"))] || lanes.payout;
+        const urgencyNote = urgency[String(data.get("urgency"))] || "";
+
+        title.textContent = lane.title;
+        copy.textContent = `${lane.copy} ${urgencyNote}`.trim();
+        files.textContent = lane.files;
+        title.setAttribute("tabindex", "-1");
+        title.focus();
+      });
+    })();
+  </script>
+</body>
+</html>

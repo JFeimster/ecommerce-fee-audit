@@ -1,0 +1,60 @@
+AI PLATFORM FEE AUDIT — PUBLIC-SAFE PREFLIGHT CHECKLIST
+=========================================================
+
+1) DEFINE THE AUDIT
+[ ] Platform(s)
+[ ] Audit period
+[ ] Currency or currencies
+[ ] Primary objective: payout reconciliation, fee leakage, SKU margin, reserves/disputes, or funding readiness
+[ ] Materiality threshold or permission to recommend one
+
+2) START WITH THE MINIMUM USEFUL DATASET
+[ ] Payout or settlement report
+[ ] Matching bank deposits
+[ ] Order or transaction export
+[ ] Confirm all files cover the same date range
+
+3) ADD ONLY WHAT THE SCOPE NEEDS
+[ ] Refund and return report
+[ ] Advertising report
+[ ] Product cost / COGS
+[ ] Fulfillment and shipping costs
+[ ] App or software costs
+[ ] Reserve or hold activity
+[ ] Financing remittance records
+[ ] Dispute and reimbursement records
+
+4) REDACT BEFORE SHARING
+NEVER INCLUDE:
+- Passwords
+- API keys
+- Session tokens or authentication cookies
+- Full card numbers
+- CVV codes
+- Bank login credentials
+- Social Security numbers
+- Unredacted customer payment data
+- Unnecessary personal information
+
+MAY BE NEEDED FOR RECONCILIATION:
+- Transaction IDs
+- Payout IDs
+- Order IDs
+- Dates
+- Amounts
+- SKU data
+- Platform descriptions
+- Matching bank deposit references
+
+5) HUMAN REVIEW GATES
+Require human review before:
+- Accusing a platform of an incorrect fee
+- Sending a dispute
+- Sharing financial data externally
+- Writing to an external system
+- Creating a funding lead
+- Making pricing, inventory, advertising, or borrowing decisions
+
+This checklist is educational and operational only. It is not accounting, tax,
+legal, lending, underwriting, platform-support, or funding-approval advice.
+Fee recovery, dispute success, eligibility, and funding terms are not guaranteed.
