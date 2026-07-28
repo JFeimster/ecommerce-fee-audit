@@ -1,0 +1,46 @@
+name: Public Asset Package
+
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Build public-safe package
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf dist
+          mkdir -p dist/package
+          cp -R site dist/package/site
+          cp README.md dist/package/README.md
+
+          find dist/package -type f -print0 | sort -z | xargs -0 sha256sum > dist/SHA256SUMS.txt
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          files = sorted(str(p.relative_to('dist/package')) for p in Path('dist/package').rglob('*') if p.is_file())
+          Path('dist/manifest.json').write_text(json.dumps({'package':'ecommerce-fee-audit-public-assets','files':files}, indent=2) + '\n')
+          PY
+
+          if find dist/package -type f | grep -Ei '(secret|credential|token|client-data|bank-statement|private)' ; then
+            echo 'Unsafe filename detected in public package.' >&2
+            exit 1
+          fi
+
+      - name: Upload package artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: ecommerce-fee-audit-public-assets
+          path: dist/
+          if-no-files-found: error
+          retention-days: 14
