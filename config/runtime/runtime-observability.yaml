@@ -1,0 +1,8 @@
+version: 1.0.0
+status: placeholder
+controls: [authentication, authorization, idempotency, redaction, audit_logging, fail_closed]
+consequential_actions: disabled_or_adapter_required
+financial_transactions: disabled
+mock_behavior: local_test_only_non_production
+active_function_limit: 10
+reserved_function_slots: 2
