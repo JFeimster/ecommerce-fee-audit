@@ -1,0 +1,5 @@
+version: 1.0.0
+states: [free, pending, trial, active, suspended, past_due, cancelled, expired, revoked, founding_member, managed_service, partner_applicant, partner_client]
+valid_transitions: {free: [pending, active, trial], pending: [active, cancelled], trial: [active, cancelled, expired], active: [suspended, past_due, cancelled, expired, founding_member, managed_service], suspended: [active, cancelled, expired], past_due: [active, cancelled, expired], cancelled: [active], expired: [active], founding_member: [active, cancelled, expired], managed_service: [active, cancelled], partner_applicant: [partner_client, cancelled], partner_client: [active, cancelled]}
+invalid_transition_examples: ['active -> trial', 'cancelled -> active without reactivation', 'expired -> active without renewal_or_administrative_activation', 'free -> paid without plan activation']
+partner_acceptance: approval_or_configured_automated_acceptance

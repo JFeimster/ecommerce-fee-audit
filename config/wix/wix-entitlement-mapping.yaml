@@ -1,0 +1,10 @@
+version: 1.0.0
+states: [pending, active, suspended, past_due, cancelled, expired, revoked, trial, founding_member, managed_service, partner_license]
+defaults: {activation_trigger: verified_wix_event, entitlement_record: product_entitlement, usage_limits: config/products/usage-limits.yaml, connector_access: tier_entitled, upload_access: tier_entitled, export_access: tier_entitled, recurring_audit_access: tier_entitled, managed_service_access: false, partner_workspace_access: false, dashboard_access: true, downgrade_behavior: recalculate_next_cycle, cancellation_behavior: paid_period_then_expire, reactivation_behavior: verified_reactivation, audit_logging: required}
+product_states:
+  free_platform_fee_audit_starter: {state: active, connector_access: limited, upload_access: limited, export_access: limited, recurring_audit_access: false}
+  audit_lab: {state: active, connector_access: tier_entitled, upload_access: tier_entitled, export_access: tier_entitled, recurring_audit_access: true}
+  margin_control: {state: active, connector_access: tier_entitled, upload_access: tier_entitled, export_access: tier_entitled, recurring_audit_access: true}
+  guided_margin_recovery: {state: managed_service, managed_service_access: true, recurring_audit_access: true}
+  ecommerce_finance_ops_desk: {state: managed_service, managed_service_access: true, recurring_audit_access: managed}
+  partner_agency_license: {state: partner_license, partner_workspace_access: true, recurring_audit_access: licensed}

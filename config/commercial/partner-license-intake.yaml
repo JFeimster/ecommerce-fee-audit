@@ -1,0 +1,3 @@
+version: 1.0.0
+partner_types: [agency, funding_broker, consultant, referral_partner, affiliate_operator, ecommerce_finance_consultant]
+workflow: {entry: partner_license_application, review: approval_or_configured_automated_acceptance, commercial_terms: proposal_or_invoice, activation: partner_client_entitlement, no_guarantees: true}

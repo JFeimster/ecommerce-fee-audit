@@ -1,0 +1,6 @@
+version: 1.0.0
+groups:
+  platform_fee_audit_lab: {display_name: Platform Fee Audit Lab, audience: self_service_operators, access_rule: audit_lab_or_eligible_member, mapped_products: [audit_lab], membership_trigger: entitlement_activated, moderation_role: internal_operator, content_purpose: education_and_clinics, automation_events: [entitlement.activated, entitlement.expired], removal_behavior: remove_on_expiry}
+  margin_control_operators: {display_name: Margin Control Operators, audience: guided_operators, access_rule: margin_control_or_guided, mapped_products: [margin_control, guided_margin_recovery], membership_trigger: entitlement_activated, moderation_role: internal_operator, content_purpose: education_and_accountability, automation_events: [entitlement.activated, entitlement.expired], removal_behavior: remove_on_expiry}
+  partner_audit_network: {display_name: Partner Audit Network, audience: approved_partners, access_rule: partner_license_only, mapped_products: [partner_agency_license], membership_trigger: partner_activation, moderation_role: administrator, content_purpose: partner_education, automation_events: [entitlement.activated, entitlement.revoked], removal_behavior: remove_on_revocation}
+restriction: Groups are community and education layers, not the audit database.

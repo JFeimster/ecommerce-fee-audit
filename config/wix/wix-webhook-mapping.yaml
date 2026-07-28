@@ -1,0 +1,8 @@
+version: 1.0.0
+defaults: {route: '/api/webhooks/{provider}', provider: wix, function_slot: 8, signature_strategy: provider_specific_hmac_placeholder, idempotency_key: provider_event_id, retry_behavior: existing_webhook_retry_policy, failure_fallback: manual_queue}
+mappings:
+  pricing_plan_activated: {canonical_event: entitlement.activated, entitlement_effect: activate, crm_effect: apply_product_label, member_effect: grant_role, dashboard_effect: activate_access}
+  payment_failed: {canonical_event: entitlement.suspended, entitlement_effect: suspend_per_policy, crm_effect: apply_churn_risk, member_effect: retain_limited_access, dashboard_effect: show_recovery_prompt}
+  subscription_cancelled: {canonical_event: entitlement.expired, entitlement_effect: expire_at_effective_date, crm_effect: apply_cancellation_requested, member_effect: remove_paid_role, dashboard_effect: restrict_after_expiry}
+  member_created: {canonical_event: entitlement.created, entitlement_effect: pending, crm_effect: create_or_update_contact, member_effect: assign_pending_role, dashboard_effect: onboarding_link}
+  booking_created: {canonical_event: audit.created, entitlement_effect: none, crm_effect: apply_service_label, member_effect: unchanged, dashboard_effect: show_booking_status}

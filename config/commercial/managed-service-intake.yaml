@@ -1,0 +1,3 @@
+version: 1.0.0
+services: [guided_margin_recovery, ecommerce_finance_ops_desk, historical_reconciliation_sprint, reserve_and_payout_investigation, sku_margin_reset]
+workflow: {entry: managed_service_intake, review: operator_or_configured_automation, commercial_terms: proposal_or_invoice, activation: approved_service_order, no_guarantees: true}

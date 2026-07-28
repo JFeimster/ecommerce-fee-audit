@@ -1,0 +1,4 @@
+version: 1.0.0
+status: provisional
+trial: {availability: placeholder, duration: placeholder, conversion: requires_plan_activation, abuse_controls: configurable}
+founding_member: {eligibility: configured_cohort, pricing: separately_labeled_founding_member_not_canonical_approved_price, protection: preserve_configured_terms, expiration: placeholder, audit_log: required}

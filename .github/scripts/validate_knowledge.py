@@ -23,6 +23,9 @@ MAPPINGS = ROOT / "config" / "mappings"
 JOBS = ROOT / "config" / "jobs"
 EVENTS = ROOT / "api" / "events"
 INGESTION_EXAMPLES = ROOT / "examples" / "ingestion"
+WIX = ROOT / "config" / "wix"
+COMMERCIAL = ROOT / "config" / "commercial"
+WIX_EXAMPLES = ROOT / "examples" / "wix"
 BATCH_TWO_SCHEMAS = (
     "audit-intake.schema.json",
     "audit-job.schema.json",
@@ -328,6 +331,48 @@ def validate_batch_five_contracts() -> None:
         fail("examples/ingestion: expected eight fictional JSON examples")
 
 
+def validate_batch_six_contracts() -> None:
+    required_wix = ("wix-site-profile.yaml", "wix-product-mapping.yaml", "wix-pricing-plan-mapping.yaml", "wix-entitlement-mapping.yaml", "wix-member-role-mapping.yaml", "wix-crm-label-mapping.yaml", "wix-form-mapping.yaml", "wix-automation-events.yaml", "wix-webhook-mapping.yaml", "wix-dashboard-linking.yaml", "wix-group-mapping.yaml", "wix-booking-mapping.yaml")
+    required_commercial = ("customer-lifecycle.yaml", "subscription-state-machine.yaml", "entitlement-activation-policy.yaml", "upgrade-downgrade-policy.yaml", "cancellation-policy.yaml", "trial-and-founding-member-policy.yaml", "managed-service-intake.yaml", "partner-license-intake.yaml")
+    for path in [*(WIX / name for name in required_wix), *(COMMERCIAL / name for name in required_commercial)]:
+        if not path.exists():
+            fail(f"Missing Batch 6 contract: {path.relative_to(ROOT)}")
+        else:
+            load_yaml(path)
+    site = load_yaml(WIX / "wix-site-profile.yaml")
+    products = load_yaml(WIX / "wix-product-mapping.yaml")
+    plans = load_yaml(WIX / "wix-pricing-plan-mapping.yaml")
+    roles = load_yaml(WIX / "wix-member-role-mapping.yaml")
+    labels = load_yaml(WIX / "wix-crm-label-mapping.yaml")
+    webhooks = load_yaml(WIX / "wix-webhook-mapping.yaml")
+    catalog = load_yaml(PRODUCT_CATALOG)
+    product_ids = {item.get("product_id") for item in catalog.get("products", [])} if isinstance(catalog, dict) else set()
+    if not isinstance(site, dict) or site.get("site", {}).get("site_id") != "cc61a0cb-edcd-43dc-bdda-42c76443dcd6":
+        fail("config/wix/wix-site-profile.yaml: Wix site ID must match the verified property")
+    if not isinstance(products, dict) or set(products.get("products", {})) != product_ids:
+        fail("config/wix/wix-product-mapping.yaml: product IDs must exactly match Batch 1")
+    if not isinstance(plans, dict) or set(plans.get("plans", {})) != {"free_platform_fee_audit_starter", "audit_lab", "margin_control", "guided_margin_recovery", "ecommerce_finance_ops_desk", "partner_agency_license"}:
+        fail("config/wix/wix-pricing-plan-mapping.yaml: expected six plan mappings")
+    allowed_prices = {"approved", "provisional", "founding_member", "placeholder", "not_applicable"}
+    if isinstance(plans, dict):
+        for plan in plans.get("plans", {}).values():
+            for value in plan.values() if isinstance(plan, dict) else []:
+                if isinstance(value, dict) and "status" in value and value["status"] not in allowed_prices:
+                    fail("config/wix/wix-pricing-plan-mapping.yaml: invalid price status")
+    if not isinstance(roles, dict) or len(roles.get("roles", {})) != len(set(roles.get("roles", {}))):
+        fail("config/wix/wix-member-role-mapping.yaml: member roles must be unique")
+    if not isinstance(labels, dict) or len(labels.get("labels", {})) != len(set(labels.get("labels", {}).values())):
+        fail("config/wix/wix-crm-label-mapping.yaml: CRM labels must be unique")
+    if not isinstance(webhooks, dict) or (webhooks.get("defaults", {}).get("route"), webhooks.get("defaults", {}).get("function_slot")) != ("/api/webhooks/{provider}", 8):
+        fail("config/wix/wix-webhook-mapping.yaml: Wix webhooks must use slot 8")
+    for path in WIX_EXAMPLES.glob("*.json"):
+        example = load_json(path)
+        if example is not None and contains_sensitive_example_value(example):
+            fail(f"{path.relative_to(ROOT)}: possible secret or private-data value")
+    if len(list(WIX_EXAMPLES.glob("*.json"))) != 5:
+        fail("examples/wix: expected five fictional JSON examples")
+
+
 for path in KNOWLEDGE.rglob("*.json"):
     load_json(path)
 
@@ -393,6 +438,7 @@ for path in KNOWLEDGE.rglob("*.md"):
 validate_batch_two_schemas()
 validate_batch_three_contracts()
 validate_batch_five_contracts()
+validate_batch_six_contracts()
 
 if errors:
     print("Knowledge integrity validation failed:")

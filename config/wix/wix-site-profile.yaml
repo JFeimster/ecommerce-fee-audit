@@ -1,0 +1,6 @@
+version: 1.0.0
+site: {name: Moonshine Capital, site_id: cc61a0cb-edcd-43dc-bdda-42c76443dcd6, url: 'https://www.distilledfunding.com/', production_readiness: contract_only}
+roles: {wix: commercial_and_member_access_layer, vercel: application_and_dashboard_layer, notion: internal_operating_layer_not_customer_dashboard}
+controls: {draft_first_content_policy: true, deletion_restrictions: approval_required, publish_restrictions: no_live_publish_in_contract_phase, public_data_boundary: public_pages_and_member_metadata_only, internal_data_boundary: financial_records_and_operator_notes_not_in_wix}
+integration: {webhook_route: '/api/webhooks/{provider}', webhook_slot: 8, provider: wix, event_mappings: config/wix/wix-automation-events.yaml, entitlement_sync_strategy: idempotent_webhook_to_entitlement_record, dashboard_linking_strategy: member_area_link_to_vercel_with_signed_handoff_placeholder}
+current_apps_and_capabilities: [pricing_plans, checkout, members_area, forms, crm, automations, groups, bookings, blog, seo]

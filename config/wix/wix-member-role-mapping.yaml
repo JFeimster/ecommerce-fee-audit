@@ -1,0 +1,11 @@
+version: 1.0.0
+roles:
+  free_member: {products: [free_platform_fee_audit_starter], grant: verified_free_activation}
+  audit_lab_member: {products: [audit_lab], grant: verified_plan_activation}
+  margin_control_member: {products: [margin_control], grant: verified_plan_activation}
+  guided_client: {products: [guided_margin_recovery], grant: approved_service_intake}
+  finance_ops_client: {products: [ecommerce_finance_ops_desk], grant: approved_service_intake}
+  partner_operator: {products: [partner_agency_license], grant: approved_partner_application}
+  internal_operator: {products: [], grant: internal_admin_only}
+  administrator: {products: [], grant: internal_admin_only}
+public_checkout_may_grant: [free_member, audit_lab_member, margin_control_member]

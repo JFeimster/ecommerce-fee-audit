@@ -1,0 +1,15 @@
+version: 1.0.0
+events:
+  form_submitted: {canonical_event: audit.created, status: proposed_mapping}
+  pricing_plan_purchased: {canonical_event: entitlement.created, status: proposed_mapping}
+  pricing_plan_activated: {canonical_event: entitlement.activated, status: proposed_mapping}
+  payment_succeeded: {canonical_event: entitlement.updated, status: proposed_mapping}
+  payment_failed: {canonical_event: entitlement.suspended, status: proposed_mapping}
+  subscription_renewed: {canonical_event: entitlement.updated, status: proposed_mapping}
+  subscription_cancelled: {canonical_event: entitlement.expired, status: proposed_mapping}
+  member_created: {canonical_event: entitlement.created, status: proposed_mapping}
+  member_approved: {canonical_event: entitlement.activated, status: proposed_mapping}
+  booking_created: {canonical_event: audit.created, status: proposed_mapping}
+  booking_cancelled: {canonical_event: audit.updated, status: proposed_mapping}
+  group_joined: {canonical_event: entitlement.updated, status: proposed_mapping}
+  group_left: {canonical_event: entitlement.updated, status: proposed_mapping}

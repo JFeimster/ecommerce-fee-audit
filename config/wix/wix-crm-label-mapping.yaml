@@ -1,0 +1,20 @@
+version: 1.0.0
+labels:
+  platform_fee_audit_lead: Platform Fee Audit Lead
+  free_starter: Free Starter
+  audit_lab: Audit Lab
+  margin_control: Margin Control
+  guided_margin_recovery: Guided Margin Recovery
+  finance_ops_desk: Finance Ops Desk
+  partner_license: Partner License
+  ecommerce_seller: Ecommerce Seller
+  shopify_seller: Shopify Seller
+  amazon_seller: Amazon Seller
+  stripe_user: Stripe User
+  funding_readiness_lead: Funding Readiness Lead
+  dispute_support: Dispute Support
+  managed_service: Managed Service
+  founding_member: Founding Member
+  churn_risk: Churn Risk
+  upgrade_candidate: Upgrade Candidate
+  cancellation_requested: Cancellation Requested

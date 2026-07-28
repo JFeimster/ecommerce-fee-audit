@@ -1,0 +1,2 @@
+version: 1.0.0
+activation: {trigger: verified_wix_event, route: '/api/webhooks/{provider}', function_slot: 8, idempotent_entitlement_creation: required, dashboard_activation: required, crm_updates: required, member_role_updates: required, group_access: product_mapped, onboarding_workflow: required, failure_recovery: retry_then_manual_queue, manual_fallback: internal_operator, audit_logging: required}

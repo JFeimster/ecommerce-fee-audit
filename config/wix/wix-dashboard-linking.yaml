@@ -1,0 +1,5 @@
+version: 1.0.0
+dashboard: {base_url: placeholder_vercel_dashboard_url, authentication: signed_handoff_placeholder, implementation_status: planned}
+flows:
+  member_area_launch_link: {product_aware_landing: true, entitlement_check: required, expired_access: upgrade_prompt, cancellation_state: recovery_prompt, partner_workspace: partner_route, managed_service_workspace: managed_route}
+security: {no_authentication_code_in_wix_contract: true, no_raw_entitlement_in_url: true, handoff_expiry: configurable}

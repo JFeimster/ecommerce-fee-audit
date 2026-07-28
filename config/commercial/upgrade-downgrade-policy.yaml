@@ -1,0 +1,2 @@
+version: 1.0.0
+policies: {immediate_upgrade: provisional_provider_mechanics, next_cycle_downgrade: provisional_provider_mechanics, usage_limit_upgrade_prompt: enabled, managed_service_escalation: application_or_operator_review, partner_license_conversion: approval_required, annual_conversion: provisional, founding_member_protection: preserve_configured_terms, entitlement_recalculation: required, prorating: placeholder, failed_change_handling: retain_prior_entitlement_and_manual_review}

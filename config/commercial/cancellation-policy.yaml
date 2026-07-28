@@ -1,0 +1,2 @@
+version: 1.0.0
+policy: {cancellation_request: form_or_member_flow, save_offer: placeholder, effective_date: provider_mechanics_deferred, access_through_paid_period: provisional, entitlement_expiration: required, data_export_option: available_when_entitled, data_retention_handling: config/connectors/connector-data-retention.yaml, crm_update: cancellation_requested, group_removal: upon_expiry_or_revocation, dashboard_restriction: after_expiry, reactivation_path: verified_reactivation}
