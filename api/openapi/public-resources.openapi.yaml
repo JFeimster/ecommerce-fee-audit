@@ -1,0 +1,13 @@
+openapi: 3.1.0
+info: {title: Ecommerce Fee Audit Public Resources, version: 1.0.0, description: Public-safe contract resources only.}
+servers: [{url: https://api.placeholder.invalid}]
+paths:
+  /api/public/fee-taxonomy: {get: &public {operationId: getPublicFeeTaxonomy, summary: Get public fee taxonomy, description: Returns public-safe taxonomy guidance only., tags: [public], x-auth-class: no_auth, x-execution-mode: autonomous, x-risk-class: read_only, x-confirmation-class: none, x-idempotency: none, x-retry: bounded_read_retry, x-audit-log: public_access, x-fallback: static_notice, responses: {'200': {description: Public resource, headers: {X-RateLimit-Limit: {schema: {type: integer}}}, content: {application/json: {schema: {type: object, additionalProperties: true}}}}, '429': {description: Rate limited}, '500': {description: Safe error}}}}
+  /api/public/audit-template-schema: {get: {<<: *public, operationId: getAuditTemplateSchema, summary: Get audit template schema}}
+  /api/public/dispute-checklist: {get: {<<: *public, operationId: getDisputeChecklist, summary: Get dispute checklist}}
+  /api/public/funding-document-checklist: {get: {<<: *public, operationId: getFundingDocumentChecklist, summary: Get funding document checklist}}
+  /api/public/product-catalog: {get: {<<: *public, operationId: getProductCatalog, summary: Get product catalog}}
+  /api/public/supported-connectors: {get: {<<: *public, operationId: getSupportedConnectors, summary: Get supported connectors}}
+  /api/public/pricing-summary: {get: {<<: *public, operationId: getPricingSummary, summary: Get public pricing summary}}
+  /api/public/sample-audit: {get: {<<: *public, operationId: getPublicSampleAudit, summary: Get fictional sample audit}}
+  /api/public/prompt-pack: {get: {<<: *public, operationId: getPublicPromptPack, summary: Get public prompt pack}}

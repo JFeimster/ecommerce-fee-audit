@@ -1,0 +1,17 @@
+version: 1.0.0
+defaults: {production_readiness: placeholder, retry_behavior: bounded_idempotent_retry, fallback: internal_review_queue}
+destinations:
+  wix: {auth_method: api_key_or_oauth, supported_action_types: [record_write, external_submission], confirmation_default: confirm_once, idempotency_support: configurable, provider_response: record_response}
+  tally: {auth_method: webhook_or_api_key, supported_action_types: [external_submission], confirmation_default: confirm_once, idempotency_support: configurable, provider_response: record_response}
+  hubspot: {auth_method: oauth_or_api_key, supported_action_types: [record_write, automated_routing], confirmation_default: confirm_once, idempotency_support: configurable, provider_response: record_response}
+  notion: {auth_method: oauth, supported_action_types: [record_write], confirmation_default: confirm_once, idempotency_support: configurable, provider_response: record_response}
+  n8n: {auth_method: webhook, supported_action_types: [automated_routing, external_submission], confirmation_default: confirm_once, idempotency_support: configurable, provider_response: record_response}
+  moonshine_funnel: {auth_method: approved_internal_config, supported_action_types: [automated_routing, external_submission], confirmation_default: confirm_once, idempotency_support: configurable, provider_response: acceptance_separate}
+  partner_api: {auth_method: oauth_or_api_key, supported_action_types: [external_submission, automated_routing], confirmation_default: confirm_each_time, idempotency_support: provider_specific, provider_response: acceptance_separate}
+  custom_gpt: {auth_method: api_key, supported_action_types: [analysis, record_write], confirmation_default: confirm_once, idempotency_support: configurable, provider_response: record_response}
+  internal_agent: {auth_method: internal_identity, supported_action_types: [analysis, record_write, automated_decision], confirmation_default: internal_only, idempotency_support: required, provider_response: audit_log_only}
+  webhook: {auth_method: signature, supported_action_types: [automated_routing, external_submission], confirmation_default: confirm_once, idempotency_support: required, provider_response: status_unknown_safe}
+  email: {auth_method: approved_mail_service, supported_action_types: [external_submission], confirmation_default: confirm_once, idempotency_support: configurable, provider_response: delivery_status}
+  cloud_storage: {auth_method: oauth_or_signed_upload, supported_action_types: [external_submission, financial_data_access], confirmation_default: confirm_each_time, idempotency_support: configurable, provider_response: file_reference}
+  marketplace_portal: {auth_method: provider_specific, supported_action_types: [external_submission], confirmation_default: confirm_each_time, idempotency_support: provider_specific, provider_response: acceptance_separate}
+  processor_portal: {auth_method: provider_specific, supported_action_types: [external_submission], confirmation_default: confirm_each_time, idempotency_support: provider_specific, provider_response: acceptance_separate}

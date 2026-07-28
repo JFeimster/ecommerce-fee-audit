@@ -1,0 +1,13 @@
+openapi: 3.1.0
+info: {title: Ecommerce Fee Audit OAuth Actions, version: 1.0.0, description: OAuth contracts use minimum approved scope and server-side credentials only.}
+servers: [{url: https://api.placeholder.invalid}]
+components: {securitySchemes: {OAuth: {type: oauth2, flows: {authorizationCode: {authorizationUrl: https://provider.placeholder.invalid/authorize, tokenUrl: https://provider.placeholder.invalid/token, scopes: {connector.read: Read approved connector data}}}}}}
+paths:
+  /api/connectors/begin: {post: &oauth {operationId: beginConnectorSession, summary: Begin connector session, description: Starts approved OAuth connection., tags: [connector], security: [{OAuth: [connector.read]}], x-auth-class: oauth, x-execution-mode: confirm_each_time, x-risk-class: financial_data_access, x-confirmation-class: connector_sync, x-idempotency: required, x-retry: no_blind_retry, x-audit-log: required, x-fallback: manual_upload, requestBody: {required: true, content: {application/json: {schema: {type: object}}}}, responses: {'200': {description: Action result, headers: {X-RateLimit-Limit: {schema: {type: integer}}}}, '401': {description: Unauthorized}, '409': {description: Duplicate}, '500': {description: Safe error}}}}
+  /api/connectors/status: {get: {<<: *oauth, operationId: getConnectorStatus, summary: Get connector status, x-execution-mode: autonomous, x-confirmation-class: none, x-idempotency: none}}
+  /api/connectors/sync: {post: {<<: *oauth, operationId: requestConnectorSync, summary: Request connector sync, x-execution-mode: confirm_once}}
+  /api/jobs/sync-platform: {post: {<<: *oauth, operationId: syncConnectedPlatform, summary: Sync connected platform, x-execution-mode: autonomous, x-confirmation-class: none}}
+  /api/connectors/disconnect: {post: {<<: *oauth, operationId: disconnectConnector, summary: Disconnect connector, x-execution-mode: confirm_each_time, x-risk-class: record_write, x-confirmation-class: connector_disconnect}}
+  /api/oauth-callback/refresh: {post: {<<: *oauth, operationId: refreshConnectorAuthorization, summary: Refresh connector authorization, x-execution-mode: confirm_once}}
+  /api/connectors/accounts: {get: {<<: *oauth, operationId: getAvailableAccounts, summary: Get available accounts, x-execution-mode: autonomous, x-confirmation-class: none, x-idempotency: none}}
+  /api/connectors/select-account: {post: {<<: *oauth, operationId: selectConnectorAccount, summary: Select connector account, x-risk-class: record_write, x-confirmation-class: low_risk_record_write}}

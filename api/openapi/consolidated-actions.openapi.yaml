@@ -1,0 +1,16 @@
+openapi: 3.1.0
+info: {title: Ecommerce Fee Audit Consolidated Actions, version: 1.0.0, description: Full action inventory assembled from public, authenticated, OAuth, and internal contract groups. Logical paths dispatch to the shared function-budget routes only.}
+servers: [{url: https://api.placeholder.invalid}]
+paths:
+  /api/public/fee-taxonomy: {$ref: public-resources.openapi.yaml#/paths/~1api~1public~1fee-taxonomy}
+  /api/intake/create-audit: {$ref: api-key-actions.openapi.yaml#/paths/~1api~1intake~1create-audit}
+  /api/connectors/begin: {$ref: oauth-actions.openapi.yaml#/paths/~1api~1connectors~1begin}
+  /api/internal/approve-low-confidence: {post: &internal {operationId: approveLowConfidenceDecision, summary: Approve low-confidence decision, description: Internal review action only., tags: [internal], x-auth-class: internal_only, x-execution-mode: internal_only, x-risk-class: restricted, x-confirmation-class: internal_policy, x-idempotency: required, x-retry: no_blind_retry, x-audit-log: required, x-fallback: remain_in_review, responses: {'200': {description: Action result, headers: {X-RateLimit-Limit: {schema: {type: integer}}}}, '403': {description: Internal access required}, '500': {description: Safe error}}}}
+  /api/internal/override-routing: {post: {<<: *internal, operationId: overrideRoutingDecision, summary: Override routing decision, x-confirmation-class: human_review_override}}
+  /api/internal/resolve-data-gap: {post: {<<: *internal, operationId: resolveDataGap, summary: Resolve data gap, x-risk-class: record_write}}
+  /api/internal/requeue-job: {post: {<<: *internal, operationId: requeueFailedJob, summary: Requeue failed job, x-risk-class: record_write}}
+  /api/internal/mark-dispute-reviewed: {post: {<<: *internal, operationId: markDisputeReviewed, summary: Mark dispute reviewed, x-risk-class: record_write}}
+  /api/internal/mark-application-reviewed: {post: {<<: *internal, operationId: markApplicationReviewed, summary: Mark application reviewed, x-risk-class: record_write}}
+  /api/internal/escalate-case: {post: {<<: *internal, operationId: escalateCase, summary: Escalate case}}
+  /api/internal/audit-trail: {get: {<<: *internal, operationId: getInternalAuditTrail, summary: Get internal audit trail, x-risk-class: read_only, x-idempotency: none}}
+x-source-contracts: [public-resources.openapi.yaml, api-key-actions.openapi.yaml, oauth-actions.openapi.yaml]

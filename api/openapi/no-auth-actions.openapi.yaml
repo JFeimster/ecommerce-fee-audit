@@ -1,0 +1,13 @@
+openapi: 3.1.0
+info: {title: Ecommerce Fee Audit No-Auth Actions, version: 1.0.0, description: Public-safe action contract; no customer data, connector state, or private routing is exposed.}
+servers: [{url: https://api.placeholder.invalid}]
+paths:
+  /api/public/fee-taxonomy: {$ref: public-resources.openapi.yaml#/paths/~1api~1public~1fee-taxonomy}
+  /api/public/audit-template-schema: {$ref: public-resources.openapi.yaml#/paths/~1api~1public~1audit-template-schema}
+  /api/public/dispute-checklist: {$ref: public-resources.openapi.yaml#/paths/~1api~1public~1dispute-checklist}
+  /api/public/funding-document-checklist: {$ref: public-resources.openapi.yaml#/paths/~1api~1public~1funding-document-checklist}
+  /api/public/product-catalog: {$ref: public-resources.openapi.yaml#/paths/~1api~1public~1product-catalog}
+  /api/public/supported-connectors: {$ref: public-resources.openapi.yaml#/paths/~1api~1public~1supported-connectors}
+  /api/public/pricing-summary: {$ref: public-resources.openapi.yaml#/paths/~1api~1public~1pricing-summary}
+  /api/public/sample-audit: {$ref: public-resources.openapi.yaml#/paths/~1api~1public~1sample-audit}
+  /api/public/prompt-pack: {$ref: public-resources.openapi.yaml#/paths/~1api~1public~1prompt-pack}

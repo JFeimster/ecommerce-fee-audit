@@ -15,6 +15,8 @@ ROOT = Path(__file__).resolve().parents[2]
 KNOWLEDGE = ROOT / "knowledge"
 API_SCHEMAS = ROOT / "api" / "schemas"
 PRODUCT_CATALOG = ROOT / "config" / "products" / "product-catalog.yaml"
+OPENAPI = ROOT / "api" / "openapi"
+ACTIONS = ROOT / "config" / "actions"
 BATCH_TWO_SCHEMAS = (
     "audit-intake.schema.json",
     "audit-job.schema.json",
@@ -176,7 +178,60 @@ def validate_batch_two_schemas() -> None:
                 if found:
                     fail(f"{path.relative_to(ROOT)} example {index}: {found[0].message}")
         except Exception as exc:
-            fail(f"{path.relative_to(ROOT)}: example validation error: {exc}")
+                    fail(f"{path.relative_to(ROOT)}: example validation error: {exc}")
+
+
+def validate_batch_three_contracts() -> None:
+    primary = ("public-resources.openapi.yaml", "api-key-actions.openapi.yaml", "oauth-actions.openapi.yaml", "consolidated-actions.openapi.yaml")
+    documents: dict[str, dict] = {}
+    operation_ids: set[str] = set()
+    for name in ("public-resources.openapi.yaml", "no-auth-actions.openapi.yaml", "api-key-actions.openapi.yaml", "oauth-actions.openapi.yaml", "consolidated-actions.openapi.yaml"):
+        path = OPENAPI / name
+        document = load_yaml(path)
+        if not isinstance(document, dict) or not str(document.get("openapi", "")).startswith("3.1."):
+            fail(f"{path.relative_to(ROOT)}: requires OpenAPI 3.1.x")
+            continue
+        documents[name] = document
+        if name not in primary:
+            continue
+        for item in document.get("paths", {}).values():
+            if not isinstance(item, dict):
+                continue
+            for method, operation in item.items():
+                if method.lower() not in {"get", "post", "patch", "put", "delete"} or not isinstance(operation, dict):
+                    continue
+                operation_id = operation.get("operationId")
+                if not operation_id or operation_id in operation_ids:
+                    fail(f"{path.relative_to(ROOT)}: missing or duplicate operationId: {operation_id}")
+                else:
+                    operation_ids.add(operation_id)
+                for field in ("summary", "description", "tags", "x-auth-class", "x-execution-mode", "x-risk-class", "x-confirmation-class", "x-idempotency", "x-retry", "x-audit-log", "x-fallback", "responses"):
+                    if field not in operation:
+                        fail(f"{path.relative_to(ROOT)} {operation_id}: missing {field}")
+        for reference in nested_values(document, "$ref"):
+            if isinstance(reference, str) and reference.startswith("../schemas/") and not (OPENAPI / reference).resolve().is_file():
+                fail(f"{path.relative_to(ROOT)}: unresolved schema reference {reference}")
+    routing = load_yaml(ACTIONS / "action-routing.yaml")
+    auth = load_yaml(ACTIONS / "action-auth-map.yaml")
+    risk = load_yaml(ACTIONS / "action-risk-matrix.yaml")
+    budget = load_yaml(ACTIONS / "function-budget.yaml")
+    if isinstance(routing, dict):
+        routed = set(routing.get("operations", {}))
+        if routed != operation_ids:
+            fail("config/actions/action-routing.yaml: operation IDs must exactly match primary OpenAPI inventory")
+        for name, item in routing.get("operations", {}).items():
+            if not isinstance(item, dict) or item.get("function_slot") not in range(1, 11):
+                fail(f"config/actions/action-routing.yaml {name}: must map to active function slot 1-10")
+    if isinstance(auth, dict):
+        mapped = {op for profile in auth.get("auth_classes", {}).values() if isinstance(profile, dict) for op in profile.get("operation_ids", [])}
+        if mapped != operation_ids:
+            fail("config/actions/action-auth-map.yaml: operation IDs must exactly match primary OpenAPI inventory")
+    if isinstance(risk, dict):
+        mapped = {op for profile in risk.get("profiles", {}).values() if isinstance(profile, dict) for op in profile.get("operation_ids", [])}
+        if not operation_ids.issubset(mapped):
+            fail("config/actions/action-risk-matrix.yaml: missing operation risk mapping")
+    if not isinstance(budget, dict) or (budget.get("active_function_limit"), budget.get("reserved_function_slots"), budget.get("maximum_total_slots")) != (10, 2, 12):
+        fail("config/actions/function-budget.yaml: must preserve 10 active and 2 reserved slots")
 
 
 for path in KNOWLEDGE.rglob("*.json"):
@@ -242,6 +297,7 @@ for path in KNOWLEDGE.rglob("*.md"):
         fail(f"{path.relative_to(ROOT)}: possible credential pattern")
 
 validate_batch_two_schemas()
+validate_batch_three_contracts()
 
 if errors:
     print("Knowledge integrity validation failed:")

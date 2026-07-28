@@ -1,0 +1,14 @@
+version: 1.0.0
+policy: Thresholds are configurable controls, not permanent business rules or underwriting decisions.
+thresholds:
+  qualification_confidence: {value: 0.75, status: provisional, scope: configurable}
+  routing_confidence: {value: 0.80, status: provisional, scope: configurable}
+  dispute_evidence_completeness: {value: 0.85, status: provisional, scope: provider_specific}
+  audit_completion_confidence: {value: 0.80, status: provisional, scope: product_tier_specific}
+  funding_readiness_score: {value: null, status: provisional, scope: configurable}
+  human_review_trigger: {value: 0.70, status: provisional, scope: configurable}
+  high_value_application_review: {value: null, status: provisional, scope: provider_specific}
+  repeated_submission_protection: {value: 1, status: configurable, scope: configurable}
+  failed_sync_escalation: {value: 2, status: configurable, scope: product_tier_specific}
+  ambiguous_provider_response: {value: 1, status: provisional, scope: provider_specific}
+  autonomous_execution_eligibility: {value: 0.80, status: provisional, scope: configurable}

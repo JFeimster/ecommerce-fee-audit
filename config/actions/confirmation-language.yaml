@@ -1,0 +1,17 @@
+version: 1.0.0
+confirmations:
+  low_risk_record_write: "Create or update this internal record with the listed fields?"
+  connector_sync: "Allow this connector workflow to read the approved account scope and sync matching data?"
+  connector_disconnect: "Disconnect this connector and stop future syncs for the selected account?"
+  funding_lead_creation: "Create this funding-readiness lead in the selected destination? This does not guarantee funding or approval."
+  funding_application_submission: "Submit this specific application and listed documents to the selected destination? Provider acceptance and any decision are separate."
+  funding_routing: "Route this application or lead to the approved destinations using the configured rules?"
+  dispute_case_creation: "Create this internal dispute case from the listed evidence?"
+  dispute_package_submission: "Submit this specific dispute package to the selected destination? Submission does not guarantee recovery or acceptance."
+  follow_up_sequence_start: "Start the approved follow-up sequence for this case or lead?"
+  document_request: "Send the listed document request to the selected recipient or workflow?"
+  report_save: "Save this report or export to the selected internal destination?"
+  report_delivery: "Deliver this report to the selected recipient or destination?"
+  recurring_automation_enablement: "Enable this recurring workflow for future matching events under the displayed limits?"
+  autonomous_mode_enablement: "Enable autonomous execution for this approved workflow until disabled or a review trigger occurs?"
+  human_review_override: "Override the current review hold with the recorded reason and audit trail?"

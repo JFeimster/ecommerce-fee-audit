@@ -1,0 +1,18 @@
+version: 1.0.0
+active_function_limit: 10
+reserved_function_slots: 2
+maximum_total_slots: 12
+prohibition: No operation, provider, export format, or workflow may create a function outside these slots.
+slots:
+  - {slot: 1, route: /api/public, purpose: public-safe resources, activation_status: planned, deployment_status: contract_only, validation_threshold: public_safe_only}
+  - {slot: 2, route: /api/intake, purpose: intake and audit record commands, activation_status: planned, deployment_status: contract_only, validation_threshold: authenticated}
+  - {slot: 3, route: /api/uploads, purpose: upload-session orchestration, activation_status: planned, deployment_status: contract_only, validation_threshold: consent_and_size_limit}
+  - {slot: 4, route: /api/audits, purpose: audit, finding, dispute, and managed-work commands, activation_status: planned, deployment_status: contract_only, validation_threshold: schema_validated}
+  - {slot: 5, route: /api/exports, purpose: local export and report delivery commands, activation_status: planned, deployment_status: contract_only, validation_threshold: entitlement_and_confirmation}
+  - {slot: 6, route: /api/connectors, purpose: connector and bank-connection commands, activation_status: planned, deployment_status: contract_only, validation_threshold: consent_and_scope}
+  - {slot: 7, route: /api/oauth-callback, purpose: OAuth callback completion, activation_status: planned, deployment_status: contract_only, validation_threshold: state_validation}
+  - {slot: 8, route: '/api/webhooks/{provider}', purpose: provider webhook ingress, activation_status: planned, deployment_status: contract_only, validation_threshold: signature_and_idempotency}
+  - {slot: 9, route: /api/jobs, purpose: scheduled, autonomous, and routing jobs, activation_status: planned, deployment_status: contract_only, validation_threshold: mode_and_thresholds}
+  - {slot: 10, route: /api/health, purpose: health and capability checks, activation_status: planned, deployment_status: contract_only, validation_threshold: no_private_data}
+  - {slot: 11, route: reserved, purpose: billing or entitlement expansion, activation_status: reserved, deployment_status: unavailable, validation_threshold: approval_required}
+  - {slot: 12, route: reserved, purpose: emergency provider-specific function, activation_status: reserved, deployment_status: unavailable, validation_threshold: approval_required}

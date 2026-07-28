@@ -1,0 +1,37 @@
+openapi: 3.1.0
+info: {title: Ecommerce Fee Audit Authenticated Actions, version: 1.0.0, description: Authenticated action contracts dispatched to shared planned handlers.}
+servers: [{url: https://api.placeholder.invalid}]
+components:
+  securitySchemes: {ApiKeyAuth: {type: apiKey, in: header, name: X-API-Key}}
+  schemas: {ActionRequest: {type: object, required: [action, idempotency_key], properties: {action: {type: string}, idempotency_key: {type: string}, payload: {type: object}}, additionalProperties: false}, ActionResponse: {type: object, required: [status, request_id], properties: {status: {type: string}, request_id: {type: string}}, additionalProperties: false}}
+paths:
+  /api/intake/create-audit: {post: &write {operationId: createAudit, summary: Create audit, description: Creates an internal audit request from authorized data., tags: [audit], security: [{ApiKeyAuth: []}], x-auth-class: api_key, x-execution-mode: confirm_once, x-risk-class: record_write, x-confirmation-class: low_risk_record_write, x-idempotency: required, x-retry: idempotent_retry, x-audit-log: required, x-fallback: draft_intake, requestBody: {required: true, content: {application/json: {schema: {$ref: ../schemas/audit-intake.schema.json}}}}, responses: {'200': {description: Action result, headers: {X-RateLimit-Limit: {schema: {type: integer}}}, content: {application/json: {schema: {$ref: '#/components/schemas/ActionResponse'}}}}, '400': {description: Invalid request}, '401': {description: Unauthorized}, '409': {description: Duplicate}, '500': {description: Safe error}}}}
+  /api/intake/get-audit: {get: {<<: *write, operationId: getAudit, summary: Get audit, x-execution-mode: autonomous, x-risk-class: financial_data_access, x-confirmation-class: none, x-idempotency: none}}
+  /api/intake/update-audit: {post: {<<: *write, operationId: updateAudit, summary: Update audit}}
+  /api/audits/run: {post: {<<: *write, operationId: runAudit, summary: Run audit, x-risk-class: analysis, x-confirmation-class: recurring_automation_enablement}}
+  /api/intake/approve-workflow: {post: {<<: *write, operationId: approveAuditWorkflow, summary: Approve recurring audit workflow, x-execution-mode: confirm_each_time, x-confirmation-class: recurring_automation_enablement}}
+  /api/audits/findings: {get: {<<: *write, operationId: getAuditFindings, summary: Get audit findings, x-execution-mode: autonomous, x-risk-class: financial_data_access, x-confirmation-class: none, x-idempotency: none}}
+  /api/uploads/request: {post: {<<: *write, operationId: requestUploadSession, summary: Request upload session, x-risk-class: financial_data_access, x-confirmation-class: connector_sync}}
+  /api/uploads/finalize: {post: {<<: *write, operationId: finalizeUpload, summary: Finalize upload, x-execution-mode: autonomous}}
+  /api/exports/generate: {post: {<<: *write, operationId: generateAuditExport, summary: Generate local export, x-confirmation-class: report_save}}
+  /api/exports/save: {post: {<<: *write, operationId: saveAuditReport, summary: Save report, x-confirmation-class: report_save}}
+  /api/exports/deliver: {post: {<<: *write, operationId: generateAndSendReport, summary: Generate and deliver report, x-risk-class: external_submission, x-confirmation-class: report_delivery}}
+  /api/audits/dispute-case: {post: {<<: *write, operationId: createDisputeCase, summary: Create dispute case, x-confirmation-class: dispute_case_creation}}
+  /api/audits/assemble-dispute: {post: {<<: *write, operationId: assembleDisputePackage, summary: Assemble dispute package, x-execution-mode: autonomous, x-risk-class: analysis, x-confirmation-class: none}}
+  /api/audits/validate-evidence: {post: {<<: *write, operationId: validateDisputeEvidence, summary: Validate dispute evidence, x-execution-mode: autonomous, x-risk-class: analysis, x-confirmation-class: none}}
+  /api/audits/submit-dispute: {post: {<<: *write, operationId: submitDisputePackage, summary: Submit dispute package, x-execution-mode: confirm_each_time, x-risk-class: external_submission, x-confirmation-class: dispute_package_submission}}
+  /api/jobs/track-dispute: {post: {<<: *write, operationId: trackDisputeStatus, summary: Track dispute status, x-risk-class: financial_data_access, x-confirmation-class: connector_sync}}
+  /api/jobs/request-evidence: {post: {<<: *write, operationId: requestMissingDisputeEvidence, summary: Request missing dispute evidence, x-risk-class: external_submission, x-confirmation-class: document_request}}
+  /api/audits/escalate-dispute: {post: {<<: *write, operationId: escalateDisputeCase, summary: Escalate dispute case, x-execution-mode: internal_only}}
+  /api/intake/funding-lead: {post: {<<: *write, operationId: createFundingReadinessLead, summary: Create funding-readiness lead, x-confirmation-class: funding_lead_creation}}
+  /api/intake/funding-application: {post: {<<: *write, operationId: createFundingApplication, summary: Create funding application, x-execution-mode: confirm_each_time, x-confirmation-class: funding_application_submission}}
+  /api/jobs/submit-funding: {post: {<<: *write, operationId: submitFundingApplication, summary: Submit funding application, x-execution-mode: confirm_each_time, x-risk-class: external_submission, x-confirmation-class: funding_application_submission}}
+  /api/jobs/route-funding: {post: {<<: *write, operationId: routeFundingApplication, summary: Route funding application, x-risk-class: automated_routing, x-confirmation-class: funding_routing}}
+  /api/jobs/qualification: {post: {<<: *write, operationId: runAutomatedQualification, summary: Run automated qualification, x-execution-mode: autonomous, x-risk-class: automated_decision, x-confirmation-class: none}}
+  /api/jobs/routing: {post: {<<: *write, operationId: runAutomatedRouting, summary: Run automated routing, x-execution-mode: autonomous, x-risk-class: automated_routing, x-confirmation-class: none}}
+  /api/connectors/bank: {post: {<<: *write, operationId: requestBankConnection, summary: Request bank connection, x-execution-mode: confirm_each_time, x-risk-class: financial_data_access, x-confirmation-class: connector_sync}}
+  /api/jobs/document-request: {post: {<<: *write, operationId: sendDocumentRequest, summary: Send document request, x-risk-class: external_submission, x-confirmation-class: document_request}}
+  /api/jobs/follow-up: {post: {<<: *write, operationId: startFollowUpSequence, summary: Start follow-up sequence, x-risk-class: external_submission, x-confirmation-class: follow_up_sequence_start}}
+  /api/jobs/funding-follow-up: {post: {<<: *write, operationId: startFundingFollowUpSequence, summary: Start funding follow-up sequence, x-risk-class: external_submission, x-confirmation-class: follow_up_sequence_start}}
+  /api/audits/corrective-action: {post: {<<: *write, operationId: createCorrectiveAction, summary: Create corrective action}}
+  /api/audits/managed-task: {post: {<<: *write, operationId: createManagedServiceTask, summary: Create managed-service task, x-execution-mode: internal_only}}
