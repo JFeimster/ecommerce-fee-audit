@@ -1,3 +1,7 @@
+<img width="1774" height="887" alt="Image" src="https://github.com/user-attachments/assets/f5f03cfd-4dc3-4b12-9575-d320567c9870" />
+
+---
+
 # Ecommerce Fee Audit
 
 Repository for the **AI Platform Fee Audit Copilot** and its supporting ecommerce finance-operations products.
