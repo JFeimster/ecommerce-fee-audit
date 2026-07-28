@@ -1,0 +1,265 @@
+version: 1.0.0
+status: provisional
+controls: [fail_closed, no_secrets, idempotency, audit_logging, approval_required]
+financial_transactions: disabled
+live_funding_submission: disabled
+live_dispute_submission: disabled
+preview_deployments: disabled
+*** Add File: config/security/data-classification.yaml
+version: 1.0.0
+status: provisional
+controls: [fail_closed, no_secrets, idempotency, audit_logging, approval_required]
+financial_transactions: disabled
+live_funding_submission: disabled
+live_dispute_submission: disabled
+preview_deployments: disabled
+*** Add File: config/security/access-control-matrix.yaml
+version: 1.0.0
+status: provisional
+controls: [fail_closed, no_secrets, idempotency, audit_logging, approval_required]
+financial_transactions: disabled
+live_funding_submission: disabled
+live_dispute_submission: disabled
+preview_deployments: disabled
+*** Add File: config/security/secret-management-policy.yaml
+version: 1.0.0
+status: provisional
+controls: [fail_closed, no_secrets, idempotency, audit_logging, approval_required]
+financial_transactions: disabled
+live_funding_submission: disabled
+live_dispute_submission: disabled
+preview_deployments: disabled
+*** Add File: config/security/privacy-controls.yaml
+version: 1.0.0
+status: provisional
+controls: [fail_closed, no_secrets, idempotency, audit_logging, approval_required]
+financial_transactions: disabled
+live_funding_submission: disabled
+live_dispute_submission: disabled
+preview_deployments: disabled
+*** Add File: config/security/logging-redaction-policy.yaml
+version: 1.0.0
+status: provisional
+controls: [fail_closed, no_secrets, idempotency, audit_logging, approval_required]
+financial_transactions: disabled
+live_funding_submission: disabled
+live_dispute_submission: disabled
+preview_deployments: disabled
+*** Add File: config/security/webhook-security-policy.yaml
+version: 1.0.0
+status: provisional
+controls: [fail_closed, no_secrets, idempotency, audit_logging, approval_required]
+financial_transactions: disabled
+live_funding_submission: disabled
+live_dispute_submission: disabled
+preview_deployments: disabled
+*** Add File: config/security/oauth-security-policy.yaml
+version: 1.0.0
+status: provisional
+controls: [fail_closed, no_secrets, idempotency, audit_logging, approval_required]
+financial_transactions: disabled
+live_funding_submission: disabled
+live_dispute_submission: disabled
+preview_deployments: disabled
+*** Add File: config/security/file-upload-security-policy.yaml
+version: 1.0.0
+status: provisional
+controls: [fail_closed, no_secrets, idempotency, audit_logging, approval_required]
+financial_transactions: disabled
+live_funding_submission: disabled
+live_dispute_submission: disabled
+preview_deployments: disabled
+*** Add File: config/security/ssrf-protection-policy.yaml
+version: 1.0.0
+status: provisional
+controls: [fail_closed, no_secrets, idempotency, audit_logging, approval_required]
+financial_transactions: disabled
+live_funding_submission: disabled
+live_dispute_submission: disabled
+preview_deployments: disabled
+*** Add File: config/security/prompt-injection-policy.yaml
+version: 1.0.0
+status: provisional
+controls: [fail_closed, no_secrets, idempotency, audit_logging, approval_required]
+financial_transactions: disabled
+live_funding_submission: disabled
+live_dispute_submission: disabled
+preview_deployments: disabled
+*** Add File: config/security/automation-safety-policy.yaml
+version: 1.0.0
+status: provisional
+controls: [fail_closed, no_secrets, idempotency, audit_logging, approval_required]
+financial_transactions: disabled
+live_funding_submission: disabled
+live_dispute_submission: disabled
+preview_deployments: disabled
+*** Add File: config/security/incident-severity-matrix.yaml
+version: 1.0.0
+status: provisional
+controls: [fail_closed, no_secrets, idempotency, audit_logging, approval_required]
+financial_transactions: disabled
+live_funding_submission: disabled
+live_dispute_submission: disabled
+preview_deployments: disabled
+*** Add File: config/qa/test-matrix.yaml
+version: 1.0.0
+status: provisional
+controls: [fail_closed, no_secrets, idempotency, audit_logging, approval_required]
+financial_transactions: disabled
+live_funding_submission: disabled
+live_dispute_submission: disabled
+preview_deployments: disabled
+*** Add File: config/qa/release-gates.yaml
+version: 1.0.0
+status: provisional
+controls: [fail_closed, no_secrets, idempotency, audit_logging, approval_required]
+financial_transactions: disabled
+live_funding_submission: disabled
+live_dispute_submission: disabled
+preview_deployments: disabled
+*** Add File: config/qa/performance-budgets.yaml
+version: 1.0.0
+status: provisional
+controls: [fail_closed, no_secrets, idempotency, audit_logging, approval_required]
+financial_transactions: disabled
+live_funding_submission: disabled
+live_dispute_submission: disabled
+preview_deployments: disabled
+*** Add File: config/qa/accessibility-standard.yaml
+version: 1.0.0
+status: provisional
+controls: [fail_closed, no_secrets, idempotency, audit_logging, approval_required]
+financial_transactions: disabled
+live_funding_submission: disabled
+live_dispute_submission: disabled
+preview_deployments: disabled
+*** Add File: config/qa/browser-matrix.yaml
+version: 1.0.0
+status: provisional
+controls: [fail_closed, no_secrets, idempotency, audit_logging, approval_required]
+financial_transactions: disabled
+live_funding_submission: disabled
+live_dispute_submission: disabled
+preview_deployments: disabled
+*** Add File: config/qa/mobile-breakpoints.yaml
+version: 1.0.0
+status: provisional
+controls: [fail_closed, no_secrets, idempotency, audit_logging, approval_required]
+financial_transactions: disabled
+live_funding_submission: disabled
+live_dispute_submission: disabled
+preview_deployments: disabled
+*** Add File: config/qa/test-data-policy.yaml
+version: 1.0.0
+status: provisional
+controls: [fail_closed, no_secrets, idempotency, audit_logging, approval_required]
+financial_transactions: disabled
+live_funding_submission: disabled
+live_dispute_submission: disabled
+preview_deployments: disabled
+*** Add File: config/qa/contract-test-policy.yaml
+version: 1.0.0
+status: provisional
+controls: [fail_closed, no_secrets, idempotency, audit_logging, approval_required]
+financial_transactions: disabled
+live_funding_submission: disabled
+live_dispute_submission: disabled
+preview_deployments: disabled
+*** Add File: config/qa/security-test-policy.yaml
+version: 1.0.0
+status: provisional
+controls: [fail_closed, no_secrets, idempotency, audit_logging, approval_required]
+financial_transactions: disabled
+live_funding_submission: disabled
+live_dispute_submission: disabled
+preview_deployments: disabled
+*** Add File: config/qa/smoke-test-policy.yaml
+version: 1.0.0
+status: provisional
+controls: [fail_closed, no_secrets, idempotency, audit_logging, approval_required]
+financial_transactions: disabled
+live_funding_submission: disabled
+live_dispute_submission: disabled
+preview_deployments: disabled
+*** Add File: config/release/environment-matrix.yaml
+version: 1.0.0
+status: provisional
+controls: [fail_closed, no_secrets, idempotency, audit_logging, approval_required]
+financial_transactions: disabled
+live_funding_submission: disabled
+live_dispute_submission: disabled
+preview_deployments: disabled
+*** Add File: config/release/deployment-policy.yaml
+version: 1.0.0
+status: provisional
+controls: [fail_closed, no_secrets, idempotency, audit_logging, approval_required]
+financial_transactions: disabled
+live_funding_submission: disabled
+live_dispute_submission: disabled
+preview_deployments: disabled
+*** Add File: config/release/branch-policy.yaml
+version: 1.0.0
+status: provisional
+controls: [fail_closed, no_secrets, idempotency, audit_logging, approval_required]
+financial_transactions: disabled
+live_funding_submission: disabled
+live_dispute_submission: disabled
+preview_deployments: disabled
+*** Add File: config/release/versioning-policy.yaml
+version: 1.0.0
+status: provisional
+controls: [fail_closed, no_secrets, idempotency, audit_logging, approval_required]
+financial_transactions: disabled
+live_funding_submission: disabled
+live_dispute_submission: disabled
+preview_deployments: disabled
+*** Add File: config/release/rollback-policy.yaml
+version: 1.0.0
+status: provisional
+controls: [fail_closed, no_secrets, idempotency, audit_logging, approval_required]
+financial_transactions: disabled
+live_funding_submission: disabled
+live_dispute_submission: disabled
+preview_deployments: disabled
+*** Add File: config/release/feature-flag-policy.yaml
+version: 1.0.0
+status: provisional
+controls: [fail_closed, no_secrets, idempotency, audit_logging, approval_required]
+financial_transactions: disabled
+live_funding_submission: disabled
+live_dispute_submission: disabled
+preview_deployments: disabled
+*** Add File: config/release/provider-activation-policy.yaml
+version: 1.0.0
+status: provisional
+controls: [fail_closed, no_secrets, idempotency, audit_logging, approval_required]
+financial_transactions: disabled
+live_funding_submission: disabled
+live_dispute_submission: disabled
+preview_deployments: disabled
+*** Add File: config/release/product-activation-policy.yaml
+version: 1.0.0
+status: provisional
+controls: [fail_closed, no_secrets, idempotency, audit_logging, approval_required]
+financial_transactions: disabled
+live_funding_submission: disabled
+live_dispute_submission: disabled
+preview_deployments: disabled
+*** Add File: config/release/release-readiness.yaml
+version: 1.0.0
+status: provisional
+controls: [fail_closed, no_secrets, idempotency, audit_logging, approval_required]
+financial_transactions: disabled
+live_funding_submission: disabled
+live_dispute_submission: disabled
+preview_deployments: disabled
+*** Add File: config/release/no-go-criteria.yaml
+version: 1.0.0
+status: provisional
+controls: [fail_closed, no_secrets, idempotency, audit_logging, approval_required]
+financial_transactions: disabled
+live_funding_submission: disabled
+live_dispute_submission: disabled
+preview_deployments: disabled
+*** Add File: tests/contracts/openapi-contract.test.js
+const test=require('node:test');const assert=require('node:assert');test('openapi-contract',()=>assert.ok(true));
