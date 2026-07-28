@@ -1,0 +1,831 @@
+metadata:
+  title: Normalized Platform Fee Taxonomy
+  filename: normalized-platform-fee-taxonomy.yaml
+  version: 1.0.0
+  status: production-ready
+  last_updated: '2026-07-27'
+  default_example_currency: USD
+  date_standard: ISO 8601
+  currency_standard: ISO 4217
+  sign_convention: normalized_amount is positive when merchant economic value or cash increases and negative when it decreases;
+    contextual classes require a direction subtype.
+  null_rule: null means unknown or not supplied; zero means confirmed zero.
+  related_files:
+  - master-transaction-schema.json
+  - column-mapping-library.json
+  - reconciliation-and-calculation-rules.md
+global_rules:
+  classification_precedence:
+  - Use the most specific supported classification.
+  - Preserve original platform label and record ID.
+  - Separate principal, fee, reserve, tax, and transfer components when evidence supports the split.
+  - Do not classify payouts or bank deposits as revenue.
+  - Do not classify temporary reserve holds as permanent expense.
+  - Do not use UNCLASSIFIED as a permanent dumping ground.
+  confidence_values:
+  - high
+  - medium
+  - low
+  - unable_to_determine
+  automatic_human_review:
+  - material discrepancy
+  - tax or duty
+  - financing allocation
+  - ambiguous reserve or fee
+  - multi-currency conflict
+  - material unclassified amount
+  - dispute or chargeback outcome
+classifications:
+- canonical_code: REV_GROSS_SALES
+  display_name: Gross sales
+  parent_category: revenue
+  definition: Merchandise revenue before discounts, refunds, taxes, duties, tips, and shipping income.
+  included_transaction_types:
+  - captured sale
+  - product sale
+  excluded_transaction_types:
+  - payout
+  - bank deposit
+  expected_sign: positive
+  cash_flow_treatment: Increases platform receivable or cash before deductions.
+  margin_treatment: Included in revenue base.
+  reconciliation_treatment: Include once at order or transaction level.
+  double_counting_risk: Order totals may repeat across line items.
+  human_review_conditions:
+  - Repeated order totals
+  - uncaptured authorization
+  - missing currency
+  example_platform_labels:
+  - Shopify Subtotal
+  - Amazon product-sales
+  - Stripe charge gross
+  confidence_guidance: high when source label, amount behavior, and related IDs agree; medium when contextual evidence is
+    sufficient but incomplete; low or unable_to_determine when generic, conflicting, or unsupported.
+- canonical_code: REV_DISCOUNT
+  display_name: Discounts
+  parent_category: revenue_contra
+  definition: Merchant- or platform-funded reduction to merchandise price.
+  included_transaction_types:
+  - order discount
+  - line discount
+  - promotion rebate
+  excluded_transaction_types:
+  - refund
+  - advertising credit
+  expected_sign: negative
+  cash_flow_treatment: Reduces expected settlement when merchant-funded.
+  margin_treatment: Reduces net merchandise revenue.
+  reconciliation_treatment: Subtract once and identify funding source.
+  double_counting_risk: May already be netted from gross sales or repeated at multiple grains.
+  human_review_conditions:
+  - Unknown funding source
+  - pre/post-discount gross ambiguity
+  example_platform_labels:
+  - Shopify Discount Amount
+  - Amazon promotional-rebate
+  confidence_guidance: high when source label, amount behavior, and related IDs agree; medium when contextual evidence is
+    sufficient but incomplete; low or unable_to_determine when generic, conflicting, or unsupported.
+- canonical_code: PASS_TAX
+  display_name: Taxes
+  parent_category: pass_through
+  definition: Tax collected, withheld, remitted, or reversed in connection with a transaction.
+  included_transaction_types:
+  - sales tax
+  - marketplace withheld tax
+  - tax reversal
+  excluded_transaction_types:
+  - product revenue
+  - non-tax platform fee
+  expected_sign: contextual
+  cash_flow_treatment: Collection can increase settlement; withholding or remittance decreases it.
+  margin_treatment: Excluded from contribution revenue and cost by default.
+  reconciliation_treatment: Track collection and withholding separately.
+  double_counting_risk: Tax may be embedded in gross or net.
+  human_review_conditions:
+  - Always review tax classification and accounting treatment.
+  example_platform_labels:
+  - Shopify Taxes
+  - Amazon item-tax
+  - Amazon marketplace-withheld-tax
+  - Stripe tax_fee
+  confidence_guidance: high when source label, amount behavior, and related IDs agree; medium when contextual evidence is
+    sufficient but incomplete; low or unable_to_determine when generic, conflicting, or unsupported.
+- canonical_code: REV_SHIPPING_INCOME
+  display_name: Shipping income
+  parent_category: revenue
+  definition: Shipping amount charged to the customer.
+  included_transaction_types:
+  - shipping charge
+  - shipping credit
+  excluded_transaction_types:
+  - shipping label cost
+  - carrier expense
+  expected_sign: positive
+  cash_flow_treatment: Increases settlement or receivable.
+  margin_treatment: Included in economic revenue; offset costs separately.
+  reconciliation_treatment: Include once and preserve refunds separately.
+  double_counting_risk: Can be confused with shipping expense or included in order total.
+  human_review_conditions:
+  - Net shipping or mixed tax treatment
+  example_platform_labels:
+  - Shopify Shipping
+  - Amazon shipping-credits
+  confidence_guidance: high when source label, amount behavior, and related IDs agree; medium when contextual evidence is
+    sufficient but incomplete; low or unable_to_determine when generic, conflicting, or unsupported.
+- canonical_code: REV_TIPS
+  display_name: Tips
+  parent_category: revenue
+  definition: Customer tips collected for the merchant or staff.
+  included_transaction_types:
+  - tip amount
+  excluded_transaction_types:
+  - service fee
+  - platform-retained gratuity
+  expected_sign: positive
+  cash_flow_treatment: Increases settlement subject to payout rules.
+  margin_treatment: Include only when economically retained.
+  reconciliation_treatment: Reconcile separately from product sales.
+  double_counting_risk: May already be included in total amount.
+  human_review_conditions:
+  - Retention or payroll treatment unclear
+  example_platform_labels:
+  - Shopify Tips
+  confidence_guidance: high when source label, amount behavior, and related IDs agree; medium when contextual evidence is
+    sufficient but incomplete; low or unable_to_determine when generic, conflicting, or unsupported.
+- canonical_code: REV_REFUND
+  display_name: Refunds
+  parent_category: revenue_contra
+  definition: Reversal of previously recognized customer revenue.
+  included_transaction_types:
+  - merchandise refund
+  - shipping refund
+  - partial refund
+  excluded_transaction_types:
+  - return-processing fee
+  - chargeback fee
+  expected_sign: negative
+  cash_flow_treatment: Reduces platform balance or future payout.
+  margin_treatment: Reduces net revenue; not a fee.
+  reconciliation_treatment: Link to original order or charge when possible.
+  double_counting_risk: May appear in order and settlement exports.
+  human_review_conditions:
+  - Unmatched, failed, or cross-period refund
+  example_platform_labels:
+  - Shopify refund
+  - Amazon Refund
+  - Stripe refund
+  confidence_guidance: high when source label, amount behavior, and related IDs agree; medium when contextual evidence is
+    sufficient but incomplete; low or unable_to_determine when generic, conflicting, or unsupported.
+- canonical_code: OPS_RETURN
+  display_name: Returns
+  parent_category: operating_event
+  definition: Physical or operational return event, including inventory disposition.
+  included_transaction_types:
+  - returned unit
+  - return received
+  - returnless refund
+  excluded_transaction_types:
+  - refund principal
+  - return-processing fee
+  expected_sign: contextual
+  cash_flow_treatment: Cash effect comes from associated refund and costs.
+  margin_treatment: Used for return-rate and inventory analysis.
+  reconciliation_treatment: Link to refund, reimbursement, and fee records.
+  double_counting_risk: Return and refund are related but not identical.
+  human_review_conditions:
+  - Missing disposition
+  - return without refund
+  example_platform_labels:
+  - Amazon return status
+  - Shopify return record
+  confidence_guidance: high when source label, amount behavior, and related IDs agree; medium when contextual evidence is
+    sufficient but incomplete; low or unable_to_determine when generic, conflicting, or unsupported.
+- canonical_code: RISK_CHARGEBACK
+  display_name: Chargebacks
+  parent_category: risk_and_disputes
+  definition: Customer-dispute principal removed or held after a chargeback.
+  included_transaction_types:
+  - chargeback principal
+  - payment reversal
+  excluded_transaction_types:
+  - dispute fee
+  - ordinary refund
+  expected_sign: negative
+  cash_flow_treatment: Reduces available balance or payout.
+  margin_treatment: Reduces economic value when loss is confirmed.
+  reconciliation_treatment: Link to original charge and dispute lifecycle.
+  double_counting_risk: Principal may coexist with a provisional hold and later reversal.
+  human_review_conditions:
+  - Provisional vs final status
+  - recovery unresolved
+  example_platform_labels:
+  - Shopify chargeback
+  - Stripe payment_reversal
+  confidence_guidance: high when source label, amount behavior, and related IDs agree; medium when contextual evidence is
+    sufficient but incomplete; low or unable_to_determine when generic, conflicting, or unsupported.
+- canonical_code: RISK_DISPUTE
+  display_name: Disputes
+  parent_category: risk_and_disputes
+  definition: Dispute case or lifecycle event, including provisional holds and outcomes.
+  included_transaction_types:
+  - dispute opened
+  - won
+  - lost
+  - withdrawn
+  excluded_transaction_types:
+  - ordinary refund
+  expected_sign: contextual
+  cash_flow_treatment: May hold, remove, or restore cash.
+  margin_treatment: Margin impact depends on final outcome.
+  reconciliation_treatment: Retain status history and related transactions.
+  double_counting_risk: Lifecycle events can be mistaken for separate losses.
+  human_review_conditions:
+  - Always review final status and deadlines.
+  example_platform_labels:
+  - Stripe dispute
+  - Shopify dispute
+  confidence_guidance: high when source label, amount behavior, and related IDs agree; medium when contextual evidence is
+    sufficient but incomplete; low or unable_to_determine when generic, conflicting, or unsupported.
+- canonical_code: FEE_PROCESSING
+  display_name: Processing fees
+  parent_category: platform_fees
+  definition: Payment processing fee assessed on a payment transaction.
+  included_transaction_types:
+  - card fee
+  - wallet fee
+  - payment-method fee
+  excluded_transaction_types:
+  - referral fee
+  - instant payout fee
+  - FX fee
+  expected_sign: negative
+  cash_flow_treatment: Reduces settlement or processor balance.
+  margin_treatment: Variable cost included in contribution margin when attributable.
+  reconciliation_treatment: Reconcile to charge and fee detail.
+  double_counting_risk: Can be combined and separately itemized.
+  human_review_conditions:
+  - Blended fee
+  - rate change
+  - unsupported expected rate
+  example_platform_labels:
+  - Shopify Fee
+  - Stripe stripe_fee
+  confidence_guidance: high when source label, amount behavior, and related IDs agree; medium when contextual evidence is
+    sufficient but incomplete; low or unable_to_determine when generic, conflicting, or unsupported.
+- canonical_code: FEE_REFERRAL
+  display_name: Referral fees
+  parent_category: platform_fees
+  definition: Marketplace commission based on product or category sales.
+  included_transaction_types:
+  - referral fee
+  - commission
+  excluded_transaction_types:
+  - affiliate payout
+  - advertising fee
+  expected_sign: negative
+  cash_flow_treatment: Reduces settlement.
+  margin_treatment: Variable marketplace cost.
+  reconciliation_treatment: Link to order, SKU, and fee basis.
+  double_counting_risk: May be embedded in broader marketplace fees.
+  human_review_conditions:
+  - Category or rate mismatch
+  example_platform_labels:
+  - Amazon Commission
+  - Amazon ReferralFee
+  confidence_guidance: high when source label, amount behavior, and related IDs agree; medium when contextual evidence is
+    sufficient but incomplete; low or unable_to_determine when generic, conflicting, or unsupported.
+- canonical_code: FEE_MARKETPLACE
+  display_name: Marketplace fees
+  parent_category: platform_fees
+  definition: Marketplace selling fee not more specifically classified.
+  included_transaction_types:
+  - closing fee
+  - listing fee
+  - selling fee
+  excluded_transaction_types:
+  - specific referral fee
+  - subscription fee
+  - FBA fee
+  expected_sign: negative
+  cash_flow_treatment: Reduces settlement or billed cash.
+  margin_treatment: Include if variable; fixed fees require disclosed allocation.
+  reconciliation_treatment: Use the most specific supported class.
+  double_counting_risk: Generic totals may duplicate specific fees.
+  human_review_conditions:
+  - A more specific category may exist
+  example_platform_labels:
+  - Amazon SellingFees
+  - ClosingFee
+  confidence_guidance: high when source label, amount behavior, and related IDs agree; medium when contextual evidence is
+    sufficient but incomplete; low or unable_to_determine when generic, conflicting, or unsupported.
+- canonical_code: FEE_SUBSCRIPTION
+  display_name: Subscription fees
+  parent_category: platform_fees
+  definition: Recurring platform, app, or account-access charge.
+  included_transaction_types:
+  - monthly plan
+  - app subscription
+  - seller plan
+  excluded_transaction_types:
+  - transaction fee
+  - advertising spend
+  expected_sign: negative
+  cash_flow_treatment: Reduces cash or settlement.
+  margin_treatment: Fixed overhead by default.
+  reconciliation_treatment: Reconcile to invoice and billing period.
+  double_counting_risk: May appear in platform bill and bank export.
+  human_review_conditions:
+  - Allocation or duplicate billing record
+  example_platform_labels:
+  - Shopify subscription
+  - Amazon SubscriptionFee
+  confidence_guidance: high when source label, amount behavior, and related IDs agree; medium when contextual evidence is
+    sufficient but incomplete; low or unable_to_determine when generic, conflicting, or unsupported.
+- canonical_code: FEE_FBA
+  display_name: FBA fees
+  parent_category: fulfillment_fees
+  definition: Amazon fulfillment-related fee attributable to FBA services.
+  included_transaction_types:
+  - fulfillment fee
+  - pick-pack
+  - weight handling
+  excluded_transaction_types:
+  - storage fee
+  - referral fee
+  expected_sign: negative
+  cash_flow_treatment: Reduces settlement.
+  margin_treatment: Variable fulfillment cost by SKU or order.
+  reconciliation_treatment: Link to order, SKU, ASIN, or fee event.
+  double_counting_risk: Aggregate FBA fees may contain separately mapped components.
+  human_review_conditions:
+  - Bundled fee
+  - dimension or weight dispute
+  example_platform_labels:
+  - Amazon FBAFees
+  - FBAPerUnitFulfillmentFee
+  confidence_guidance: high when source label, amount behavior, and related IDs agree; medium when contextual evidence is
+    sufficient but incomplete; low or unable_to_determine when generic, conflicting, or unsupported.
+- canonical_code: FEE_STORAGE
+  display_name: Storage fees
+  parent_category: fulfillment_fees
+  definition: Inventory storage charge, including monthly or aged-inventory storage.
+  included_transaction_types:
+  - monthly storage
+  - aged inventory surcharge
+  excluded_transaction_types:
+  - fulfillment fee
+  - removal fee
+  expected_sign: negative
+  cash_flow_treatment: Reduces settlement or billed cash.
+  margin_treatment: Inventory carrying cost; allocation must be disclosed.
+  reconciliation_treatment: Reconcile by period and SKU or ASIN.
+  double_counting_risk: Estimated and charged reports can be double-counted.
+  human_review_conditions:
+  - Estimate vs actual
+  - period mismatch
+  example_platform_labels:
+  - Amazon StorageFee
+  confidence_guidance: high when source label, amount behavior, and related IDs agree; medium when contextual evidence is
+    sufficient but incomplete; low or unable_to_determine when generic, conflicting, or unsupported.
+- canonical_code: FEE_ADVERTISING
+  display_name: Advertising fees
+  parent_category: marketing_costs
+  definition: Paid media spend or marketplace advertising deduction.
+  included_transaction_types:
+  - campaign spend
+  - sponsored ads charge
+  excluded_transaction_types:
+  - promotion discount
+  - affiliate commission
+  expected_sign: negative
+  cash_flow_treatment: Reduces cash or settlement.
+  margin_treatment: Variable acquisition cost when attributed.
+  reconciliation_treatment: Reconcile ad source to settlement or bank.
+  double_counting_risk: Same spend may appear in export, invoice, settlement, and bank.
+  human_review_conditions:
+  - Attribution window
+  - credit
+  - tax
+  - duplicate settlement deduction
+  example_platform_labels:
+  - Amazon Advertising
+  - Meta Amount spent
+  - Google Ads Cost
+  - TikTok Cost
+  confidence_guidance: high when source label, amount behavior, and related IDs agree; medium when contextual evidence is
+    sufficient but incomplete; low or unable_to_determine when generic, conflicting, or unsupported.
+- canonical_code: FEE_FX
+  display_name: Currency-conversion fees
+  parent_category: currency_costs
+  definition: Explicit fee or spread charged for currency conversion.
+  included_transaction_types:
+  - FX fee
+  - conversion fee
+  excluded_transaction_types:
+  - exchange-rate gain/loss
+  - international fee
+  expected_sign: negative
+  cash_flow_treatment: Reduces converted proceeds.
+  margin_treatment: Variable cost when transaction-related.
+  reconciliation_treatment: Reconcile source and settlement currencies.
+  double_counting_risk: Fee may be embedded in rate and also itemized.
+  human_review_conditions:
+  - Rate source or fee basis unknown
+  example_platform_labels:
+  - Shopify Currency conversion fee
+  - Stripe stripe_fx_fee
+  confidence_guidance: high when source label, amount behavior, and related IDs agree; medium when contextual evidence is
+    sufficient but incomplete; low or unable_to_determine when generic, conflicting, or unsupported.
+- canonical_code: FEE_INTERNATIONAL
+  display_name: International fees
+  parent_category: currency_costs
+  definition: Additional fee triggered by cross-border payment attributes.
+  included_transaction_types:
+  - international card fee
+  - cross-border fee
+  excluded_transaction_types:
+  - FX fee
+  - duty
+  expected_sign: negative
+  cash_flow_treatment: Reduces settlement.
+  margin_treatment: Variable payment cost.
+  reconciliation_treatment: Link to charge geography and fee detail.
+  double_counting_risk: Can be bundled with processing or FX.
+  human_review_conditions:
+  - Overlapping fee components
+  example_platform_labels:
+  - Stripe international fee
+  confidence_guidance: high when source label, amount behavior, and related IDs agree; medium when contextual evidence is
+    sufficient but incomplete; low or unable_to_determine when generic, conflicting, or unsupported.
+- canonical_code: FEE_INSTANT_PAYOUT
+  display_name: Instant-payout fees
+  parent_category: payout_fees
+  definition: Fee charged for accelerated payout delivery.
+  included_transaction_types:
+  - instant payout fee
+  - expedited payout fee
+  excluded_transaction_types:
+  - ordinary processing fee
+  expected_sign: negative
+  cash_flow_treatment: Reduces payout cash.
+  margin_treatment: Cash-management cost; include only in the requested profitability view.
+  reconciliation_treatment: Link to payout ID and delivery method.
+  double_counting_risk: May be netted and separately listed.
+  human_review_conditions:
+  - Duplicate netting
+  - payout method unclear
+  example_platform_labels:
+  - Stripe instant payout fee
+  confidence_guidance: high when source label, amount behavior, and related IDs agree; medium when contextual evidence is
+    sufficient but incomplete; low or unable_to_determine when generic, conflicting, or unsupported.
+- canonical_code: FIN_REMITTANCE
+  display_name: Financing remittances
+  parent_category: financing
+  definition: Revenue-linked repayment deducted by a platform.
+  included_transaction_types:
+  - capital remittance
+  - revenue share repayment
+  excluded_transaction_types:
+  - platform fee
+  - reserve hold
+  expected_sign: negative
+  cash_flow_treatment: Reduces payout cash.
+  margin_treatment: Exclude principal; include supported financing cost only in a separate view.
+  reconciliation_treatment: Reconcile to financing statement and payout.
+  double_counting_risk: Entire deduction may be incorrectly treated as a fee.
+  human_review_conditions:
+  - Always review principal and cost split.
+  example_platform_labels:
+  - Shopify Capital remittance
+  - Amazon Lending repayment
+  confidence_guidance: high when source label, amount behavior, and related IDs agree; medium when contextual evidence is
+    sufficient but incomplete; low or unable_to_determine when generic, conflicting, or unsupported.
+- canonical_code: FIN_LOAN_DEDUCTION
+  display_name: Loan or advance deductions
+  parent_category: financing
+  definition: Scheduled or event-based deduction for a loan or advance.
+  included_transaction_types:
+  - loan payment
+  - advance deduction
+  - principal payment
+  excluded_transaction_types:
+  - platform fee
+  - tax withholding
+  expected_sign: negative
+  cash_flow_treatment: Reduces cash.
+  margin_treatment: Exclude principal; cost treatment requires support.
+  reconciliation_treatment: Link to obligation and payment schedule.
+  double_counting_risk: Can duplicate a bank-side payment or blend principal and fees.
+  human_review_conditions:
+  - Always review obligation and allocation.
+  example_platform_labels:
+  - loan deduction
+  - advance repayment
+  confidence_guidance: high when source label, amount behavior, and related IDs agree; medium when contextual evidence is
+    sufficient but incomplete; low or unable_to_determine when generic, conflicting, or unsupported.
+- canonical_code: LIQ_RESERVE_HOLD
+  display_name: Reserves
+  parent_category: liquidity_restrictions
+  definition: Amount moved into a restricted reserve balance.
+  included_transaction_types:
+  - rolling reserve
+  - risk reserve
+  - minimum-balance hold
+  excluded_transaction_types:
+  - permanent fee
+  - confirmed chargeback loss
+  expected_sign: negative
+  cash_flow_treatment: Reduces available cash but may remain restricted value.
+  margin_treatment: Exclude from contribution margin unless converted to confirmed loss.
+  reconciliation_treatment: Increase reserve ledger and reduce available payout.
+  double_counting_risk: Balance snapshots may be mistaken for new holds.
+  human_review_conditions:
+  - Missing opening balance
+  - release terms unknown
+  example_platform_labels:
+  - Shopify reserve
+  - Stripe reserve_hold
+  - Amazon account level reserve
+  confidence_guidance: high when source label, amount behavior, and related IDs agree; medium when contextual evidence is
+    sufficient but incomplete; low or unable_to_determine when generic, conflicting, or unsupported.
+- canonical_code: LIQ_HOLD
+  display_name: Holds
+  parent_category: liquidity_restrictions
+  definition: Temporary transaction or payout hold not yet classified as reserve or permanent loss.
+  included_transaction_types:
+  - payout hold
+  - deferred transaction
+  - pending balance
+  excluded_transaction_types:
+  - specific reserve hold
+  - permanent fee
+  expected_sign: contextual
+  cash_flow_treatment: Delays availability.
+  margin_treatment: No margin effect until resolved.
+  reconciliation_treatment: Track aging and expected resolution.
+  double_counting_risk: Pending records may later appear in payouts and be counted twice.
+  human_review_conditions:
+  - Aging or release conditions unclear
+  example_platform_labels:
+  - Amazon Deferred Transaction
+  - Stripe pending
+  - Shopify pending
+  confidence_guidance: high when source label, amount behavior, and related IDs agree; medium when contextual evidence is
+    sufficient but incomplete; low or unable_to_determine when generic, conflicting, or unsupported.
+- canonical_code: LIQ_RESERVE_RELEASE
+  display_name: Reserve releases
+  parent_category: liquidity_restrictions
+  definition: Release of previously restricted reserve funds.
+  included_transaction_types:
+  - reserve release
+  - minimum-balance release
+  excluded_transaction_types:
+  - reimbursement
+  - sale
+  expected_sign: positive
+  cash_flow_treatment: Increases available cash.
+  margin_treatment: No new revenue or contribution profit.
+  reconciliation_treatment: Reduce reserve ledger and increase expected payout.
+  double_counting_risk: Can be mistaken for revenue or reimbursement.
+  human_review_conditions:
+  - No link to prior hold
+  example_platform_labels:
+  - Stripe reserve_release
+  - Shopify reserve release
+  confidence_guidance: high when source label, amount behavior, and related IDs agree; medium when contextual evidence is
+    sufficient but incomplete; low or unable_to_determine when generic, conflicting, or unsupported.
+- canonical_code: REC_REIMBURSEMENT
+  display_name: Reimbursements
+  parent_category: recoveries
+  definition: Platform payment restoring value for a loss, error, inventory issue, or approved claim.
+  included_transaction_types:
+  - inventory reimbursement
+  - fee reimbursement
+  - dispute recovery
+  excluded_transaction_types:
+  - reserve release
+  - new sale
+  expected_sign: positive
+  cash_flow_treatment: Increases settlement or cash.
+  margin_treatment: Treatment depends on underlying loss.
+  reconciliation_treatment: Link to original loss, fee, order, or case.
+  double_counting_risk: Reversal and reimbursement may represent the same recovery.
+  human_review_conditions:
+  - Basis or period unclear
+  example_platform_labels:
+  - Amazon Reimbursement
+  - Shopify adjustment credit
+  confidence_guidance: high when source label, amount behavior, and related IDs agree; medium when contextual evidence is
+    sufficient but incomplete; low or unable_to_determine when generic, conflicting, or unsupported.
+- canonical_code: REC_CREDIT
+  display_name: Credits
+  parent_category: recoveries
+  definition: Platform or vendor credit reducing a fee, bill, or deduction.
+  included_transaction_types:
+  - fee credit
+  - billing credit
+  - ad credit
+  excluded_transaction_types:
+  - customer payment
+  - reimbursement tied to loss
+  expected_sign: positive
+  cash_flow_treatment: Increases settlement or reduces cash outflow.
+  margin_treatment: Offset related cost when supported.
+  reconciliation_treatment: Link to original charge or invoice.
+  double_counting_risk: Credit may already be netted against expense.
+  human_review_conditions:
+  - Promotional credit comparability
+  example_platform_labels:
+  - Shopify credit
+  - Google Ads adjustment
+  confidence_guidance: high when source label, amount behavior, and related IDs agree; medium when contextual evidence is
+    sufficient but incomplete; low or unable_to_determine when generic, conflicting, or unsupported.
+- canonical_code: ADJ_MANUAL
+  display_name: Adjustments
+  parent_category: adjustments
+  definition: Supported manual or system adjustment not yet mapped more specifically.
+  included_transaction_types:
+  - manual adjustment
+  - rounding adjustment
+  - platform correction
+  excluded_transaction_types:
+  - known fee
+  - refund
+  - reserve
+  - tax
+  - financing item
+  expected_sign: contextual
+  cash_flow_treatment: Depends on direction.
+  margin_treatment: Depends on documented basis.
+  reconciliation_treatment: Preserve source description and reclassify when possible.
+  double_counting_risk: Generic adjustments can conceal duplicates.
+  human_review_conditions:
+  - Human review if material or unresolved.
+  example_platform_labels:
+  - Shopify adjustment
+  - Stripe adjustment
+  - Amazon other
+  confidence_guidance: high when source label, amount behavior, and related IDs agree; medium when contextual evidence is
+    sufficient but incomplete; low or unable_to_determine when generic, conflicting, or unsupported.
+- canonical_code: FEE_SHIPPING_LABEL
+  display_name: Shipping-label charges
+  parent_category: shipping_costs
+  definition: Cost of a shipping label purchased through a platform.
+  included_transaction_types:
+  - shipping label
+  - postage
+  excluded_transaction_types:
+  - shipping income
+  - bundled fulfillment fee
+  expected_sign: negative
+  cash_flow_treatment: Reduces settlement or cash.
+  margin_treatment: Variable shipping cost.
+  reconciliation_treatment: Link to order, shipment, or label ID.
+  double_counting_risk: May be included in fulfillment cost or carrier invoice.
+  human_review_conditions:
+  - Voided label
+  - bundled fulfillment
+  example_platform_labels:
+  - Shopify shipping_label
+  - postage
+  confidence_guidance: high when source label, amount behavior, and related IDs agree; medium when contextual evidence is
+    sufficient but incomplete; low or unable_to_determine when generic, conflicting, or unsupported.
+- canonical_code: PASS_DUTY
+  display_name: Duties
+  parent_category: pass_through
+  definition: Customs duty collected, withheld, or paid in cross-border sales.
+  included_transaction_types:
+  - duty collected
+  - import duty withheld
+  excluded_transaction_types:
+  - international fee
+  - FX fee
+  expected_sign: contextual
+  cash_flow_treatment: Collection increases cash temporarily; payment or withholding decreases it.
+  margin_treatment: Pass-through by default.
+  reconciliation_treatment: Track collection and remittance separately.
+  double_counting_risk: May be embedded in tax or shipping.
+  human_review_conditions:
+  - Always review jurisdiction and treatment.
+  example_platform_labels:
+  - Shopify Duties
+  confidence_guidance: high when source label, amount behavior, and related IDs agree; medium when contextual evidence is
+    sufficient but incomplete; low or unable_to_determine when generic, conflicting, or unsupported.
+- canonical_code: PASS_WITHHOLDING
+  display_name: Withholding
+  parent_category: pass_through
+  definition: Amount withheld for tax, regulatory, legal, or documented account reasons.
+  included_transaction_types:
+  - marketplace withheld tax
+  - regulatory withholding
+  excluded_transaction_types:
+  - reserve hold
+  - financing remittance
+  expected_sign: negative
+  cash_flow_treatment: Reduces available payout.
+  margin_treatment: Exclude from contribution margin by default.
+  reconciliation_treatment: Reconcile to statement and release or remittance status.
+  double_counting_risk: Can be confused with reserve or tax payment.
+  human_review_conditions:
+  - Always review basis and recoverability.
+  example_platform_labels:
+  - Amazon marketplace-withheld-tax
+  confidence_guidance: high when source label, amount behavior, and related IDs agree; medium when contextual evidence is
+    sufficient but incomplete; low or unable_to_determine when generic, conflicting, or unsupported.
+- canonical_code: TRF_PAYOUT
+  display_name: Payouts
+  parent_category: transfers
+  definition: Transfer initiated from platform or processor balance to a financial account.
+  included_transaction_types:
+  - standard payout
+  - manual payout
+  - instant payout
+  excluded_transaction_types:
+  - sale
+  - bank deposit
+  - refund
+  expected_sign: negative_at_platform_balance
+  cash_flow_treatment: Moves cash between accounts.
+  margin_treatment: Never revenue or contribution profit.
+  reconciliation_treatment: Match to settlement and bank deposit.
+  double_counting_risk: Payout plus deposit may be counted as two inflows.
+  human_review_conditions:
+  - Failed, reversed, split, aggregated, or FX payout
+  example_platform_labels:
+  - Shopify payout
+  - Stripe payout
+  - Amazon transfer
+  confidence_guidance: high when source label, amount behavior, and related IDs agree; medium when contextual evidence is
+    sufficient but incomplete; low or unable_to_determine when generic, conflicting, or unsupported.
+- canonical_code: TRF_BANK_DEPOSIT
+  display_name: Bank deposits
+  parent_category: transfers
+  definition: Bank-posted receipt corresponding to one or more payouts.
+  included_transaction_types:
+  - ACH credit
+  - platform deposit
+  - processor transfer
+  excluded_transaction_types:
+  - customer sale
+  - loan proceeds
+  expected_sign: positive_at_bank
+  cash_flow_treatment: Increases bank cash while clearing platform receivable.
+  margin_treatment: Never additional revenue when it represents a payout.
+  reconciliation_treatment: Match by reference, amount, currency, and date.
+  double_counting_risk: Deposit and payout double-counting.
+  human_review_conditions:
+  - Aggregated deposit
+  - unrelated matching amount
+  example_platform_labels:
+  - Bank ACH credit
+  - deposit
+  confidence_guidance: high when source label, amount behavior, and related IDs agree; medium when contextual evidence is
+    sufficient but incomplete; low or unable_to_determine when generic, conflicting, or unsupported.
+- canonical_code: TIMING_DIFFERENCE
+  display_name: Timing differences
+  parent_category: timing
+  definition: Difference caused by valid cutoffs, pending availability, bank processing, timezone, or period boundaries.
+  included_transaction_types:
+  - pending transaction
+  - payout in transit
+  - cross-period posting
+  excluded_transaction_types:
+  - permanent fee
+  - unexplained missing cash
+  expected_sign: non_economic
+  cash_flow_treatment: Changes timing, not total economic value.
+  margin_treatment: No margin impact.
+  reconciliation_treatment: Carry with expected resolution date.
+  double_counting_risk: Can mask a permanent difference if left unresolved.
+  human_review_conditions:
+  - Aging beyond expected window
+  example_platform_labels:
+  - pending
+  - available_on
+  - scheduled
+  - in transit
+  confidence_guidance: high when source label, amount behavior, and related IDs agree; medium when contextual evidence is
+    sufficient but incomplete; low or unable_to_determine when generic, conflicting, or unsupported.
+- canonical_code: UNCLASSIFIED
+  display_name: Unclassified transactions
+  parent_category: exceptions
+  definition: Record that cannot be reliably mapped with current evidence.
+  included_transaction_types:
+  - unknown description
+  - unsupported code
+  - contradictory amount behavior
+  excluded_transaction_types:
+  - any sufficiently supported specific class
+  expected_sign: unknown
+  cash_flow_treatment: Unknown.
+  margin_treatment: Exclude from definitive margin conclusions.
+  reconciliation_treatment: Retain as unresolved; never force to zero.
+  double_counting_risk: Can accumulate material errors.
+  human_review_conditions:
+  - Human review; Data Gap Report if over 20% of in-scope value.
+  example_platform_labels:
+  - Other
+  - Unknown
+  - N/A
+  confidence_guidance: high when source label, amount behavior, and related IDs agree; medium when contextual evidence is
+    sufficient but incomplete; low or unable_to_determine when generic, conflicting, or unsupported.

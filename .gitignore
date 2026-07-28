@@ -1,0 +1,39 @@
+# Operating system
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editors
+.vscode/
+.idea/
+*.code-workspace
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+credentials/
+
+# Node and build output
+node_modules/
+.next/
+dist/
+build/
+coverage/
+.vercel/
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+~$*
+*.bak
+
+# Local exports containing client or financial data
+private-data/
+client-data/
+uploads/
+exports/private/

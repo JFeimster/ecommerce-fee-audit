@@ -1,0 +1,3598 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://moonshine.example/schemas/output-schema-1.0.0.json",
+  "title": "AI Platform Fee Audit Copilot Output Schema",
+  "description": "Canonical envelope and report-specific payloads for human-readable and machine-readable outputs.",
+  "x-metadata": {
+    "filename": "output-schema.json",
+    "version": "1.0.0",
+    "status": "production-ready",
+    "last_updated": "2026-07-27",
+    "default_example_currency": "USD",
+    "date_standard": "ISO 8601",
+    "currency_standard": "ISO 4217",
+    "related_files": [
+      "ai-platform-fee-audit-copilot-instructions.md",
+      "master-transaction-schema.json",
+      "normalized-platform-fee-taxonomy.yaml",
+      "reconciliation-and-calculation-rules.md",
+      "funding-readiness-summary-template.md",
+      "fee-dispute-documentation-playbook.md"
+    ]
+  },
+  "x-conventions": {
+    "null_handling": "null means unavailable, unsupported, or not applicable; zero means a verified zero.",
+    "ratio_storage": "Decimal ratio; 0.125 means 12.5%.",
+    "amount_sign": "Report summaries use economic direction where needed; expense and exposure components may use non-negative magnitudes. Source signs remain in source records.",
+    "rounding": "Store unrounded calculation values. Display currency using the applicable currency exponent and ratios to two percentage points unless a platform requires otherwise.",
+    "evidence_rule": "Material findings must cite at least one source reference and distinguish fact, user data, assumption, calculation, inference, and recommendation.",
+    "data_gap_rule": "If more than 20% of in-scope transaction value is unclassified, or a blocking settlement source is absent, use data_gap unless a narrower reliable scope is explicitly reported."
+  },
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "report_id",
+    "report_type",
+    "generated_at",
+    "audit_context",
+    "data_coverage",
+    "overall_confidence",
+    "reconciliation_status",
+    "findings",
+    "actions",
+    "human_review",
+    "disclaimers",
+    "report_payload"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "report_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._:-]+$"
+    },
+    "report_type": {
+      "type": "string",
+      "enum": [
+        "executive_summary",
+        "reconciliation_report",
+        "data_gap_report",
+        "partial_reconciliation",
+        "fee_leakage_report",
+        "sku_scorecard",
+        "reserve_report",
+        "monthly_variance_report",
+        "cash_timing_diagnosis",
+        "funding_readiness_summary",
+        "exception_report",
+        "dispute_case",
+        "machine_readable_export"
+      ]
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "audit_context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "audit_id",
+        "business_alias",
+        "requested_outcome",
+        "reporting_currency"
+      ],
+      "properties": {
+        "audit_id": {
+          "type": "string"
+        },
+        "business_alias": {
+          "type": "string"
+        },
+        "requested_outcome": {
+          "type": "string"
+        },
+        "reporting_currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$"
+        },
+        "platform_accounts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "prepared_for": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "prepared_by": {
+          "type": "string",
+          "const": "AI Platform Fee Audit Copilot"
+        }
+      }
+    },
+    "data_coverage": {
+      "$ref": "#/$defs/data_coverage"
+    },
+    "overall_confidence": {
+      "type": "string",
+      "enum": [
+        "High",
+        "Medium",
+        "Low",
+        "Unable to Determine"
+      ]
+    },
+    "reconciliation_status": {
+      "type": "string",
+      "enum": [
+        "not_started",
+        "partial",
+        "matched",
+        "matched_with_timing_difference",
+        "unmatched",
+        "data_gap",
+        "human_review_required"
+      ]
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/finding"
+      }
+    },
+    "actions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/action"
+      }
+    },
+    "human_review": {
+      "$ref": "#/$defs/human_review"
+    },
+    "disclaimers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1
+    },
+    "report_payload": {
+      "type": "object"
+    },
+    "source_record_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "parent_report_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "supersedes_report_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "revision_notes": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "$defs": {
+    "money": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "amount",
+        "currency"
+      ],
+      "properties": {
+        "amount": {
+          "type": "number"
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$"
+        },
+        "amount_basis": {
+          "type": "string",
+          "enum": [
+            "source_currency",
+            "reporting_currency",
+            "settlement_currency",
+            "bank_currency"
+          ]
+        },
+        "exchange_rate": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "exclusiveMinimum": 0
+        },
+        "exchange_rate_date": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        }
+      }
+    },
+    "source_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_id",
+        "source_type",
+        "filename",
+        "evidence_label"
+      ],
+      "properties": {
+        "source_id": {
+          "type": "string"
+        },
+        "source_type": {
+          "type": "string",
+          "enum": [
+            "platform_export",
+            "bank_export",
+            "advertising_export",
+            "user_statement",
+            "support_case",
+            "calculation_workpaper",
+            "other"
+          ]
+        },
+        "filename": {
+          "type": "string"
+        },
+        "sheet_or_section": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "row_or_record_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "evidence_label": {
+          "type": "string",
+          "enum": [
+            "Verified Fact",
+            "User-Provided Data",
+            "Assumption",
+            "Calculation",
+            "Inference",
+            "Recommendation"
+          ]
+        },
+        "notes": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "finding_id",
+        "title",
+        "finding",
+        "evidence",
+        "business_impact",
+        "confidence",
+        "severity",
+        "priority",
+        "recommended_actions"
+      ],
+      "properties": {
+        "finding_id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "finding": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/source_reference"
+          },
+          "minItems": 1
+        },
+        "business_impact": {
+          "type": "string",
+          "minLength": 1
+        },
+        "confidence": {
+          "type": "string",
+          "enum": [
+            "High",
+            "Medium",
+            "Low",
+            "Unable to Determine"
+          ]
+        },
+        "severity": {
+          "type": "string",
+          "enum": [
+            "critical",
+            "high",
+            "medium",
+            "low",
+            "informational"
+          ]
+        },
+        "priority": {
+          "type": "string",
+          "enum": [
+            "critical",
+            "high",
+            "medium",
+            "low"
+          ]
+        },
+        "amount": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/money"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "taxonomy_codes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "recommended_actions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "human_review_required": {
+          "type": "boolean"
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "action": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "action_id",
+        "action",
+        "owner",
+        "priority",
+        "status",
+        "requires_confirmation",
+        "human_review_required"
+      ],
+      "properties": {
+        "action_id": {
+          "type": "string"
+        },
+        "action": {
+          "type": "string",
+          "minLength": 1
+        },
+        "owner": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "priority": {
+          "type": "string",
+          "enum": [
+            "critical",
+            "high",
+            "medium",
+            "low"
+          ]
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "recommended",
+            "planned",
+            "in_progress",
+            "blocked",
+            "completed",
+            "declined"
+          ]
+        },
+        "due_date": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "requires_confirmation": {
+          "type": "boolean"
+        },
+        "human_review_required": {
+          "type": "boolean"
+        },
+        "dependency": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "expected_impact": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "data_coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "period_start",
+        "period_end",
+        "platforms",
+        "stores",
+        "currencies",
+        "files_reviewed",
+        "files_missing",
+        "coverage_status",
+        "unclassified_value_share"
+      ],
+      "properties": {
+        "period_start": {
+          "type": "string",
+          "format": "date"
+        },
+        "period_end": {
+          "type": "string",
+          "format": "date"
+        },
+        "analysis_timezone": {
+          "type": "string"
+        },
+        "platforms": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "stores": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "currencies": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Z]{3}$"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "files_reviewed": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/source_reference"
+          }
+        },
+        "files_missing": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "coverage_status": {
+          "type": "string",
+          "enum": [
+            "complete",
+            "partial",
+            "insufficient"
+          ]
+        },
+        "unclassified_value_share": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "date_ranges_overlap": {
+          "type": "boolean"
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "human_review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "required",
+        "status",
+        "review_reasons"
+      ],
+      "properties": {
+        "required": {
+          "type": "boolean"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "unreviewed",
+            "reviewed",
+            "approved",
+            "rejected",
+            "escalated"
+          ]
+        },
+        "reviewer": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "reviewed_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "review_reasons": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "approval_notes": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "discrepancy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "discrepancy_id",
+        "description",
+        "expected_amount",
+        "observed_amount",
+        "variance_amount",
+        "status",
+        "confidence",
+        "priority"
+      ],
+      "properties": {
+        "discrepancy_id": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "expected_amount": {
+          "$ref": "#/$defs/money"
+        },
+        "observed_amount": {
+          "$ref": "#/$defs/money"
+        },
+        "variance_amount": {
+          "$ref": "#/$defs/money"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "none",
+            "open",
+            "investigating",
+            "awaiting_data",
+            "resolved",
+            "waived",
+            "escalated"
+          ]
+        },
+        "confidence": {
+          "type": "string",
+          "enum": [
+            "High",
+            "Medium",
+            "Low",
+            "Unable to Determine"
+          ]
+        },
+        "priority": {
+          "type": "string",
+          "enum": [
+            "critical",
+            "high",
+            "medium",
+            "low"
+          ]
+        },
+        "related_record_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "explanation": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "next_action": {
+          "type": "string"
+        }
+      }
+    },
+    "payout_match": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "payout_id",
+        "bank_transaction_id",
+        "expected_payout",
+        "observed_deposit",
+        "variance",
+        "days_to_deposit",
+        "status",
+        "confidence"
+      ],
+      "properties": {
+        "payout_id": {
+          "type": "string"
+        },
+        "bank_transaction_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "expected_payout": {
+          "$ref": "#/$defs/money"
+        },
+        "observed_deposit": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/money"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "variance": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/money"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "payout_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "deposit_date": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "days_to_deposit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "not_started",
+            "partial",
+            "matched",
+            "matched_with_timing_difference",
+            "unmatched",
+            "data_gap",
+            "human_review_required"
+          ]
+        },
+        "confidence": {
+          "type": "string",
+          "enum": [
+            "High",
+            "Medium",
+            "Low",
+            "Unable to Determine"
+          ]
+        },
+        "match_method": {
+          "type": "string",
+          "enum": [
+            "identifier",
+            "amount_date",
+            "bank_trace",
+            "manual",
+            "unmatched"
+          ]
+        },
+        "notes": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "data_request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "request_id",
+        "document_or_field",
+        "reason",
+        "priority",
+        "blocking"
+      ],
+      "properties": {
+        "request_id": {
+          "type": "string"
+        },
+        "document_or_field": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "priority": {
+          "type": "string",
+          "enum": [
+            "critical",
+            "high",
+            "medium",
+            "low"
+          ]
+        },
+        "blocking": {
+          "type": "boolean"
+        },
+        "acceptable_alternatives": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "fee_candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidate_id",
+        "taxonomy_code",
+        "description",
+        "amount",
+        "reason_flagged",
+        "recoverability_status",
+        "confidence",
+        "human_review_required"
+      ],
+      "properties": {
+        "candidate_id": {
+          "type": "string"
+        },
+        "taxonomy_code": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "amount": {
+          "$ref": "#/$defs/money"
+        },
+        "reason_flagged": {
+          "type": "string"
+        },
+        "recoverability_status": {
+          "type": "string",
+          "enum": [
+            "not_assessed",
+            "potentially_disputable",
+            "not_disputable",
+            "needs_policy_review",
+            "resolved"
+          ]
+        },
+        "confidence": {
+          "type": "string",
+          "enum": [
+            "High",
+            "Medium",
+            "Low",
+            "Unable to Determine"
+          ]
+        },
+        "source_references": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/source_reference"
+          }
+        },
+        "human_review_required": {
+          "type": "boolean"
+        },
+        "recommended_action": {
+          "type": "string"
+        }
+      }
+    },
+    "sku_result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sku",
+        "product_name",
+        "units_sold",
+        "net_product_revenue",
+        "total_variable_cost",
+        "contribution_profit",
+        "contribution_margin_rate",
+        "score",
+        "score_band",
+        "confidence",
+        "recommended_action"
+      ],
+      "properties": {
+        "sku": {
+          "type": "string"
+        },
+        "product_name": {
+          "type": "string"
+        },
+        "units_sold": {
+          "type": "number",
+          "minimum": 0
+        },
+        "net_product_revenue": {
+          "$ref": "#/$defs/money"
+        },
+        "total_variable_cost": {
+          "$ref": "#/$defs/money"
+        },
+        "contribution_profit": {
+          "$ref": "#/$defs/money"
+        },
+        "contribution_margin_rate": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "refund_rate": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "advertising_to_sales_ratio": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "fee_rate": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "score": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 100
+        },
+        "score_band": {
+          "type": "string",
+          "enum": [
+            "strong",
+            "watch",
+            "at_risk",
+            "negative",
+            "unable_to_score"
+          ]
+        },
+        "confidence": {
+          "type": "string",
+          "enum": [
+            "High",
+            "Medium",
+            "Low",
+            "Unable to Determine"
+          ]
+        },
+        "recommended_action": {
+          "type": "string"
+        },
+        "review_status": {
+          "type": "string",
+          "enum": [
+            "unreviewed",
+            "reviewed",
+            "approved",
+            "rejected",
+            "escalated"
+          ]
+        }
+      }
+    },
+    "reserve_result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reserve_id",
+        "reserve_type",
+        "original_amount",
+        "current_balance",
+        "held_at",
+        "expected_release_date",
+        "aging_days",
+        "cash_impact",
+        "status",
+        "confidence"
+      ],
+      "properties": {
+        "reserve_id": {
+          "type": "string"
+        },
+        "reserve_type": {
+          "type": "string"
+        },
+        "original_amount": {
+          "$ref": "#/$defs/money"
+        },
+        "current_balance": {
+          "$ref": "#/$defs/money"
+        },
+        "held_at": {
+          "type": "string",
+          "format": "date"
+        },
+        "expected_release_date": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "actual_release_date": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "aging_days": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "cash_impact": {
+          "$ref": "#/$defs/money"
+        },
+        "working_capital_impact": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "active",
+            "partially_released",
+            "released",
+            "disputed",
+            "unknown"
+          ]
+        },
+        "confidence": {
+          "type": "string",
+          "enum": [
+            "High",
+            "Medium",
+            "Low",
+            "Unable to Determine"
+          ]
+        },
+        "next_action": {
+          "type": "string"
+        }
+      }
+    },
+    "variance_item": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "metric_code",
+        "display_name",
+        "current_value",
+        "prior_value",
+        "absolute_variance",
+        "percentage_variance",
+        "alert_status",
+        "severity",
+        "confidence"
+      ],
+      "properties": {
+        "metric_code": {
+          "type": "string"
+        },
+        "display_name": {
+          "type": "string"
+        },
+        "current_value": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "prior_value": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "benchmark_value": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "absolute_variance": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "percentage_variance": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "alert_status": {
+          "type": "string",
+          "enum": [
+            "none",
+            "watch",
+            "warning",
+            "critical",
+            "unable_to_determine"
+          ]
+        },
+        "severity": {
+          "type": "string",
+          "enum": [
+            "critical",
+            "high",
+            "medium",
+            "low",
+            "informational"
+          ]
+        },
+        "confidence": {
+          "type": "string",
+          "enum": [
+            "High",
+            "Medium",
+            "Low",
+            "Unable to Determine"
+          ]
+        },
+        "notes": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "dispute_case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "case_id",
+        "platform",
+        "issue_type",
+        "amount_at_issue",
+        "eligibility_status",
+        "case_status",
+        "evidence_status",
+        "deadline_status",
+        "human_approval_status",
+        "reimbursement_status"
+      ],
+      "properties": {
+        "case_id": {
+          "type": "string"
+        },
+        "platform": {
+          "type": "string"
+        },
+        "issue_type": {
+          "type": "string"
+        },
+        "amount_at_issue": {
+          "$ref": "#/$defs/money"
+        },
+        "eligibility_status": {
+          "type": "string",
+          "enum": [
+            "not_screened",
+            "eligible_for_review",
+            "ineligible",
+            "uncertain"
+          ]
+        },
+        "case_status": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "awaiting_evidence",
+            "ready_for_review",
+            "approved_to_submit",
+            "submitted",
+            "platform_review",
+            "resolved",
+            "closed"
+          ]
+        },
+        "evidence_status": {
+          "type": "string",
+          "enum": [
+            "missing",
+            "partial",
+            "complete",
+            "verified"
+          ]
+        },
+        "deadline_status": {
+          "type": "string",
+          "enum": [
+            "unknown",
+            "open",
+            "approaching",
+            "expired",
+            "not_applicable"
+          ]
+        },
+        "human_approval_status": {
+          "type": "string",
+          "enum": [
+            "not_requested",
+            "pending",
+            "approved",
+            "declined"
+          ]
+        },
+        "reimbursement_status": {
+          "type": "string",
+          "enum": [
+            "not_requested",
+            "pending",
+            "approved",
+            "partially_received",
+            "received",
+            "denied",
+            "not_applicable"
+          ]
+        },
+        "submitted_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "resolved_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/source_reference"
+          }
+        },
+        "case_notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "executive_summary_payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "headline",
+        "direct_answer",
+        "key_metrics",
+        "top_findings",
+        "limitations",
+        "next_step"
+      ],
+      "properties": {
+        "headline": {
+          "type": "string"
+        },
+        "direct_answer": {
+          "type": "string",
+          "minLength": 40
+        },
+        "key_metrics": {
+          "type": "object",
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "top_findings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "next_step": {
+          "type": "string"
+        }
+      }
+    },
+    "reconciliation_report_payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reconciliation_scope",
+        "gross_to_net",
+        "payout_matches",
+        "discrepancies",
+        "unresolved_amount"
+      ],
+      "properties": {
+        "reconciliation_scope": {
+          "type": "string"
+        },
+        "gross_to_net": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/money"
+          }
+        },
+        "payout_matches": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/payout_match"
+          }
+        },
+        "discrepancies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/discrepancy"
+          }
+        },
+        "unresolved_amount": {
+          "$ref": "#/$defs/money"
+        }
+      }
+    },
+    "data_gap_report_payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "blocking_reason",
+        "calculations_withheld",
+        "data_requests",
+        "available_directional_observations"
+      ],
+      "properties": {
+        "blocking_reason": {
+          "type": "string"
+        },
+        "calculations_withheld": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        },
+        "data_requests": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/data_request"
+          },
+          "minItems": 1
+        },
+        "available_directional_observations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "partial_reconciliation_payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "preliminary_notice",
+        "completed_calculations",
+        "withheld_calculations",
+        "assumptions",
+        "payout_matches",
+        "unresolved_amount",
+        "data_requests"
+      ],
+      "properties": {
+        "preliminary_notice": {
+          "type": "string"
+        },
+        "completed_calculations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "withheld_calculations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "assumptions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "payout_matches": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/payout_match"
+          }
+        },
+        "unresolved_amount": {
+          "$ref": "#/$defs/money"
+        },
+        "data_requests": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/data_request"
+          }
+        }
+      }
+    },
+    "fee_leakage_report_payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "total_fees_reviewed",
+        "flagged_amount",
+        "candidates",
+        "non_recoverable_costs",
+        "disclaimer"
+      ],
+      "properties": {
+        "total_fees_reviewed": {
+          "$ref": "#/$defs/money"
+        },
+        "flagged_amount": {
+          "$ref": "#/$defs/money"
+        },
+        "candidates": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/fee_candidate"
+          }
+        },
+        "non_recoverable_costs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "disclaimer": {
+          "type": "string"
+        }
+      }
+    },
+    "sku_scorecard_payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "score_method_version",
+        "results",
+        "portfolio_summary"
+      ],
+      "properties": {
+        "score_method_version": {
+          "type": "string"
+        },
+        "results": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/sku_result"
+          }
+        },
+        "portfolio_summary": {
+          "type": "object",
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "reserve_report_payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "total_original",
+        "total_current",
+        "total_released",
+        "reserves",
+        "exposure_summary"
+      ],
+      "properties": {
+        "total_original": {
+          "$ref": "#/$defs/money"
+        },
+        "total_current": {
+          "$ref": "#/$defs/money"
+        },
+        "total_released": {
+          "$ref": "#/$defs/money"
+        },
+        "reserves": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/reserve_result"
+          }
+        },
+        "exposure_summary": {
+          "type": "string"
+        }
+      }
+    },
+    "monthly_variance_report_payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "current_period",
+        "comparison_period",
+        "items",
+        "critical_alerts"
+      ],
+      "properties": {
+        "current_period": {
+          "type": "string",
+          "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+        },
+        "comparison_period": {
+          "type": "string",
+          "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/variance_item"
+          }
+        },
+        "critical_alerts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "cash_timing_diagnosis_payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "cash_conversion_summary",
+        "timing_metrics",
+        "timing_gaps",
+        "working_capital_gap",
+        "diagnosis"
+      ],
+      "properties": {
+        "cash_conversion_summary": {
+          "type": "string"
+        },
+        "timing_metrics": {
+          "type": "object",
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "timing_gaps": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "working_capital_gap": {
+          "$ref": "#/$defs/money"
+        },
+        "diagnosis": {
+          "type": "string",
+          "enum": [
+            "primarily_margin",
+            "primarily_timing",
+            "both",
+            "insufficient_data",
+            "no_material_issue"
+          ]
+        }
+      }
+    },
+    "funding_readiness_summary_payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "readiness_scope",
+        "revenue_profile",
+        "payout_profile",
+        "fee_burden",
+        "reserve_exposure",
+        "working_capital_gap",
+        "documentation_readiness",
+        "potential_use_scenarios",
+        "risks",
+        "disclaimer"
+      ],
+      "properties": {
+        "readiness_scope": {
+          "type": "string"
+        },
+        "revenue_profile": {
+          "type": "string"
+        },
+        "payout_profile": {
+          "type": "string"
+        },
+        "fee_burden": {
+          "type": "string"
+        },
+        "reserve_exposure": {
+          "type": "string"
+        },
+        "working_capital_gap": {
+          "$ref": "#/$defs/money"
+        },
+        "documentation_readiness": {
+          "type": "string",
+          "enum": [
+            "ready",
+            "partially_ready",
+            "not_ready",
+            "unable_to_determine"
+          ]
+        },
+        "potential_use_scenarios": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "risks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "disclaimer": {
+          "type": "string"
+        }
+      }
+    },
+    "exception_report_payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "exception_count",
+        "exceptions",
+        "materiality_rule",
+        "next_review_date"
+      ],
+      "properties": {
+        "exception_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "exceptions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/discrepancy"
+          }
+        },
+        "materiality_rule": {
+          "type": "string"
+        },
+        "next_review_date": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        }
+      }
+    },
+    "dispute_case_payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "case",
+        "submission_recommendation",
+        "required_evidence",
+        "prohibited_claims_notice"
+      ],
+      "properties": {
+        "case": {
+          "$ref": "#/$defs/dispute_case"
+        },
+        "submission_recommendation": {
+          "type": "string",
+          "enum": [
+            "do_not_submit",
+            "gather_more_evidence",
+            "human_review",
+            "ready_for_confirmation"
+          ]
+        },
+        "required_evidence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "prohibited_claims_notice": {
+          "type": "string"
+        }
+      }
+    },
+    "machine_readable_export_payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "export_format",
+        "schema_reference",
+        "record_count",
+        "records",
+        "export_hash"
+      ],
+      "properties": {
+        "export_format": {
+          "type": "string",
+          "enum": [
+            "json",
+            "csv",
+            "jsonl"
+          ]
+        },
+        "schema_reference": {
+          "type": "string"
+        },
+        "record_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "records": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "export_hash": {
+          "type": "string"
+        },
+        "generated_for": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "report_type": {
+            "const": "executive_summary"
+          }
+        },
+        "required": [
+          "report_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "report_payload": {
+            "$ref": "#/$defs/executive_summary_payload"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "report_type": {
+            "const": "reconciliation_report"
+          }
+        },
+        "required": [
+          "report_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "report_payload": {
+            "$ref": "#/$defs/reconciliation_report_payload"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "report_type": {
+            "const": "data_gap_report"
+          }
+        },
+        "required": [
+          "report_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "report_payload": {
+            "$ref": "#/$defs/data_gap_report_payload"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "report_type": {
+            "const": "partial_reconciliation"
+          }
+        },
+        "required": [
+          "report_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "report_payload": {
+            "$ref": "#/$defs/partial_reconciliation_payload"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "report_type": {
+            "const": "fee_leakage_report"
+          }
+        },
+        "required": [
+          "report_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "report_payload": {
+            "$ref": "#/$defs/fee_leakage_report_payload"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "report_type": {
+            "const": "sku_scorecard"
+          }
+        },
+        "required": [
+          "report_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "report_payload": {
+            "$ref": "#/$defs/sku_scorecard_payload"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "report_type": {
+            "const": "reserve_report"
+          }
+        },
+        "required": [
+          "report_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "report_payload": {
+            "$ref": "#/$defs/reserve_report_payload"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "report_type": {
+            "const": "monthly_variance_report"
+          }
+        },
+        "required": [
+          "report_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "report_payload": {
+            "$ref": "#/$defs/monthly_variance_report_payload"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "report_type": {
+            "const": "cash_timing_diagnosis"
+          }
+        },
+        "required": [
+          "report_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "report_payload": {
+            "$ref": "#/$defs/cash_timing_diagnosis_payload"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "report_type": {
+            "const": "funding_readiness_summary"
+          }
+        },
+        "required": [
+          "report_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "report_payload": {
+            "$ref": "#/$defs/funding_readiness_summary_payload"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "report_type": {
+            "const": "exception_report"
+          }
+        },
+        "required": [
+          "report_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "report_payload": {
+            "$ref": "#/$defs/exception_report_payload"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "report_type": {
+            "const": "dispute_case"
+          }
+        },
+        "required": [
+          "report_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "report_payload": {
+            "$ref": "#/$defs/dispute_case_payload"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "report_type": {
+            "const": "machine_readable_export"
+          }
+        },
+        "required": [
+          "report_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "report_payload": {
+            "$ref": "#/$defs/machine_readable_export_payload"
+          }
+        }
+      }
+    }
+  ],
+  "examples": [
+    {
+      "schema_version": "1.0.0",
+      "report_id": "rpt-fictional-executive_summary-001",
+      "report_type": "executive_summary",
+      "generated_at": "2026-07-27T14:00:00-04:00",
+      "audit_context": {
+        "audit_id": "audit-fictional-001",
+        "business_alias": "Fictional Store A",
+        "requested_outcome": "Reconcile payouts and identify material exceptions.",
+        "reporting_currency": "USD",
+        "platform_accounts": [
+          "shopify-fictional-01"
+        ],
+        "prepared_for": null,
+        "prepared_by": "AI Platform Fee Audit Copilot"
+      },
+      "data_coverage": {
+        "period_start": "2026-06-01",
+        "period_end": "2026-06-30",
+        "analysis_timezone": "America/New_York",
+        "platforms": [
+          "shopify"
+        ],
+        "stores": [
+          "Fictional Store A"
+        ],
+        "currencies": [
+          "USD"
+        ],
+        "files_reviewed": [
+          {
+            "source_id": "src_shopify_payout_june",
+            "source_type": "platform_export",
+            "filename": "fictional-shopify-payouts-2026-06.csv",
+            "sheet_or_section": null,
+            "row_or_record_id": "row-12",
+            "evidence_label": "Verified Fact",
+            "notes": "Fictional QA source."
+          }
+        ],
+        "files_missing": [],
+        "coverage_status": "complete",
+        "unclassified_value_share": 0.0,
+        "date_ranges_overlap": true,
+        "limitations": []
+      },
+      "overall_confidence": "High",
+      "reconciliation_status": "matched",
+      "findings": [],
+      "actions": [
+        {
+          "action_id": "act-001",
+          "action": "Retain source exports with the workpaper.",
+          "owner": "Operator",
+          "priority": "medium",
+          "status": "recommended",
+          "due_date": null,
+          "requires_confirmation": false,
+          "human_review_required": false,
+          "dependency": null,
+          "expected_impact": "Supports repeatable review."
+        }
+      ],
+      "human_review": {
+        "required": false,
+        "status": "unreviewed",
+        "reviewer": null,
+        "reviewed_at": null,
+        "review_reasons": [],
+        "approval_notes": null
+      },
+      "disclaimers": [
+        "This operational analysis is not legal, tax, accounting, underwriting, or lending advice."
+      ],
+      "report_payload": {
+        "headline": "June payouts reconcile with no material unresolved difference.",
+        "direct_answer": "The reviewed June Shopify payout and bank records reconcile to $970, with no material unmatched amount in the covered scope.",
+        "key_metrics": {
+          "gross_sales": 1000,
+          "net_payout": 970,
+          "unmatched_amount": 0
+        },
+        "top_findings": [
+          "The payout matched the bank deposit."
+        ],
+        "limitations": [],
+        "next_step": "Archive the completed workpaper."
+      },
+      "source_record_ids": [
+        "txn-fictional-001"
+      ],
+      "parent_report_id": null,
+      "supersedes_report_id": null,
+      "revision_notes": null
+    },
+    {
+      "schema_version": "1.0.0",
+      "report_id": "rpt-fictional-reconciliation_report-001",
+      "report_type": "reconciliation_report",
+      "generated_at": "2026-07-27T14:00:00-04:00",
+      "audit_context": {
+        "audit_id": "audit-fictional-001",
+        "business_alias": "Fictional Store A",
+        "requested_outcome": "Reconcile payouts and identify material exceptions.",
+        "reporting_currency": "USD",
+        "platform_accounts": [
+          "shopify-fictional-01"
+        ],
+        "prepared_for": null,
+        "prepared_by": "AI Platform Fee Audit Copilot"
+      },
+      "data_coverage": {
+        "period_start": "2026-06-01",
+        "period_end": "2026-06-30",
+        "analysis_timezone": "America/New_York",
+        "platforms": [
+          "shopify"
+        ],
+        "stores": [
+          "Fictional Store A"
+        ],
+        "currencies": [
+          "USD"
+        ],
+        "files_reviewed": [
+          {
+            "source_id": "src_shopify_payout_june",
+            "source_type": "platform_export",
+            "filename": "fictional-shopify-payouts-2026-06.csv",
+            "sheet_or_section": null,
+            "row_or_record_id": "row-12",
+            "evidence_label": "Verified Fact",
+            "notes": "Fictional QA source."
+          }
+        ],
+        "files_missing": [],
+        "coverage_status": "complete",
+        "unclassified_value_share": 0.0,
+        "date_ranges_overlap": true,
+        "limitations": []
+      },
+      "overall_confidence": "High",
+      "reconciliation_status": "matched",
+      "findings": [],
+      "actions": [
+        {
+          "action_id": "act-001",
+          "action": "Retain source exports with the workpaper.",
+          "owner": "Operator",
+          "priority": "medium",
+          "status": "recommended",
+          "due_date": null,
+          "requires_confirmation": false,
+          "human_review_required": false,
+          "dependency": null,
+          "expected_impact": "Supports repeatable review."
+        }
+      ],
+      "human_review": {
+        "required": false,
+        "status": "unreviewed",
+        "reviewer": null,
+        "reviewed_at": null,
+        "review_reasons": [],
+        "approval_notes": null
+      },
+      "disclaimers": [
+        "This operational analysis is not legal, tax, accounting, underwriting, or lending advice."
+      ],
+      "report_payload": {
+        "reconciliation_scope": "June 2026 Shopify sales through bank deposit.",
+        "gross_to_net": {
+          "gross_sales": {
+            "amount": 1000,
+            "currency": "USD",
+            "amount_basis": "reporting_currency",
+            "exchange_rate": null,
+            "exchange_rate_date": null
+          },
+          "processing_fees": {
+            "amount": 30,
+            "currency": "USD",
+            "amount_basis": "reporting_currency",
+            "exchange_rate": null,
+            "exchange_rate_date": null
+          },
+          "expected_payout": {
+            "amount": 970,
+            "currency": "USD",
+            "amount_basis": "reporting_currency",
+            "exchange_rate": null,
+            "exchange_rate_date": null
+          }
+        },
+        "payout_matches": [
+          {
+            "payout_id": "po-fictional-001",
+            "bank_transaction_id": "bank-fictional-001",
+            "expected_payout": {
+              "amount": 970,
+              "currency": "USD",
+              "amount_basis": "reporting_currency",
+              "exchange_rate": null,
+              "exchange_rate_date": null
+            },
+            "observed_deposit": {
+              "amount": 970,
+              "currency": "USD",
+              "amount_basis": "reporting_currency",
+              "exchange_rate": null,
+              "exchange_rate_date": null
+            },
+            "variance": {
+              "amount": 0,
+              "currency": "USD",
+              "amount_basis": "reporting_currency",
+              "exchange_rate": null,
+              "exchange_rate_date": null
+            },
+            "payout_date": "2026-06-28",
+            "deposit_date": "2026-06-30",
+            "days_to_deposit": 2,
+            "status": "matched",
+            "confidence": "High",
+            "match_method": "identifier",
+            "notes": null
+          }
+        ],
+        "discrepancies": [],
+        "unresolved_amount": {
+          "amount": 0,
+          "currency": "USD",
+          "amount_basis": "reporting_currency",
+          "exchange_rate": null,
+          "exchange_rate_date": null
+        }
+      },
+      "source_record_ids": [
+        "txn-fictional-001"
+      ],
+      "parent_report_id": null,
+      "supersedes_report_id": null,
+      "revision_notes": null
+    },
+    {
+      "schema_version": "1.0.0",
+      "report_id": "rpt-fictional-data_gap_report-001",
+      "report_type": "data_gap_report",
+      "generated_at": "2026-07-27T14:00:00-04:00",
+      "audit_context": {
+        "audit_id": "audit-fictional-001",
+        "business_alias": "Fictional Store A",
+        "requested_outcome": "Reconcile payouts and identify material exceptions.",
+        "reporting_currency": "USD",
+        "platform_accounts": [
+          "shopify-fictional-01"
+        ],
+        "prepared_for": null,
+        "prepared_by": "AI Platform Fee Audit Copilot"
+      },
+      "data_coverage": {
+        "period_start": "2026-06-01",
+        "period_end": "2026-06-30",
+        "analysis_timezone": "America/New_York",
+        "platforms": [
+          "shopify"
+        ],
+        "stores": [
+          "Fictional Store A"
+        ],
+        "currencies": [
+          "USD"
+        ],
+        "files_reviewed": [
+          {
+            "source_id": "src_shopify_payout_june",
+            "source_type": "platform_export",
+            "filename": "fictional-shopify-payouts-2026-06.csv",
+            "sheet_or_section": null,
+            "row_or_record_id": "row-12",
+            "evidence_label": "Verified Fact",
+            "notes": "Fictional QA source."
+          }
+        ],
+        "files_missing": [
+          "Shopify settlement detail"
+        ],
+        "coverage_status": "insufficient",
+        "unclassified_value_share": 0.0,
+        "date_ranges_overlap": true,
+        "limitations": [
+          "Coverage is incomplete."
+        ]
+      },
+      "overall_confidence": "Unable to Determine",
+      "reconciliation_status": "data_gap",
+      "findings": [],
+      "actions": [
+        {
+          "action_id": "act-001",
+          "action": "Retain source exports with the workpaper.",
+          "owner": "Operator",
+          "priority": "medium",
+          "status": "recommended",
+          "due_date": null,
+          "requires_confirmation": false,
+          "human_review_required": false,
+          "dependency": null,
+          "expected_impact": "Supports repeatable review."
+        }
+      ],
+      "human_review": {
+        "required": false,
+        "status": "unreviewed",
+        "reviewer": null,
+        "reviewed_at": null,
+        "review_reasons": [],
+        "approval_notes": null
+      },
+      "disclaimers": [
+        "This operational analysis is not legal, tax, accounting, underwriting, or lending advice."
+      ],
+      "report_payload": {
+        "blocking_reason": "Only the bank deposit was supplied; settlement detail is missing.",
+        "calculations_withheld": [
+          "Gross-to-net reconciliation",
+          "Fee leakage analysis"
+        ],
+        "data_requests": [
+          {
+            "request_id": "req-001",
+            "document_or_field": "Shopify payout transaction detail",
+            "reason": "Required to explain the bank deposit.",
+            "priority": "critical",
+            "blocking": true,
+            "acceptable_alternatives": [
+              "Shopify balance transaction export"
+            ]
+          }
+        ],
+        "available_directional_observations": [
+          "A $970 bank deposit was observed."
+        ]
+      },
+      "source_record_ids": [
+        "txn-fictional-001"
+      ],
+      "parent_report_id": null,
+      "supersedes_report_id": null,
+      "revision_notes": null
+    },
+    {
+      "schema_version": "1.0.0",
+      "report_id": "rpt-fictional-partial_reconciliation-001",
+      "report_type": "partial_reconciliation",
+      "generated_at": "2026-07-27T14:00:00-04:00",
+      "audit_context": {
+        "audit_id": "audit-fictional-001",
+        "business_alias": "Fictional Store A",
+        "requested_outcome": "Reconcile payouts and identify material exceptions.",
+        "reporting_currency": "USD",
+        "platform_accounts": [
+          "shopify-fictional-01"
+        ],
+        "prepared_for": null,
+        "prepared_by": "AI Platform Fee Audit Copilot"
+      },
+      "data_coverage": {
+        "period_start": "2026-06-01",
+        "period_end": "2026-06-30",
+        "analysis_timezone": "America/New_York",
+        "platforms": [
+          "shopify"
+        ],
+        "stores": [
+          "Fictional Store A"
+        ],
+        "currencies": [
+          "USD"
+        ],
+        "files_reviewed": [
+          {
+            "source_id": "src_shopify_payout_june",
+            "source_type": "platform_export",
+            "filename": "fictional-shopify-payouts-2026-06.csv",
+            "sheet_or_section": null,
+            "row_or_record_id": "row-12",
+            "evidence_label": "Verified Fact",
+            "notes": "Fictional QA source."
+          }
+        ],
+        "files_missing": [
+          "SKU cost file"
+        ],
+        "coverage_status": "partial",
+        "unclassified_value_share": 0.05,
+        "date_ranges_overlap": true,
+        "limitations": [
+          "Coverage is incomplete."
+        ]
+      },
+      "overall_confidence": "Medium",
+      "reconciliation_status": "partial",
+      "findings": [],
+      "actions": [
+        {
+          "action_id": "act-001",
+          "action": "Retain source exports with the workpaper.",
+          "owner": "Operator",
+          "priority": "medium",
+          "status": "recommended",
+          "due_date": null,
+          "requires_confirmation": false,
+          "human_review_required": false,
+          "dependency": null,
+          "expected_impact": "Supports repeatable review."
+        }
+      ],
+      "human_review": {
+        "required": false,
+        "status": "unreviewed",
+        "reviewer": null,
+        "reviewed_at": null,
+        "review_reasons": [],
+        "approval_notes": null
+      },
+      "disclaimers": [
+        "This operational analysis is not legal, tax, accounting, underwriting, or lending advice."
+      ],
+      "report_payload": {
+        "preliminary_notice": "Preliminary — Partial Reconciliation. Findings may change when missing files are supplied.",
+        "completed_calculations": [
+          "Payout-to-bank match"
+        ],
+        "withheld_calculations": [
+          "SKU contribution margin"
+        ],
+        "assumptions": [
+          "The supplied store timezone is America/New_York."
+        ],
+        "payout_matches": [
+          {
+            "payout_id": "po-fictional-001",
+            "bank_transaction_id": "bank-fictional-001",
+            "expected_payout": {
+              "amount": 970,
+              "currency": "USD",
+              "amount_basis": "reporting_currency",
+              "exchange_rate": null,
+              "exchange_rate_date": null
+            },
+            "observed_deposit": {
+              "amount": 970,
+              "currency": "USD",
+              "amount_basis": "reporting_currency",
+              "exchange_rate": null,
+              "exchange_rate_date": null
+            },
+            "variance": {
+              "amount": 0,
+              "currency": "USD",
+              "amount_basis": "reporting_currency",
+              "exchange_rate": null,
+              "exchange_rate_date": null
+            },
+            "payout_date": "2026-06-28",
+            "deposit_date": "2026-06-30",
+            "days_to_deposit": 2,
+            "status": "matched",
+            "confidence": "High",
+            "match_method": "identifier",
+            "notes": null
+          }
+        ],
+        "unresolved_amount": {
+          "amount": 0,
+          "currency": "USD",
+          "amount_basis": "reporting_currency",
+          "exchange_rate": null,
+          "exchange_rate_date": null
+        },
+        "data_requests": [
+          {
+            "request_id": "req-002",
+            "document_or_field": "SKU cost file",
+            "reason": "Required for contribution margin.",
+            "priority": "high",
+            "blocking": false,
+            "acceptable_alternatives": [
+              "COGS by SKU export"
+            ]
+          }
+        ]
+      },
+      "source_record_ids": [
+        "txn-fictional-001"
+      ],
+      "parent_report_id": null,
+      "supersedes_report_id": null,
+      "revision_notes": null
+    },
+    {
+      "schema_version": "1.0.0",
+      "report_id": "rpt-fictional-fee_leakage_report-001",
+      "report_type": "fee_leakage_report",
+      "generated_at": "2026-07-27T14:00:00-04:00",
+      "audit_context": {
+        "audit_id": "audit-fictional-001",
+        "business_alias": "Fictional Store A",
+        "requested_outcome": "Reconcile payouts and identify material exceptions.",
+        "reporting_currency": "USD",
+        "platform_accounts": [
+          "shopify-fictional-01"
+        ],
+        "prepared_for": null,
+        "prepared_by": "AI Platform Fee Audit Copilot"
+      },
+      "data_coverage": {
+        "period_start": "2026-06-01",
+        "period_end": "2026-06-30",
+        "analysis_timezone": "America/New_York",
+        "platforms": [
+          "shopify"
+        ],
+        "stores": [
+          "Fictional Store A"
+        ],
+        "currencies": [
+          "USD"
+        ],
+        "files_reviewed": [
+          {
+            "source_id": "src_shopify_payout_june",
+            "source_type": "platform_export",
+            "filename": "fictional-shopify-payouts-2026-06.csv",
+            "sheet_or_section": null,
+            "row_or_record_id": "row-12",
+            "evidence_label": "Verified Fact",
+            "notes": "Fictional QA source."
+          }
+        ],
+        "files_missing": [],
+        "coverage_status": "complete",
+        "unclassified_value_share": 0.0,
+        "date_ranges_overlap": true,
+        "limitations": []
+      },
+      "overall_confidence": "Medium",
+      "reconciliation_status": "partial",
+      "findings": [],
+      "actions": [
+        {
+          "action_id": "act-001",
+          "action": "Retain source exports with the workpaper.",
+          "owner": "Operator",
+          "priority": "medium",
+          "status": "recommended",
+          "due_date": null,
+          "requires_confirmation": false,
+          "human_review_required": false,
+          "dependency": null,
+          "expected_impact": "Supports repeatable review."
+        }
+      ],
+      "human_review": {
+        "required": false,
+        "status": "unreviewed",
+        "reviewer": null,
+        "reviewed_at": null,
+        "review_reasons": [],
+        "approval_notes": null
+      },
+      "disclaimers": [
+        "This operational analysis is not legal, tax, accounting, underwriting, or lending advice."
+      ],
+      "report_payload": {
+        "total_fees_reviewed": {
+          "amount": 30,
+          "currency": "USD",
+          "amount_basis": "reporting_currency",
+          "exchange_rate": null,
+          "exchange_rate_date": null
+        },
+        "flagged_amount": {
+          "amount": 5,
+          "currency": "USD",
+          "amount_basis": "reporting_currency",
+          "exchange_rate": null,
+          "exchange_rate_date": null
+        },
+        "candidates": [
+          {
+            "candidate_id": "fee-001",
+            "taxonomy_code": "FEE_PROCESSING",
+            "description": "Potential duplicate processing fee.",
+            "amount": {
+              "amount": 5,
+              "currency": "USD",
+              "amount_basis": "reporting_currency",
+              "exchange_rate": null,
+              "exchange_rate_date": null
+            },
+            "reason_flagged": "Same source fingerprint appeared twice.",
+            "recoverability_status": "needs_policy_review",
+            "confidence": "Medium",
+            "source_references": [
+              {
+                "source_id": "src_shopify_payout_june",
+                "source_type": "platform_export",
+                "filename": "fictional-shopify-payouts-2026-06.csv",
+                "sheet_or_section": null,
+                "row_or_record_id": "row-12",
+                "evidence_label": "Verified Fact",
+                "notes": "Fictional QA source."
+              }
+            ],
+            "human_review_required": true,
+            "recommended_action": "Verify platform policy and source IDs before escalation."
+          }
+        ],
+        "non_recoverable_costs": [
+          "Ordinary contracted processing fees are not treated as leakage."
+        ],
+        "disclaimer": "A flagged amount is not a guaranteed recovery."
+      },
+      "source_record_ids": [
+        "txn-fictional-001"
+      ],
+      "parent_report_id": null,
+      "supersedes_report_id": null,
+      "revision_notes": null
+    },
+    {
+      "schema_version": "1.0.0",
+      "report_id": "rpt-fictional-sku_scorecard-001",
+      "report_type": "sku_scorecard",
+      "generated_at": "2026-07-27T14:00:00-04:00",
+      "audit_context": {
+        "audit_id": "audit-fictional-001",
+        "business_alias": "Fictional Store A",
+        "requested_outcome": "Reconcile payouts and identify material exceptions.",
+        "reporting_currency": "USD",
+        "platform_accounts": [
+          "shopify-fictional-01"
+        ],
+        "prepared_for": null,
+        "prepared_by": "AI Platform Fee Audit Copilot"
+      },
+      "data_coverage": {
+        "period_start": "2026-06-01",
+        "period_end": "2026-06-30",
+        "analysis_timezone": "America/New_York",
+        "platforms": [
+          "shopify"
+        ],
+        "stores": [
+          "Fictional Store A"
+        ],
+        "currencies": [
+          "USD"
+        ],
+        "files_reviewed": [
+          {
+            "source_id": "src_shopify_payout_june",
+            "source_type": "platform_export",
+            "filename": "fictional-shopify-payouts-2026-06.csv",
+            "sheet_or_section": null,
+            "row_or_record_id": "row-12",
+            "evidence_label": "Verified Fact",
+            "notes": "Fictional QA source."
+          }
+        ],
+        "files_missing": [],
+        "coverage_status": "complete",
+        "unclassified_value_share": 0.0,
+        "date_ranges_overlap": true,
+        "limitations": []
+      },
+      "overall_confidence": "Medium",
+      "reconciliation_status": "partial",
+      "findings": [],
+      "actions": [
+        {
+          "action_id": "act-001",
+          "action": "Retain source exports with the workpaper.",
+          "owner": "Operator",
+          "priority": "medium",
+          "status": "recommended",
+          "due_date": null,
+          "requires_confirmation": false,
+          "human_review_required": false,
+          "dependency": null,
+          "expected_impact": "Supports repeatable review."
+        }
+      ],
+      "human_review": {
+        "required": false,
+        "status": "unreviewed",
+        "reviewer": null,
+        "reviewed_at": null,
+        "review_reasons": [],
+        "approval_notes": null
+      },
+      "disclaimers": [
+        "This operational analysis is not legal, tax, accounting, underwriting, or lending advice."
+      ],
+      "report_payload": {
+        "score_method_version": "1.0.0",
+        "results": [
+          {
+            "sku": "SKU-FIC-001",
+            "product_name": "Fictional Widget",
+            "units_sold": 100,
+            "net_product_revenue": {
+              "amount": 4500,
+              "currency": "USD",
+              "amount_basis": "reporting_currency",
+              "exchange_rate": null,
+              "exchange_rate_date": null
+            },
+            "total_variable_cost": {
+              "amount": 4800,
+              "currency": "USD",
+              "amount_basis": "reporting_currency",
+              "exchange_rate": null,
+              "exchange_rate_date": null
+            },
+            "contribution_profit": {
+              "amount": -300,
+              "currency": "USD",
+              "amount_basis": "reporting_currency",
+              "exchange_rate": null,
+              "exchange_rate_date": null
+            },
+            "contribution_margin_rate": -0.0666667,
+            "refund_rate": 0.1,
+            "advertising_to_sales_ratio": 0.2,
+            "fee_rate": 0.08,
+            "score": 35,
+            "score_band": "negative",
+            "confidence": "Medium",
+            "recommended_action": "Review price, COGS, returns, and advertising allocation.",
+            "review_status": "unreviewed"
+          }
+        ],
+        "portfolio_summary": {
+          "sku_count": 1,
+          "negative_margin_sku_count": 1
+        }
+      },
+      "source_record_ids": [
+        "txn-fictional-001"
+      ],
+      "parent_report_id": null,
+      "supersedes_report_id": null,
+      "revision_notes": null
+    },
+    {
+      "schema_version": "1.0.0",
+      "report_id": "rpt-fictional-reserve_report-001",
+      "report_type": "reserve_report",
+      "generated_at": "2026-07-27T14:00:00-04:00",
+      "audit_context": {
+        "audit_id": "audit-fictional-001",
+        "business_alias": "Fictional Store A",
+        "requested_outcome": "Reconcile payouts and identify material exceptions.",
+        "reporting_currency": "USD",
+        "platform_accounts": [
+          "shopify-fictional-01"
+        ],
+        "prepared_for": null,
+        "prepared_by": "AI Platform Fee Audit Copilot"
+      },
+      "data_coverage": {
+        "period_start": "2026-06-01",
+        "period_end": "2026-06-30",
+        "analysis_timezone": "America/New_York",
+        "platforms": [
+          "shopify"
+        ],
+        "stores": [
+          "Fictional Store A"
+        ],
+        "currencies": [
+          "USD"
+        ],
+        "files_reviewed": [
+          {
+            "source_id": "src_shopify_payout_june",
+            "source_type": "platform_export",
+            "filename": "fictional-shopify-payouts-2026-06.csv",
+            "sheet_or_section": null,
+            "row_or_record_id": "row-12",
+            "evidence_label": "Verified Fact",
+            "notes": "Fictional QA source."
+          }
+        ],
+        "files_missing": [],
+        "coverage_status": "complete",
+        "unclassified_value_share": 0.0,
+        "date_ranges_overlap": true,
+        "limitations": []
+      },
+      "overall_confidence": "Medium",
+      "reconciliation_status": "partial",
+      "findings": [],
+      "actions": [
+        {
+          "action_id": "act-001",
+          "action": "Retain source exports with the workpaper.",
+          "owner": "Operator",
+          "priority": "medium",
+          "status": "recommended",
+          "due_date": null,
+          "requires_confirmation": false,
+          "human_review_required": false,
+          "dependency": null,
+          "expected_impact": "Supports repeatable review."
+        }
+      ],
+      "human_review": {
+        "required": false,
+        "status": "unreviewed",
+        "reviewer": null,
+        "reviewed_at": null,
+        "review_reasons": [],
+        "approval_notes": null
+      },
+      "disclaimers": [
+        "This operational analysis is not legal, tax, accounting, underwriting, or lending advice."
+      ],
+      "report_payload": {
+        "total_original": {
+          "amount": 2000,
+          "currency": "USD",
+          "amount_basis": "reporting_currency",
+          "exchange_rate": null,
+          "exchange_rate_date": null
+        },
+        "total_current": {
+          "amount": 1000,
+          "currency": "USD",
+          "amount_basis": "reporting_currency",
+          "exchange_rate": null,
+          "exchange_rate_date": null
+        },
+        "total_released": {
+          "amount": 1000,
+          "currency": "USD",
+          "amount_basis": "reporting_currency",
+          "exchange_rate": null,
+          "exchange_rate_date": null
+        },
+        "reserves": [
+          {
+            "reserve_id": "res-fic-001",
+            "reserve_type": "rolling",
+            "original_amount": {
+              "amount": 2000,
+              "currency": "USD",
+              "amount_basis": "reporting_currency",
+              "exchange_rate": null,
+              "exchange_rate_date": null
+            },
+            "current_balance": {
+              "amount": 1000,
+              "currency": "USD",
+              "amount_basis": "reporting_currency",
+              "exchange_rate": null,
+              "exchange_rate_date": null
+            },
+            "held_at": "2026-06-01",
+            "expected_release_date": "2026-08-01",
+            "actual_release_date": null,
+            "aging_days": 56,
+            "cash_impact": {
+              "amount": 1000,
+              "currency": "USD",
+              "amount_basis": "reporting_currency",
+              "exchange_rate": null,
+              "exchange_rate_date": null
+            },
+            "working_capital_impact": "$1,000 remains unavailable for operations.",
+            "status": "partially_released",
+            "confidence": "Medium",
+            "next_action": "Confirm the expected release schedule."
+          }
+        ],
+        "exposure_summary": "The active reserve reduces currently available cash by $1,000."
+      },
+      "source_record_ids": [
+        "txn-fictional-001"
+      ],
+      "parent_report_id": null,
+      "supersedes_report_id": null,
+      "revision_notes": null
+    },
+    {
+      "schema_version": "1.0.0",
+      "report_id": "rpt-fictional-monthly_variance_report-001",
+      "report_type": "monthly_variance_report",
+      "generated_at": "2026-07-27T14:00:00-04:00",
+      "audit_context": {
+        "audit_id": "audit-fictional-001",
+        "business_alias": "Fictional Store A",
+        "requested_outcome": "Reconcile payouts and identify material exceptions.",
+        "reporting_currency": "USD",
+        "platform_accounts": [
+          "shopify-fictional-01"
+        ],
+        "prepared_for": null,
+        "prepared_by": "AI Platform Fee Audit Copilot"
+      },
+      "data_coverage": {
+        "period_start": "2026-06-01",
+        "period_end": "2026-06-30",
+        "analysis_timezone": "America/New_York",
+        "platforms": [
+          "shopify"
+        ],
+        "stores": [
+          "Fictional Store A"
+        ],
+        "currencies": [
+          "USD"
+        ],
+        "files_reviewed": [
+          {
+            "source_id": "src_shopify_payout_june",
+            "source_type": "platform_export",
+            "filename": "fictional-shopify-payouts-2026-06.csv",
+            "sheet_or_section": null,
+            "row_or_record_id": "row-12",
+            "evidence_label": "Verified Fact",
+            "notes": "Fictional QA source."
+          }
+        ],
+        "files_missing": [],
+        "coverage_status": "complete",
+        "unclassified_value_share": 0.0,
+        "date_ranges_overlap": true,
+        "limitations": []
+      },
+      "overall_confidence": "High",
+      "reconciliation_status": "matched",
+      "findings": [],
+      "actions": [
+        {
+          "action_id": "act-001",
+          "action": "Retain source exports with the workpaper.",
+          "owner": "Operator",
+          "priority": "medium",
+          "status": "recommended",
+          "due_date": null,
+          "requires_confirmation": false,
+          "human_review_required": false,
+          "dependency": null,
+          "expected_impact": "Supports repeatable review."
+        }
+      ],
+      "human_review": {
+        "required": false,
+        "status": "unreviewed",
+        "reviewer": null,
+        "reviewed_at": null,
+        "review_reasons": [],
+        "approval_notes": null
+      },
+      "disclaimers": [
+        "This operational analysis is not legal, tax, accounting, underwriting, or lending advice."
+      ],
+      "report_payload": {
+        "current_period": "2026-06",
+        "comparison_period": "2026-05",
+        "items": [
+          {
+            "metric_code": "effective_fee_rate",
+            "display_name": "Effective fee rate",
+            "current_value": 0.035,
+            "prior_value": 0.03,
+            "benchmark_value": null,
+            "absolute_variance": 0.005,
+            "percentage_variance": 0.166667,
+            "alert_status": "watch",
+            "severity": "medium",
+            "confidence": "High",
+            "notes": "Increase requires fee-category drill-down."
+          }
+        ],
+        "critical_alerts": []
+      },
+      "source_record_ids": [
+        "txn-fictional-001"
+      ],
+      "parent_report_id": null,
+      "supersedes_report_id": null,
+      "revision_notes": null
+    },
+    {
+      "schema_version": "1.0.0",
+      "report_id": "rpt-fictional-cash_timing_diagnosis-001",
+      "report_type": "cash_timing_diagnosis",
+      "generated_at": "2026-07-27T14:00:00-04:00",
+      "audit_context": {
+        "audit_id": "audit-fictional-001",
+        "business_alias": "Fictional Store A",
+        "requested_outcome": "Reconcile payouts and identify material exceptions.",
+        "reporting_currency": "USD",
+        "platform_accounts": [
+          "shopify-fictional-01"
+        ],
+        "prepared_for": null,
+        "prepared_by": "AI Platform Fee Audit Copilot"
+      },
+      "data_coverage": {
+        "period_start": "2026-06-01",
+        "period_end": "2026-06-30",
+        "analysis_timezone": "America/New_York",
+        "platforms": [
+          "shopify"
+        ],
+        "stores": [
+          "Fictional Store A"
+        ],
+        "currencies": [
+          "USD"
+        ],
+        "files_reviewed": [
+          {
+            "source_id": "src_shopify_payout_june",
+            "source_type": "platform_export",
+            "filename": "fictional-shopify-payouts-2026-06.csv",
+            "sheet_or_section": null,
+            "row_or_record_id": "row-12",
+            "evidence_label": "Verified Fact",
+            "notes": "Fictional QA source."
+          }
+        ],
+        "files_missing": [],
+        "coverage_status": "complete",
+        "unclassified_value_share": 0.0,
+        "date_ranges_overlap": true,
+        "limitations": []
+      },
+      "overall_confidence": "High",
+      "reconciliation_status": "matched_with_timing_difference",
+      "findings": [],
+      "actions": [
+        {
+          "action_id": "act-001",
+          "action": "Retain source exports with the workpaper.",
+          "owner": "Operator",
+          "priority": "medium",
+          "status": "recommended",
+          "due_date": null,
+          "requires_confirmation": false,
+          "human_review_required": false,
+          "dependency": null,
+          "expected_impact": "Supports repeatable review."
+        }
+      ],
+      "human_review": {
+        "required": false,
+        "status": "unreviewed",
+        "reviewer": null,
+        "reviewed_at": null,
+        "review_reasons": [],
+        "approval_notes": null
+      },
+      "disclaimers": [
+        "This operational analysis is not legal, tax, accounting, underwriting, or lending advice."
+      ],
+      "report_payload": {
+        "cash_conversion_summary": "The payout matched, but the bank deposit arrived six days later than expected.",
+        "timing_metrics": {
+          "payout_to_bank_days": 8,
+          "expected_days": 2,
+          "delay_days": 6
+        },
+        "timing_gaps": [
+          "A six-day deposit delay reduced available operating cash."
+        ],
+        "working_capital_gap": {
+          "amount": 2500,
+          "currency": "USD",
+          "amount_basis": "reporting_currency",
+          "exchange_rate": null,
+          "exchange_rate_date": null
+        },
+        "diagnosis": "primarily_timing"
+      },
+      "source_record_ids": [
+        "txn-fictional-001"
+      ],
+      "parent_report_id": null,
+      "supersedes_report_id": null,
+      "revision_notes": null
+    },
+    {
+      "schema_version": "1.0.0",
+      "report_id": "rpt-fictional-funding_readiness_summary-001",
+      "report_type": "funding_readiness_summary",
+      "generated_at": "2026-07-27T14:00:00-04:00",
+      "audit_context": {
+        "audit_id": "audit-fictional-001",
+        "business_alias": "Fictional Store A",
+        "requested_outcome": "Reconcile payouts and identify material exceptions.",
+        "reporting_currency": "USD",
+        "platform_accounts": [
+          "shopify-fictional-01"
+        ],
+        "prepared_for": null,
+        "prepared_by": "AI Platform Fee Audit Copilot"
+      },
+      "data_coverage": {
+        "period_start": "2026-06-01",
+        "period_end": "2026-06-30",
+        "analysis_timezone": "America/New_York",
+        "platforms": [
+          "shopify"
+        ],
+        "stores": [
+          "Fictional Store A"
+        ],
+        "currencies": [
+          "USD"
+        ],
+        "files_reviewed": [
+          {
+            "source_id": "src_shopify_payout_june",
+            "source_type": "platform_export",
+            "filename": "fictional-shopify-payouts-2026-06.csv",
+            "sheet_or_section": null,
+            "row_or_record_id": "row-12",
+            "evidence_label": "Verified Fact",
+            "notes": "Fictional QA source."
+          }
+        ],
+        "files_missing": [],
+        "coverage_status": "complete",
+        "unclassified_value_share": 0.0,
+        "date_ranges_overlap": true,
+        "limitations": []
+      },
+      "overall_confidence": "Medium",
+      "reconciliation_status": "partial",
+      "findings": [],
+      "actions": [
+        {
+          "action_id": "act-001",
+          "action": "Retain source exports with the workpaper.",
+          "owner": "Operator",
+          "priority": "medium",
+          "status": "recommended",
+          "due_date": null,
+          "requires_confirmation": false,
+          "human_review_required": false,
+          "dependency": null,
+          "expected_impact": "Supports repeatable review."
+        }
+      ],
+      "human_review": {
+        "required": false,
+        "status": "unreviewed",
+        "reviewer": null,
+        "reviewed_at": null,
+        "review_reasons": [],
+        "approval_notes": null
+      },
+      "disclaimers": [
+        "This operational analysis is not legal, tax, accounting, underwriting, or lending advice."
+      ],
+      "report_payload": {
+        "readiness_scope": "Operational funding-readiness summary based on June 2026 posted data.",
+        "revenue_profile": "Revenue appears recurring across the covered month, subject to broader-period verification.",
+        "payout_profile": "Payout records are substantially matched, with one timing exception.",
+        "fee_burden": "Fees were measured but contract and policy review remains incomplete.",
+        "reserve_exposure": "A $1,000 reserve remains active.",
+        "working_capital_gap": {
+          "amount": 2500,
+          "currency": "USD",
+          "amount_basis": "reporting_currency",
+          "exchange_rate": null,
+          "exchange_rate_date": null
+        },
+        "documentation_readiness": "partially_ready",
+        "potential_use_scenarios": [
+          "Bridge a documented payout delay",
+          "Support inventory timing"
+        ],
+        "risks": [
+          "One reserve release date remains unverified."
+        ],
+        "disclaimer": "This summary does not issue a credit decision or guarantee eligibility."
+      },
+      "source_record_ids": [
+        "txn-fictional-001"
+      ],
+      "parent_report_id": null,
+      "supersedes_report_id": null,
+      "revision_notes": null
+    },
+    {
+      "schema_version": "1.0.0",
+      "report_id": "rpt-fictional-exception_report-001",
+      "report_type": "exception_report",
+      "generated_at": "2026-07-27T14:00:00-04:00",
+      "audit_context": {
+        "audit_id": "audit-fictional-001",
+        "business_alias": "Fictional Store A",
+        "requested_outcome": "Reconcile payouts and identify material exceptions.",
+        "reporting_currency": "USD",
+        "platform_accounts": [
+          "shopify-fictional-01"
+        ],
+        "prepared_for": null,
+        "prepared_by": "AI Platform Fee Audit Copilot"
+      },
+      "data_coverage": {
+        "period_start": "2026-06-01",
+        "period_end": "2026-06-30",
+        "analysis_timezone": "America/New_York",
+        "platforms": [
+          "shopify"
+        ],
+        "stores": [
+          "Fictional Store A"
+        ],
+        "currencies": [
+          "USD"
+        ],
+        "files_reviewed": [
+          {
+            "source_id": "src_shopify_payout_june",
+            "source_type": "platform_export",
+            "filename": "fictional-shopify-payouts-2026-06.csv",
+            "sheet_or_section": null,
+            "row_or_record_id": "row-12",
+            "evidence_label": "Verified Fact",
+            "notes": "Fictional QA source."
+          }
+        ],
+        "files_missing": [],
+        "coverage_status": "complete",
+        "unclassified_value_share": 0.0,
+        "date_ranges_overlap": true,
+        "limitations": []
+      },
+      "overall_confidence": "Medium",
+      "reconciliation_status": "unmatched",
+      "findings": [],
+      "actions": [
+        {
+          "action_id": "act-001",
+          "action": "Retain source exports with the workpaper.",
+          "owner": "Operator",
+          "priority": "medium",
+          "status": "recommended",
+          "due_date": null,
+          "requires_confirmation": false,
+          "human_review_required": false,
+          "dependency": null,
+          "expected_impact": "Supports repeatable review."
+        }
+      ],
+      "human_review": {
+        "required": false,
+        "status": "unreviewed",
+        "reviewer": null,
+        "reviewed_at": null,
+        "review_reasons": [],
+        "approval_notes": null
+      },
+      "disclaimers": [
+        "This operational analysis is not legal, tax, accounting, underwriting, or lending advice."
+      ],
+      "report_payload": {
+        "exception_count": 1,
+        "exceptions": [
+          {
+            "discrepancy_id": "exc-001",
+            "description": "Expected payout exceeds observed deposit.",
+            "expected_amount": {
+              "amount": 1000,
+              "currency": "USD",
+              "amount_basis": "reporting_currency",
+              "exchange_rate": null,
+              "exchange_rate_date": null
+            },
+            "observed_amount": {
+              "amount": 980,
+              "currency": "USD",
+              "amount_basis": "reporting_currency",
+              "exchange_rate": null,
+              "exchange_rate_date": null
+            },
+            "variance_amount": {
+              "amount": 20,
+              "currency": "USD",
+              "amount_basis": "reporting_currency",
+              "exchange_rate": null,
+              "exchange_rate_date": null
+            },
+            "status": "open",
+            "confidence": "Medium",
+            "priority": "high",
+            "related_record_ids": [
+              "po-fic-002",
+              "bank-fic-002"
+            ],
+            "explanation": null,
+            "next_action": "Obtain payout transaction detail."
+          }
+        ],
+        "materiality_rule": "Operational threshold is max($10, 0.1% of absolute gross sales in scope).",
+        "next_review_date": "2026-07-30"
+      },
+      "source_record_ids": [
+        "txn-fictional-001"
+      ],
+      "parent_report_id": null,
+      "supersedes_report_id": null,
+      "revision_notes": null
+    },
+    {
+      "schema_version": "1.0.0",
+      "report_id": "rpt-fictional-dispute_case-001",
+      "report_type": "dispute_case",
+      "generated_at": "2026-07-27T14:00:00-04:00",
+      "audit_context": {
+        "audit_id": "audit-fictional-001",
+        "business_alias": "Fictional Store A",
+        "requested_outcome": "Reconcile payouts and identify material exceptions.",
+        "reporting_currency": "USD",
+        "platform_accounts": [
+          "shopify-fictional-01"
+        ],
+        "prepared_for": null,
+        "prepared_by": "AI Platform Fee Audit Copilot"
+      },
+      "data_coverage": {
+        "period_start": "2026-06-01",
+        "period_end": "2026-06-30",
+        "analysis_timezone": "America/New_York",
+        "platforms": [
+          "shopify"
+        ],
+        "stores": [
+          "Fictional Store A"
+        ],
+        "currencies": [
+          "USD"
+        ],
+        "files_reviewed": [
+          {
+            "source_id": "src_shopify_payout_june",
+            "source_type": "platform_export",
+            "filename": "fictional-shopify-payouts-2026-06.csv",
+            "sheet_or_section": null,
+            "row_or_record_id": "row-12",
+            "evidence_label": "Verified Fact",
+            "notes": "Fictional QA source."
+          }
+        ],
+        "files_missing": [],
+        "coverage_status": "complete",
+        "unclassified_value_share": 0.0,
+        "date_ranges_overlap": true,
+        "limitations": []
+      },
+      "overall_confidence": "Medium",
+      "reconciliation_status": "human_review_required",
+      "findings": [],
+      "actions": [
+        {
+          "action_id": "act-001",
+          "action": "Retain source exports with the workpaper.",
+          "owner": "Operator",
+          "priority": "medium",
+          "status": "recommended",
+          "due_date": null,
+          "requires_confirmation": false,
+          "human_review_required": false,
+          "dependency": null,
+          "expected_impact": "Supports repeatable review."
+        }
+      ],
+      "human_review": {
+        "required": false,
+        "status": "unreviewed",
+        "reviewer": null,
+        "reviewed_at": null,
+        "review_reasons": [],
+        "approval_notes": null
+      },
+      "disclaimers": [
+        "This operational analysis is not legal, tax, accounting, underwriting, or lending advice."
+      ],
+      "report_payload": {
+        "case": {
+          "case_id": "case-fic-001",
+          "platform": "amazon",
+          "issue_type": "Potential missing reimbursement",
+          "amount_at_issue": {
+            "amount": 240,
+            "currency": "USD",
+            "amount_basis": "reporting_currency",
+            "exchange_rate": null,
+            "exchange_rate_date": null
+          },
+          "eligibility_status": "eligible_for_review",
+          "case_status": "ready_for_review",
+          "evidence_status": "complete",
+          "deadline_status": "open",
+          "human_approval_status": "pending",
+          "reimbursement_status": "not_requested",
+          "submitted_at": null,
+          "resolved_at": null,
+          "evidence": [
+            {
+              "source_id": "src_amazon_reimbursement",
+              "source_type": "platform_export",
+              "filename": "fictional-shopify-payouts-2026-06.csv",
+              "sheet_or_section": null,
+              "row_or_record_id": "row-12",
+              "evidence_label": "Verified Fact",
+              "notes": "Fictional QA source."
+            }
+          ],
+          "case_notes": [
+            "Fictional example; verify policy and deadline before submission."
+          ]
+        },
+        "submission_recommendation": "ready_for_confirmation",
+        "required_evidence": [
+          "Settlement event",
+          "Inventory event",
+          "Prior support correspondence"
+        ],
+        "prohibited_claims_notice": "Do not state that reimbursement is guaranteed."
+      },
+      "source_record_ids": [
+        "txn-fictional-001"
+      ],
+      "parent_report_id": null,
+      "supersedes_report_id": null,
+      "revision_notes": null
+    },
+    {
+      "schema_version": "1.0.0",
+      "report_id": "rpt-fictional-machine_readable_export-001",
+      "report_type": "machine_readable_export",
+      "generated_at": "2026-07-27T14:00:00-04:00",
+      "audit_context": {
+        "audit_id": "audit-fictional-001",
+        "business_alias": "Fictional Store A",
+        "requested_outcome": "Reconcile payouts and identify material exceptions.",
+        "reporting_currency": "USD",
+        "platform_accounts": [
+          "shopify-fictional-01"
+        ],
+        "prepared_for": null,
+        "prepared_by": "AI Platform Fee Audit Copilot"
+      },
+      "data_coverage": {
+        "period_start": "2026-06-01",
+        "period_end": "2026-06-30",
+        "analysis_timezone": "America/New_York",
+        "platforms": [
+          "shopify"
+        ],
+        "stores": [
+          "Fictional Store A"
+        ],
+        "currencies": [
+          "USD"
+        ],
+        "files_reviewed": [
+          {
+            "source_id": "src_shopify_payout_june",
+            "source_type": "platform_export",
+            "filename": "fictional-shopify-payouts-2026-06.csv",
+            "sheet_or_section": null,
+            "row_or_record_id": "row-12",
+            "evidence_label": "Verified Fact",
+            "notes": "Fictional QA source."
+          }
+        ],
+        "files_missing": [],
+        "coverage_status": "complete",
+        "unclassified_value_share": 0.0,
+        "date_ranges_overlap": true,
+        "limitations": []
+      },
+      "overall_confidence": "High",
+      "reconciliation_status": "matched",
+      "findings": [],
+      "actions": [
+        {
+          "action_id": "act-001",
+          "action": "Retain source exports with the workpaper.",
+          "owner": "Operator",
+          "priority": "medium",
+          "status": "recommended",
+          "due_date": null,
+          "requires_confirmation": false,
+          "human_review_required": false,
+          "dependency": null,
+          "expected_impact": "Supports repeatable review."
+        }
+      ],
+      "human_review": {
+        "required": false,
+        "status": "unreviewed",
+        "reviewer": null,
+        "reviewed_at": null,
+        "review_reasons": [],
+        "approval_notes": null
+      },
+      "disclaimers": [
+        "This operational analysis is not legal, tax, accounting, underwriting, or lending advice."
+      ],
+      "report_payload": {
+        "export_format": "json",
+        "schema_reference": "master-transaction-schema.json",
+        "record_count": 1,
+        "records": [
+          {
+            "transaction_id": "txn-fictional-001",
+            "normalized_classification": "TRF_PAYOUT"
+          }
+        ],
+        "export_hash": "sha256:fictional-example-not-for-integrity-use",
+        "generated_for": null
+      },
+      "source_record_ids": [
+        "txn-fictional-001"
+      ],
+      "parent_report_id": null,
+      "supersedes_report_id": null,
+      "revision_notes": null
+    }
+  ]
+}

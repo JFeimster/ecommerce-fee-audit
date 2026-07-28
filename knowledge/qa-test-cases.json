@@ -1,0 +1,1570 @@
+{
+  "metadata": {
+    "title": "AI Platform Fee Audit Copilot QA Test Cases",
+    "filename": "qa-test-cases.json",
+    "version": "1.0.0",
+    "status": "production-ready",
+    "last_updated": "2026-07-27",
+    "purpose": "Fictional regression tests for classification, calculations, reconciliation, missing-data handling, duplicate detection, multi-currency logic, reserves, refunds, disputes, and timing.",
+    "related_files": [
+      "master-transaction-schema.json",
+      "normalized-platform-fee-taxonomy.yaml",
+      "reconciliation-and-calculation-rules.md",
+      "output-schema.json",
+      "shopify-payout-reconciliation-guide.md",
+      "amazon-settlement-analyzer-guide.md",
+      "stripe-fee-calculation-guide.md"
+    ]
+  },
+  "conventions": {
+    "fictional_data_only": true,
+    "default_example_currency": "USD",
+    "date_standard": "ISO 8601",
+    "ratio_storage": "Decimal ratio; 0.20 means 20%.",
+    "amount_sign": "Source amounts preserve source sign; expected calculations use the stated formula.",
+    "tolerance": "Currency calculations default to ±0.01 unless a case specifies otherwise.",
+    "null_rule": "null means unavailable, unsupported, or not applicable; zero means verified zero.",
+    "priority_order": [
+      "payout_reconciliation",
+      "fee_leakage",
+      "sku_contribution_margin",
+      "cash_timing_diagnosis"
+    ],
+    "automatic_data_gap_triggers": [
+      "Missing blocking settlement or payout evidence",
+      "More than 20% of in-scope value remains unclassified",
+      "Date ranges do not materially overlap",
+      "Currency cannot be determined",
+      "Required core fields prevent reliable calculations"
+    ]
+  },
+  "allowed_values": {
+    "reconciliation_status": [
+      "not_started",
+      "partial",
+      "matched",
+      "matched_with_timing_difference",
+      "unmatched",
+      "data_gap",
+      "human_review_required"
+    ],
+    "confidence": [
+      "High",
+      "Medium",
+      "Low",
+      "Unable to Determine"
+    ],
+    "taxonomy_codes": [
+      "ADJ_MANUAL",
+      "FEE_ADVERTISING",
+      "FEE_FBA",
+      "FEE_FX",
+      "FEE_INSTANT_PAYOUT",
+      "FEE_INTERNATIONAL",
+      "FEE_MARKETPLACE",
+      "FEE_PROCESSING",
+      "FEE_REFERRAL",
+      "FEE_SHIPPING_LABEL",
+      "FEE_STORAGE",
+      "FEE_SUBSCRIPTION",
+      "FIN_LOAN_DEDUCTION",
+      "FIN_REMITTANCE",
+      "LIQ_HOLD",
+      "LIQ_RESERVE_HOLD",
+      "LIQ_RESERVE_RELEASE",
+      "OPS_RETURN",
+      "PASS_DUTY",
+      "PASS_TAX",
+      "PASS_WITHHOLDING",
+      "REC_CREDIT",
+      "REC_REIMBURSEMENT",
+      "REV_DISCOUNT",
+      "REV_GROSS_SALES",
+      "REV_REFUND",
+      "REV_SHIPPING_INCOME",
+      "REV_TIPS",
+      "RISK_CHARGEBACK",
+      "RISK_DISPUTE",
+      "TIMING_DIFFERENCE",
+      "TRF_BANK_DEPOSIT",
+      "TRF_PAYOUT",
+      "UNCLASSIFIED"
+    ]
+  },
+  "test_cases": [
+    {
+      "test_id": "QA-001",
+      "scenario": "Complete Shopify reconciliation",
+      "input_records": [
+        {
+          "record_id": "sh-sale-001",
+          "platform": "shopify",
+          "transaction_at": "2026-06-28T10:00:00-04:00",
+          "currency": "USD",
+          "source_amount": 1000,
+          "source_label": "sale",
+          "order_id": "ord-fic-001"
+        },
+        {
+          "record_id": "sh-fee-001",
+          "platform": "shopify",
+          "transaction_at": "2026-06-28T10:00:01-04:00",
+          "currency": "USD",
+          "source_amount": -30,
+          "source_label": "processing_fee",
+          "payout_id": "po-fic-001"
+        },
+        {
+          "record_id": "sh-payout-001",
+          "platform": "shopify",
+          "transaction_at": "2026-06-28T18:00:00-04:00",
+          "currency": "USD",
+          "source_amount": -970,
+          "source_label": "payout",
+          "payout_id": "po-fic-001"
+        },
+        {
+          "record_id": "bank-dep-001",
+          "platform": "bank",
+          "transaction_at": "2026-06-30T09:00:00-04:00",
+          "currency": "USD",
+          "source_amount": 970,
+          "source_label": "SHOPIFY DEPOSIT",
+          "bank_transaction_id": "bank-fic-001",
+          "payout_id": "po-fic-001"
+        }
+      ],
+      "expected_classification": [
+        {
+          "record_ids": [
+            "sh-sale-001"
+          ],
+          "taxonomy_code": "REV_GROSS_SALES"
+        },
+        {
+          "record_ids": [
+            "sh-fee-001"
+          ],
+          "taxonomy_code": "FEE_PROCESSING"
+        },
+        {
+          "record_ids": [
+            "sh-payout-001"
+          ],
+          "taxonomy_code": "TRF_PAYOUT"
+        },
+        {
+          "record_ids": [
+            "bank-dep-001"
+          ],
+          "taxonomy_code": "TRF_BANK_DEPOSIT"
+        }
+      ],
+      "expected_calculations": [
+        {
+          "calculation_code": "expected_payout",
+          "formula": "1000 - 30",
+          "expected_value": 970,
+          "tolerance": 0.01,
+          "currency": "USD"
+        },
+        {
+          "calculation_code": "bank_variance",
+          "formula": "970 - 970",
+          "expected_value": 0,
+          "tolerance": 0.01,
+          "currency": "USD"
+        },
+        {
+          "calculation_code": "effective_fee_rate",
+          "formula": "30 / 1000",
+          "expected_value": 0.03,
+          "tolerance": 1e-06
+        }
+      ],
+      "expected_reconciliation_status": "matched",
+      "expected_confidence": "High",
+      "expected_warnings": [],
+      "expected_user_facing_response": "The $970 Shopify payout matches the $970 bank deposit. Processing fees total $30, or 3.00% of gross sales.",
+      "expected_escalation": {
+        "required": false,
+        "reason": null,
+        "target_role": null
+      },
+      "pass_criteria": [
+        "All four records receive the expected taxonomy code.",
+        "Expected payout equals $970.00.",
+        "Bank variance equals $0.00.",
+        "No sales or transfers are double-counted."
+      ]
+    },
+    {
+      "test_id": "QA-002",
+      "scenario": "Shopify refund mismatch",
+      "input_records": [
+        {
+          "record_id": "sh-refund-001",
+          "platform": "shopify",
+          "transaction_at": "2026-06-15T11:00:00-04:00",
+          "currency": "USD",
+          "source_amount": -120,
+          "source_label": "refund",
+          "order_id": "ord-fic-002"
+        },
+        {
+          "record_id": "sh-payout-refund-001",
+          "platform": "shopify",
+          "transaction_at": "2026-06-16T18:00:00-04:00",
+          "currency": "USD",
+          "source_amount": -100,
+          "source_label": "refund_adjustment",
+          "payout_id": "po-fic-002"
+        }
+      ],
+      "expected_classification": [
+        {
+          "record_ids": [
+            "sh-refund-001"
+          ],
+          "taxonomy_code": "REV_REFUND"
+        },
+        {
+          "record_ids": [
+            "sh-payout-refund-001"
+          ],
+          "taxonomy_code": "REV_REFUND",
+          "note": "Settlement representation; link to original and do not count twice."
+        }
+      ],
+      "expected_calculations": [
+        {
+          "calculation_code": "refund_variance",
+          "formula": "abs(120) - abs(100)",
+          "expected_value": 20,
+          "tolerance": 0.01,
+          "currency": "USD"
+        }
+      ],
+      "expected_reconciliation_status": "unmatched",
+      "expected_confidence": "Medium",
+      "expected_warnings": [
+        "A $20 refund difference remains unresolved.",
+        "The settlement line may be a partial refund or timing difference."
+      ],
+      "expected_user_facing_response": "The supplied records show a $120 refund but only a $100 payout adjustment, leaving a $20 unresolved difference. Review the order refund detail and settlement timing.",
+      "expected_escalation": {
+        "required": true,
+        "reason": "Material refund mismatch requires source review.",
+        "target_role": "finance operator"
+      },
+      "pass_criteria": [
+        "Variance equals $20.00.",
+        "The two records are linked rather than double-counted.",
+        "Status is unmatched and confidence is Medium."
+      ]
+    },
+    {
+      "test_id": "QA-003",
+      "scenario": "Shopify Capital deduction",
+      "input_records": [
+        {
+          "record_id": "sh-sale-003",
+          "platform": "shopify",
+          "transaction_at": "2026-06-20T10:00:00-04:00",
+          "currency": "USD",
+          "source_amount": 2000,
+          "source_label": "sales"
+        },
+        {
+          "record_id": "sh-cap-003",
+          "platform": "shopify",
+          "transaction_at": "2026-06-20T18:00:00-04:00",
+          "currency": "USD",
+          "source_amount": -220,
+          "source_label": "Shopify Capital remittance",
+          "payout_id": "po-fic-003"
+        },
+        {
+          "record_id": "sh-payout-003",
+          "platform": "shopify",
+          "transaction_at": "2026-06-20T18:00:01-04:00",
+          "currency": "USD",
+          "source_amount": -1780,
+          "source_label": "payout",
+          "payout_id": "po-fic-003"
+        }
+      ],
+      "expected_classification": [
+        {
+          "record_ids": [
+            "sh-sale-003"
+          ],
+          "taxonomy_code": "REV_GROSS_SALES"
+        },
+        {
+          "record_ids": [
+            "sh-cap-003"
+          ],
+          "taxonomy_code": "FIN_REMITTANCE"
+        },
+        {
+          "record_ids": [
+            "sh-payout-003"
+          ],
+          "taxonomy_code": "TRF_PAYOUT"
+        }
+      ],
+      "expected_calculations": [
+        {
+          "calculation_code": "expected_payout",
+          "formula": "2000 - 220",
+          "expected_value": 1780,
+          "tolerance": 0.01,
+          "currency": "USD"
+        },
+        {
+          "calculation_code": "remittance_rate",
+          "formula": "220 / 2000",
+          "expected_value": 0.11,
+          "tolerance": 1e-06
+        }
+      ],
+      "expected_reconciliation_status": "partial",
+      "expected_confidence": "Medium",
+      "expected_warnings": [
+        "The principal-versus-financing-cost split is unavailable and must not be inferred."
+      ],
+      "expected_user_facing_response": "The $220 Shopify Capital remittance explains the $1,780 payout. It is classified as financing remittance, not a platform fee; principal and financing-cost treatment requires the agreement or ledger detail.",
+      "expected_escalation": {
+        "required": true,
+        "reason": "Accounting treatment and agreement terms require human review.",
+        "target_role": "accountant or finance operator"
+      },
+      "pass_criteria": [
+        "Remittance is FIN_REMITTANCE, not FEE_PROCESSING.",
+        "Expected payout equals $1,780.00.",
+        "No unsupported principal/fee split is produced."
+      ]
+    },
+    {
+      "test_id": "QA-004",
+      "scenario": "Amazon reserve withholding",
+      "input_records": [
+        {
+          "record_id": "am-sale-004",
+          "platform": "amazon",
+          "transaction_at": "2026-06-14T00:00:00Z",
+          "currency": "USD",
+          "source_amount": 10000,
+          "source_label": "Product charges",
+          "settlement_id": "set-fic-004"
+        },
+        {
+          "record_id": "am-res-004",
+          "platform": "amazon",
+          "transaction_at": "2026-06-14T00:00:01Z",
+          "currency": "USD",
+          "source_amount": -1500,
+          "source_label": "Account Level Reserve",
+          "settlement_id": "set-fic-004"
+        },
+        {
+          "record_id": "am-disb-004",
+          "platform": "amazon",
+          "transaction_at": "2026-06-15T00:00:00Z",
+          "currency": "USD",
+          "source_amount": -8500,
+          "source_label": "Transfer",
+          "settlement_id": "set-fic-004"
+        }
+      ],
+      "expected_classification": [
+        {
+          "record_ids": [
+            "am-sale-004"
+          ],
+          "taxonomy_code": "REV_GROSS_SALES"
+        },
+        {
+          "record_ids": [
+            "am-res-004"
+          ],
+          "taxonomy_code": "LIQ_RESERVE_HOLD"
+        },
+        {
+          "record_ids": [
+            "am-disb-004"
+          ],
+          "taxonomy_code": "TRF_PAYOUT"
+        }
+      ],
+      "expected_calculations": [
+        {
+          "calculation_code": "expected_payout",
+          "formula": "10000 - 1500",
+          "expected_value": 8500,
+          "tolerance": 0.01,
+          "currency": "USD"
+        },
+        {
+          "calculation_code": "reserve_exposure_ratio",
+          "formula": "1500 / 10000",
+          "expected_value": 0.15,
+          "tolerance": 1e-06
+        }
+      ],
+      "expected_reconciliation_status": "partial",
+      "expected_confidence": "Medium",
+      "expected_warnings": [
+        "Reserve release timing is not supplied.",
+        "A reserve is a liquidity restriction, not automatically an expense."
+      ],
+      "expected_user_facing_response": "The $1,500 account-level reserve explains the $8,500 disbursement and represents 15.00% of gross sales in scope. Release timing remains unresolved.",
+      "expected_escalation": {
+        "required": true,
+        "reason": "Reserve terms and release timing require verification.",
+        "target_role": "finance operator"
+      },
+      "pass_criteria": [
+        "Reserve is not classified as a fee.",
+        "Expected disbursement equals $8,500.00.",
+        "Reserve exposure equals 15.00%."
+      ]
+    },
+    {
+      "test_id": "QA-005",
+      "scenario": "Amazon reimbursement",
+      "input_records": [
+        {
+          "record_id": "am-reimb-005",
+          "platform": "amazon",
+          "transaction_at": "2026-06-11T00:00:00Z",
+          "currency": "USD",
+          "source_amount": 240,
+          "source_label": "FBA Inventory Reimbursement",
+          "settlement_id": "set-fic-005"
+        },
+        {
+          "record_id": "am-disb-005",
+          "platform": "amazon",
+          "transaction_at": "2026-06-14T00:00:00Z",
+          "currency": "USD",
+          "source_amount": -240,
+          "source_label": "Transfer component",
+          "settlement_id": "set-fic-005"
+        },
+        {
+          "record_id": "bank-dep-005",
+          "platform": "bank",
+          "transaction_at": "2026-06-16T00:00:00-04:00",
+          "currency": "USD",
+          "source_amount": 240,
+          "source_label": "AMAZON DISBURSEMENT",
+          "bank_transaction_id": "bank-fic-005"
+        }
+      ],
+      "expected_classification": [
+        {
+          "record_ids": [
+            "am-reimb-005"
+          ],
+          "taxonomy_code": "REC_REIMBURSEMENT"
+        },
+        {
+          "record_ids": [
+            "am-disb-005"
+          ],
+          "taxonomy_code": "TRF_PAYOUT"
+        },
+        {
+          "record_ids": [
+            "bank-dep-005"
+          ],
+          "taxonomy_code": "TRF_BANK_DEPOSIT"
+        }
+      ],
+      "expected_calculations": [
+        {
+          "calculation_code": "recognized_recovery",
+          "formula": "reimbursement event only",
+          "expected_value": 240,
+          "tolerance": 0.01,
+          "currency": "USD"
+        },
+        {
+          "calculation_code": "cash_received",
+          "formula": "bank deposit",
+          "expected_value": 240,
+          "tolerance": 0.01,
+          "currency": "USD"
+        }
+      ],
+      "expected_reconciliation_status": "matched",
+      "expected_confidence": "High",
+      "expected_warnings": [],
+      "expected_user_facing_response": "The $240 Amazon reimbursement is included once as a recovery and is traced through the payout to the matching bank deposit.",
+      "expected_escalation": {
+        "required": false,
+        "reason": null,
+        "target_role": null
+      },
+      "pass_criteria": [
+        "Recovery is recognized once.",
+        "Payout and bank deposit are treated as transfers, not additional revenue.",
+        "Cash received equals $240.00."
+      ]
+    },
+    {
+      "test_id": "QA-006",
+      "scenario": "Amazon advertising deduction represented twice",
+      "input_records": [
+        {
+          "record_id": "am-ad-006a",
+          "platform": "amazon",
+          "transaction_at": "2026-06-10T00:00:00Z",
+          "currency": "USD",
+          "source_amount": -600,
+          "source_label": "Advertising transaction",
+          "transaction_id": "ad-fic-006"
+        },
+        {
+          "record_id": "am-ad-006b",
+          "platform": "amazon",
+          "transaction_at": "2026-06-10T00:00:01Z",
+          "currency": "USD",
+          "source_amount": -600,
+          "source_label": "Service fee - Sponsored Ads",
+          "transaction_id": "ad-fic-006",
+          "settlement_id": "set-fic-006"
+        }
+      ],
+      "expected_classification": [
+        {
+          "record_ids": [
+            "am-ad-006a",
+            "am-ad-006b"
+          ],
+          "taxonomy_code": "FEE_ADVERTISING",
+          "deduplication_result": "one economic expense"
+        }
+      ],
+      "expected_calculations": [
+        {
+          "calculation_code": "advertising_cost_after_dedup",
+          "formula": "600, not 1200",
+          "expected_value": 600,
+          "tolerance": 0.01,
+          "currency": "USD"
+        }
+      ],
+      "expected_reconciliation_status": "partial",
+      "expected_confidence": "Medium",
+      "expected_warnings": [
+        "The same advertising charge appears in two source views."
+      ],
+      "expected_user_facing_response": "The two $600 advertising lines appear to represent one economic charge. The audit counts $600 once and flags the source linkage for review.",
+      "expected_escalation": {
+        "required": true,
+        "reason": "Duplicate linkage should be confirmed before finalizing.",
+        "target_role": "finance operator"
+      },
+      "pass_criteria": [
+        "Both records receive FEE_ADVERTISING.",
+        "Deduplicated advertising cost equals $600.00.",
+        "The report does not total $1,200.00."
+      ]
+    },
+    {
+      "test_id": "QA-007",
+      "scenario": "Stripe international transaction",
+      "input_records": [
+        {
+          "record_id": "st-charge-007",
+          "platform": "stripe",
+          "transaction_at": "2026-06-08T14:00:00Z",
+          "currency": "USD",
+          "source_amount": 100,
+          "source_label": "charge",
+          "balance_transaction_id": "txn-fic-007"
+        },
+        {
+          "record_id": "st-fee-007a",
+          "platform": "stripe",
+          "transaction_at": "2026-06-08T14:00:01Z",
+          "currency": "USD",
+          "source_amount": -2.9,
+          "source_label": "Stripe processing fee",
+          "balance_transaction_id": "txn-fic-007"
+        },
+        {
+          "record_id": "st-fee-007b",
+          "platform": "stripe",
+          "transaction_at": "2026-06-08T14:00:02Z",
+          "currency": "USD",
+          "source_amount": -1.5,
+          "source_label": "International card fee",
+          "balance_transaction_id": "txn-fic-007"
+        }
+      ],
+      "expected_classification": [
+        {
+          "record_ids": [
+            "st-charge-007"
+          ],
+          "taxonomy_code": "REV_GROSS_SALES"
+        },
+        {
+          "record_ids": [
+            "st-fee-007a"
+          ],
+          "taxonomy_code": "FEE_PROCESSING"
+        },
+        {
+          "record_ids": [
+            "st-fee-007b"
+          ],
+          "taxonomy_code": "FEE_INTERNATIONAL"
+        }
+      ],
+      "expected_calculations": [
+        {
+          "calculation_code": "net_balance",
+          "formula": "100 - 2.90 - 1.50",
+          "expected_value": 95.6,
+          "tolerance": 0.01,
+          "currency": "USD"
+        },
+        {
+          "calculation_code": "effective_fee_rate",
+          "formula": "(2.90 + 1.50) / 100",
+          "expected_value": 0.044,
+          "tolerance": 1e-06
+        }
+      ],
+      "expected_reconciliation_status": "matched",
+      "expected_confidence": "High",
+      "expected_warnings": [],
+      "expected_user_facing_response": "The $100 charge produces a $95.60 net balance after $2.90 in processing fees and $1.50 in international fees, for a 4.40% effective fee rate.",
+      "expected_escalation": {
+        "required": false,
+        "reason": null,
+        "target_role": null
+      },
+      "pass_criteria": [
+        "Net balance equals $95.60.",
+        "International fee remains distinct from processing fee.",
+        "Effective fee rate equals 4.40%."
+      ]
+    },
+    {
+      "test_id": "QA-008",
+      "scenario": "Stripe currency conversion fee with missing native amount",
+      "input_records": [
+        {
+          "record_id": "st-fx-008",
+          "platform": "stripe",
+          "transaction_at": "2026-06-09T14:00:00Z",
+          "currency": "USD",
+          "source_amount": -3.2,
+          "source_label": "currency_conversion",
+          "balance_transaction_id": "txn-fic-008"
+        }
+      ],
+      "expected_classification": [
+        {
+          "record_ids": [
+            "st-fx-008"
+          ],
+          "taxonomy_code": "FEE_FX"
+        }
+      ],
+      "expected_calculations": [
+        {
+          "calculation_code": "known_fx_fee",
+          "formula": "abs(-3.20)",
+          "expected_value": 3.2,
+          "tolerance": 0.01,
+          "currency": "USD"
+        }
+      ],
+      "expected_reconciliation_status": "partial",
+      "expected_confidence": "Medium",
+      "expected_warnings": [
+        "Native transaction amount and exchange rate are missing; realized FX rate cannot be calculated."
+      ],
+      "expected_user_facing_response": "A $3.20 currency-conversion fee is verified. The effective exchange rate and FX spread cannot be determined without the native amount and conversion details.",
+      "expected_escalation": {
+        "required": false,
+        "reason": "Directional classification is reliable; detailed FX analysis needs more data.",
+        "target_role": null
+      },
+      "pass_criteria": [
+        "Fee is FEE_FX.",
+        "Known fee equals $3.20.",
+        "No exchange rate is invented.",
+        "Status remains partial."
+      ]
+    },
+    {
+      "test_id": "QA-009",
+      "scenario": "Stripe dispute",
+      "input_records": [
+        {
+          "record_id": "st-disp-009a",
+          "platform": "stripe",
+          "transaction_at": "2026-06-07T14:00:00Z",
+          "currency": "USD",
+          "source_amount": -250,
+          "source_label": "dispute",
+          "charge_id": "ch-fic-009"
+        },
+        {
+          "record_id": "st-disp-009b",
+          "platform": "stripe",
+          "transaction_at": "2026-06-07T14:00:01Z",
+          "currency": "USD",
+          "source_amount": -15,
+          "source_label": "dispute_fee",
+          "charge_id": "ch-fic-009"
+        }
+      ],
+      "expected_classification": [
+        {
+          "record_ids": [
+            "st-disp-009a"
+          ],
+          "taxonomy_code": "RISK_DISPUTE"
+        },
+        {
+          "record_ids": [
+            "st-disp-009b"
+          ],
+          "taxonomy_code": "FEE_PROCESSING",
+          "note": "Dispute fee component; retain source label."
+        }
+      ],
+      "expected_calculations": [
+        {
+          "calculation_code": "current_cash_impact",
+          "formula": "250 + 15",
+          "expected_value": 265,
+          "tolerance": 0.01,
+          "currency": "USD"
+        }
+      ],
+      "expected_reconciliation_status": "partial",
+      "expected_confidence": "Medium",
+      "expected_warnings": [
+        "Final loss cannot be determined until the dispute is resolved.",
+        "Do not assume the principal or fee is recoverable."
+      ],
+      "expected_user_facing_response": "The dispute currently reduces available cash by $265. Final economic loss remains unable to determine until the platform resolves the case.",
+      "expected_escalation": {
+        "required": true,
+        "reason": "Dispute submission and accounting treatment require human review.",
+        "target_role": "operator and accountant"
+      },
+      "pass_criteria": [
+        "Current cash impact equals $265.00.",
+        "Final loss is not stated as definitive.",
+        "Dispute and fee components remain separately classified."
+      ]
+    },
+    {
+      "test_id": "QA-010",
+      "scenario": "Stripe Instant Payout",
+      "input_records": [
+        {
+          "record_id": "st-avail-010",
+          "platform": "stripe",
+          "transaction_at": "2026-06-12T12:00:00Z",
+          "currency": "USD",
+          "source_amount": 1000,
+          "source_label": "available balance",
+          "payout_id": "po-fic-010"
+        },
+        {
+          "record_id": "st-instant-010",
+          "platform": "stripe",
+          "transaction_at": "2026-06-12T12:00:01Z",
+          "currency": "USD",
+          "source_amount": -10,
+          "source_label": "instant_payout_fee",
+          "payout_id": "po-fic-010"
+        },
+        {
+          "record_id": "bank-dep-010",
+          "platform": "bank",
+          "transaction_at": "2026-06-12T12:15:00-04:00",
+          "currency": "USD",
+          "source_amount": 990,
+          "source_label": "STRIPE INSTANT PAYOUT",
+          "payout_id": "po-fic-010"
+        }
+      ],
+      "expected_classification": [
+        {
+          "record_ids": [
+            "st-instant-010"
+          ],
+          "taxonomy_code": "FEE_INSTANT_PAYOUT"
+        },
+        {
+          "record_ids": [
+            "bank-dep-010"
+          ],
+          "taxonomy_code": "TRF_BANK_DEPOSIT"
+        }
+      ],
+      "expected_calculations": [
+        {
+          "calculation_code": "expected_deposit",
+          "formula": "1000 - 10",
+          "expected_value": 990,
+          "tolerance": 0.01,
+          "currency": "USD"
+        },
+        {
+          "calculation_code": "instant_payout_fee_rate",
+          "formula": "10 / 1000",
+          "expected_value": 0.01,
+          "tolerance": 1e-06
+        }
+      ],
+      "expected_reconciliation_status": "matched",
+      "expected_confidence": "High",
+      "expected_warnings": [],
+      "expected_user_facing_response": "The $1,000 available balance produced a $990 Instant Payout deposit after a $10 fee, equal to 1.00% of the payout base.",
+      "expected_escalation": {
+        "required": false,
+        "reason": null,
+        "target_role": null
+      },
+      "pass_criteria": [
+        "Expected deposit equals $990.00.",
+        "Instant payout fee is FEE_INSTANT_PAYOUT.",
+        "Fee rate equals 1.00%."
+      ]
+    },
+    {
+      "test_id": "QA-011",
+      "scenario": "Multi-currency transaction",
+      "input_records": [
+        {
+          "record_id": "mc-sale-011",
+          "platform": "stripe",
+          "transaction_at": "2026-06-05T10:00:00Z",
+          "currency": "EUR",
+          "source_amount": 100,
+          "source_label": "charge",
+          "native_currency": "EUR",
+          "reporting_currency": "USD",
+          "exchange_rate": 1.1
+        },
+        {
+          "record_id": "mc-usd-011",
+          "platform": "stripe",
+          "transaction_at": "2026-06-05T10:00:01Z",
+          "currency": "USD",
+          "source_amount": 110,
+          "source_label": "converted amount",
+          "native_record_id": "mc-sale-011"
+        }
+      ],
+      "expected_classification": [
+        {
+          "record_ids": [
+            "mc-sale-011"
+          ],
+          "taxonomy_code": "REV_GROSS_SALES"
+        },
+        {
+          "record_ids": [
+            "mc-usd-011"
+          ],
+          "taxonomy_code": "TIMING_DIFFERENCE",
+          "note": "Conversion representation linked to native event; not additional sales."
+        }
+      ],
+      "expected_calculations": [
+        {
+          "calculation_code": "reporting_currency_amount",
+          "formula": "EUR 100 × 1.10 USD/EUR",
+          "expected_value": 110,
+          "currency": "USD",
+          "tolerance": 0.01
+        }
+      ],
+      "expected_reconciliation_status": "matched",
+      "expected_confidence": "High",
+      "expected_warnings": [],
+      "expected_user_facing_response": "The €100 transaction converts to $110 at the supplied EUR/USD rate of 1.10. The converted representation is linked to the native sale and is not counted as additional revenue.",
+      "expected_escalation": {
+        "required": false,
+        "reason": null,
+        "target_role": null
+      },
+      "pass_criteria": [
+        "Reporting amount equals $110.00.",
+        "Native and converted records are linked.",
+        "Revenue is counted once."
+      ]
+    },
+    {
+      "test_id": "QA-012",
+      "scenario": "Missing settlement report",
+      "input_records": [
+        {
+          "record_id": "bank-only-012",
+          "platform": "bank",
+          "transaction_at": "2026-06-30T09:00:00-04:00",
+          "currency": "USD",
+          "source_amount": 5000,
+          "source_label": "PLATFORM DEPOSIT",
+          "bank_transaction_id": "bank-fic-012"
+        }
+      ],
+      "expected_classification": [
+        {
+          "record_ids": [
+            "bank-only-012"
+          ],
+          "taxonomy_code": "TRF_BANK_DEPOSIT"
+        }
+      ],
+      "expected_calculations": [],
+      "expected_reconciliation_status": "data_gap",
+      "expected_confidence": "Unable to Determine",
+      "expected_warnings": [
+        "Settlement or payout detail is missing.",
+        "Gross sales, fees, reserves, and refunds cannot be reconciled from the bank deposit alone."
+      ],
+      "expected_user_facing_response": "A $5,000 bank deposit is visible, but the missing settlement report prevents reliable gross-to-net reconciliation. Provide the platform settlement or payout transaction detail.",
+      "expected_escalation": {
+        "required": true,
+        "reason": "Blocking source file is missing.",
+        "target_role": "operator"
+      },
+      "pass_criteria": [
+        "Status is data_gap.",
+        "Confidence is Unable to Determine.",
+        "No fee or gross-sales estimate is generated.",
+        "A prioritized data request is returned."
+      ]
+    },
+    {
+      "test_id": "QA-013",
+      "scenario": "Duplicate transaction",
+      "input_records": [
+        {
+          "record_id": "dup-fee-013a",
+          "platform": "stripe",
+          "transaction_at": "2026-06-06T10:00:00Z",
+          "currency": "USD",
+          "source_amount": -30,
+          "source_label": "fee",
+          "source_record_id": "txn-fic-013",
+          "fingerprint": "fp-fic-013"
+        },
+        {
+          "record_id": "dup-fee-013b",
+          "platform": "stripe",
+          "transaction_at": "2026-06-06T10:00:00Z",
+          "currency": "USD",
+          "source_amount": -30,
+          "source_label": "fee",
+          "source_record_id": "txn-fic-013",
+          "fingerprint": "fp-fic-013"
+        }
+      ],
+      "expected_classification": [
+        {
+          "record_ids": [
+            "dup-fee-013a",
+            "dup-fee-013b"
+          ],
+          "taxonomy_code": "FEE_PROCESSING",
+          "duplicate_status": "confirmed_duplicate"
+        }
+      ],
+      "expected_calculations": [
+        {
+          "calculation_code": "raw_fee_total",
+          "formula": "30 + 30",
+          "expected_value": 60,
+          "tolerance": 0.01,
+          "currency": "USD"
+        },
+        {
+          "calculation_code": "deduplicated_fee_total",
+          "formula": "one economic record",
+          "expected_value": 30,
+          "tolerance": 0.01,
+          "currency": "USD"
+        }
+      ],
+      "expected_reconciliation_status": "partial",
+      "expected_confidence": "High",
+      "expected_warnings": [
+        "A confirmed duplicate was removed from calculation totals but retained in the audit trail."
+      ],
+      "expected_user_facing_response": "The source contains two identical $30 fee records with the same identifier and fingerprint. The audit retains both source rows but counts $30 once.",
+      "expected_escalation": {
+        "required": false,
+        "reason": null,
+        "target_role": null
+      },
+      "pass_criteria": [
+        "Raw total equals $60.00.",
+        "Deduplicated total equals $30.00.",
+        "Both source rows remain traceable."
+      ]
+    },
+    {
+      "test_id": "QA-014",
+      "scenario": "Duplicate bank deposit",
+      "input_records": [
+        {
+          "record_id": "dup-bank-014a",
+          "platform": "bank",
+          "transaction_at": "2026-06-25T09:00:00-04:00",
+          "currency": "USD",
+          "source_amount": 1000,
+          "source_label": "PLATFORM DEPOSIT",
+          "bank_transaction_id": "bank-fic-014",
+          "fingerprint": "fp-bank-014"
+        },
+        {
+          "record_id": "dup-bank-014b",
+          "platform": "bank",
+          "transaction_at": "2026-06-25T09:00:00-04:00",
+          "currency": "USD",
+          "source_amount": 1000,
+          "source_label": "PLATFORM DEPOSIT",
+          "bank_transaction_id": "bank-fic-014",
+          "fingerprint": "fp-bank-014"
+        }
+      ],
+      "expected_classification": [
+        {
+          "record_ids": [
+            "dup-bank-014a",
+            "dup-bank-014b"
+          ],
+          "taxonomy_code": "TRF_BANK_DEPOSIT",
+          "duplicate_status": "confirmed_duplicate"
+        }
+      ],
+      "expected_calculations": [
+        {
+          "calculation_code": "raw_deposit_total",
+          "formula": "1000 + 1000",
+          "expected_value": 2000,
+          "tolerance": 0.01,
+          "currency": "USD"
+        },
+        {
+          "calculation_code": "deduplicated_deposit_total",
+          "formula": "one economic deposit",
+          "expected_value": 1000,
+          "tolerance": 0.01,
+          "currency": "USD"
+        }
+      ],
+      "expected_reconciliation_status": "partial",
+      "expected_confidence": "High",
+      "expected_warnings": [
+        "A duplicated bank row must not create a second cash receipt."
+      ],
+      "expected_user_facing_response": "The bank export contains two identical $1,000 rows for one transaction. The reconciled cash receipt is $1,000, not $2,000.",
+      "expected_escalation": {
+        "required": false,
+        "reason": null,
+        "target_role": null
+      },
+      "pass_criteria": [
+        "Raw deposit total equals $2,000.00.",
+        "Deduplicated cash equals $1,000.00.",
+        "Transfer revenue is not created."
+      ]
+    },
+    {
+      "test_id": "QA-015",
+      "scenario": "Partial date-range overlap",
+      "input_records": [
+        {
+          "record_id": "po-015",
+          "platform": "shopify",
+          "transaction_at": "2026-06-30T18:00:00-04:00",
+          "currency": "USD",
+          "source_amount": -970,
+          "source_label": "payout",
+          "payout_id": "po-fic-015",
+          "expected_deposit_date": "2026-07-01"
+        },
+        {
+          "record_id": "bank-015",
+          "platform": "bank",
+          "transaction_at": "2026-07-02T09:00:00-04:00",
+          "currency": "USD",
+          "source_amount": 970,
+          "source_label": "SHOPIFY DEPOSIT",
+          "payout_id": "po-fic-015"
+        }
+      ],
+      "expected_classification": [
+        {
+          "record_ids": [
+            "po-015"
+          ],
+          "taxonomy_code": "TRF_PAYOUT"
+        },
+        {
+          "record_ids": [
+            "bank-015"
+          ],
+          "taxonomy_code": "TRF_BANK_DEPOSIT"
+        },
+        {
+          "record_ids": [
+            "po-015",
+            "bank-015"
+          ],
+          "taxonomy_code": "TIMING_DIFFERENCE",
+          "note": "Cross-period payout-to-deposit timing."
+        }
+      ],
+      "expected_calculations": [
+        {
+          "calculation_code": "payout_to_bank_days",
+          "formula": "2026-07-02 - 2026-06-30",
+          "expected_value": 2,
+          "tolerance": 0
+        }
+      ],
+      "expected_reconciliation_status": "matched_with_timing_difference",
+      "expected_confidence": "High",
+      "expected_warnings": [
+        "The bank deposit falls outside the June source period but matches the June 30 payout."
+      ],
+      "expected_user_facing_response": "The June 30 payout matches the July 2 bank deposit. The two-day cross-period difference is classified as timing, not an unmatched amount.",
+      "expected_escalation": {
+        "required": false,
+        "reason": null,
+        "target_role": null
+      },
+      "pass_criteria": [
+        "Status is matched_with_timing_difference.",
+        "Payout-to-bank interval equals 2 days.",
+        "No false June variance is reported."
+      ]
+    },
+    {
+      "test_id": "QA-016",
+      "scenario": "Unclassified transaction below blocking threshold",
+      "input_records": [
+        {
+          "record_id": "unc-016",
+          "platform": "amazon",
+          "transaction_at": "2026-06-18T00:00:00Z",
+          "currency": "USD",
+          "source_amount": -125,
+          "source_label": "Miscellaneous adjustment",
+          "settlement_id": "set-fic-016"
+        },
+        {
+          "record_id": "known-016",
+          "platform": "amazon",
+          "transaction_at": "2026-06-18T00:00:01Z",
+          "currency": "USD",
+          "source_amount": 6125,
+          "source_label": "Known classified value",
+          "settlement_id": "set-fic-016"
+        }
+      ],
+      "expected_classification": [
+        {
+          "record_ids": [
+            "unc-016"
+          ],
+          "taxonomy_code": "UNCLASSIFIED"
+        }
+      ],
+      "expected_calculations": [
+        {
+          "calculation_code": "unclassified_value_share",
+          "formula": "125 / (6125 + 125)",
+          "expected_value": 0.02,
+          "tolerance": 1e-06
+        }
+      ],
+      "expected_reconciliation_status": "partial",
+      "expected_confidence": "Medium",
+      "expected_warnings": [
+        "A $125 transaction remains unclassified.",
+        "The unclassified share is 2.00%, below the automatic 20% Data Gap trigger."
+      ],
+      "expected_user_facing_response": "A $125 miscellaneous adjustment remains unclassified. The audit continues as a partial reconciliation because the item represents 2.00% of in-scope value, but the finding remains preliminary.",
+      "expected_escalation": {
+        "required": true,
+        "reason": "Ambiguous transaction classification needs review.",
+        "target_role": "finance operator"
+      },
+      "pass_criteria": [
+        "Unclassified share equals 2.00%.",
+        "Status is partial, not data_gap.",
+        "The transaction is not silently assigned to a fee category."
+      ]
+    },
+    {
+      "test_id": "QA-017",
+      "scenario": "More than 20% unclassified value",
+      "input_records": [
+        {
+          "record_id": "known-017",
+          "platform": "generic_processor",
+          "transaction_at": "2026-06-18T00:00:00Z",
+          "currency": "USD",
+          "source_amount": 7000,
+          "source_label": "Known classified activity"
+        },
+        {
+          "record_id": "unc-017",
+          "platform": "generic_processor",
+          "transaction_at": "2026-06-18T00:00:01Z",
+          "currency": "USD",
+          "source_amount": -3000,
+          "source_label": "Unknown adjustment"
+        }
+      ],
+      "expected_classification": [
+        {
+          "record_ids": [
+            "unc-017"
+          ],
+          "taxonomy_code": "UNCLASSIFIED"
+        }
+      ],
+      "expected_calculations": [
+        {
+          "calculation_code": "unclassified_value_share",
+          "formula": "3000 / (7000 + 3000)",
+          "expected_value": 0.3,
+          "tolerance": 1e-06
+        }
+      ],
+      "expected_reconciliation_status": "data_gap",
+      "expected_confidence": "Unable to Determine",
+      "expected_warnings": [
+        "Unclassified value equals 30.00% of in-scope transaction value and exceeds the 20% blocking threshold."
+      ],
+      "expected_user_facing_response": "Reliable reconciliation is blocked because $3,000, or 30.00% of in-scope value, remains unclassified. Provide source detail or platform documentation before relying on the totals.",
+      "expected_escalation": {
+        "required": true,
+        "reason": "Automatic Data Gap trigger exceeded.",
+        "target_role": "operator"
+      },
+      "pass_criteria": [
+        "Unclassified share equals 30.00%.",
+        "Status is data_gap.",
+        "Confidence is Unable to Determine.",
+        "Definitive fee and margin conclusions are withheld."
+      ]
+    },
+    {
+      "test_id": "QA-018",
+      "scenario": "Negative SKU contribution margin",
+      "input_records": [
+        {
+          "record_id": "sku-sales-018",
+          "platform": "shopify",
+          "transaction_at": "2026-06-01T00:00:00-04:00",
+          "currency": "USD",
+          "source_amount": 5000,
+          "source_label": "SKU gross sales",
+          "sku": "SKU-FIC-018"
+        },
+        {
+          "record_id": "sku-refund-018",
+          "platform": "shopify",
+          "transaction_at": "2026-06-10T00:00:00-04:00",
+          "currency": "USD",
+          "source_amount": -500,
+          "source_label": "SKU refunds",
+          "sku": "SKU-FIC-018"
+        },
+        {
+          "record_id": "sku-cost-018",
+          "platform": "other",
+          "transaction_at": "2026-06-30T00:00:00-04:00",
+          "currency": "USD",
+          "source_amount": -4800,
+          "source_label": "Total variable cost",
+          "sku": "SKU-FIC-018"
+        }
+      ],
+      "expected_classification": [
+        {
+          "record_ids": [
+            "sku-sales-018"
+          ],
+          "taxonomy_code": "REV_GROSS_SALES"
+        },
+        {
+          "record_ids": [
+            "sku-refund-018"
+          ],
+          "taxonomy_code": "REV_REFUND"
+        }
+      ],
+      "expected_calculations": [
+        {
+          "calculation_code": "net_product_revenue",
+          "formula": "5000 - 500",
+          "expected_value": 4500,
+          "tolerance": 0.01,
+          "currency": "USD"
+        },
+        {
+          "calculation_code": "contribution_profit",
+          "formula": "4500 - 4800",
+          "expected_value": -300,
+          "tolerance": 0.01,
+          "currency": "USD"
+        },
+        {
+          "calculation_code": "contribution_margin_rate",
+          "formula": "-300 / 4500",
+          "expected_value": -0.0666667,
+          "tolerance": 1e-06
+        }
+      ],
+      "expected_reconciliation_status": "partial",
+      "expected_confidence": "Medium",
+      "expected_warnings": [
+        "The SKU has negative contribution margin in the covered period.",
+        "Cost allocation should be reviewed before a pricing or inventory decision."
+      ],
+      "expected_user_facing_response": "SKU-FIC-018 generated $4,500 in net product revenue against $4,800 in variable costs, producing a $300 contribution loss and a -6.67% contribution margin.",
+      "expected_escalation": {
+        "required": true,
+        "reason": "Material negative margin and cost allocation require human review.",
+        "target_role": "operator or accountant"
+      },
+      "pass_criteria": [
+        "Net product revenue equals $4,500.00.",
+        "Contribution profit equals -$300.00.",
+        "Contribution margin equals approximately -6.67%."
+      ]
+    },
+    {
+      "test_id": "QA-019",
+      "scenario": "Payout timing gap",
+      "input_records": [
+        {
+          "record_id": "po-019",
+          "platform": "stripe",
+          "transaction_at": "2026-06-10T12:00:00Z",
+          "currency": "USD",
+          "source_amount": -2500,
+          "source_label": "payout",
+          "payout_id": "po-fic-019",
+          "expected_deposit_date": "2026-06-12"
+        },
+        {
+          "record_id": "bank-019",
+          "platform": "bank",
+          "transaction_at": "2026-06-18T09:00:00-04:00",
+          "currency": "USD",
+          "source_amount": 2500,
+          "source_label": "STRIPE PAYOUT",
+          "payout_id": "po-fic-019"
+        }
+      ],
+      "expected_classification": [
+        {
+          "record_ids": [
+            "po-019"
+          ],
+          "taxonomy_code": "TRF_PAYOUT"
+        },
+        {
+          "record_ids": [
+            "bank-019"
+          ],
+          "taxonomy_code": "TRF_BANK_DEPOSIT"
+        },
+        {
+          "record_ids": [
+            "po-019",
+            "bank-019"
+          ],
+          "taxonomy_code": "TIMING_DIFFERENCE"
+        }
+      ],
+      "expected_calculations": [
+        {
+          "calculation_code": "payout_to_bank_days",
+          "formula": "2026-06-18 - 2026-06-10",
+          "expected_value": 8,
+          "tolerance": 0
+        },
+        {
+          "calculation_code": "delay_days",
+          "formula": "actual 8 - expected 2",
+          "expected_value": 6,
+          "tolerance": 0
+        }
+      ],
+      "expected_reconciliation_status": "matched_with_timing_difference",
+      "expected_confidence": "High",
+      "expected_warnings": [
+        "The payout matched but arrived six days later than expected."
+      ],
+      "expected_user_facing_response": "The $2,500 payout matches the bank deposit, but settlement took eight days—six days longer than the expected two-day interval. This is a cash-timing issue, not a missing payout.",
+      "expected_escalation": {
+        "required": true,
+        "reason": "Material timing delay may warrant platform or bank follow-up.",
+        "target_role": "finance operator"
+      },
+      "pass_criteria": [
+        "Payout-to-bank days equals 8.",
+        "Delay equals 6 days.",
+        "Status is matched_with_timing_difference, not unmatched."
+      ]
+    },
+    {
+      "test_id": "QA-020",
+      "scenario": "Reserve release",
+      "input_records": [
+        {
+          "record_id": "res-hold-020",
+          "platform": "amazon",
+          "transaction_at": "2026-06-01T00:00:00Z",
+          "currency": "USD",
+          "source_amount": -2000,
+          "source_label": "Account Level Reserve",
+          "reserve_id": "res-fic-020"
+        },
+        {
+          "record_id": "res-rel-020",
+          "platform": "amazon",
+          "transaction_at": "2026-06-20T00:00:00Z",
+          "currency": "USD",
+          "source_amount": 2000,
+          "source_label": "Previous Reserve Amount Balance",
+          "reserve_id": "res-fic-020"
+        }
+      ],
+      "expected_classification": [
+        {
+          "record_ids": [
+            "res-hold-020"
+          ],
+          "taxonomy_code": "LIQ_RESERVE_HOLD"
+        },
+        {
+          "record_ids": [
+            "res-rel-020"
+          ],
+          "taxonomy_code": "LIQ_RESERVE_RELEASE"
+        }
+      ],
+      "expected_calculations": [
+        {
+          "calculation_code": "ending_reserve_balance",
+          "formula": "2000 hold - 2000 release",
+          "expected_value": 0,
+          "tolerance": 0.01,
+          "currency": "USD"
+        },
+        {
+          "calculation_code": "new_revenue_from_release",
+          "formula": "reserve release is liquidity movement",
+          "expected_value": 0,
+          "tolerance": 0.01,
+          "currency": "USD"
+        }
+      ],
+      "expected_reconciliation_status": "matched",
+      "expected_confidence": "High",
+      "expected_warnings": [],
+      "expected_user_facing_response": "The $2,000 reserve hold was fully released, leaving a $0 ending reserve balance. The release restores cash availability but does not create new sales revenue.",
+      "expected_escalation": {
+        "required": false,
+        "reason": null,
+        "target_role": null
+      },
+      "pass_criteria": [
+        "Ending reserve equals $0.00.",
+        "Reserve release is not classified as revenue.",
+        "Hold and release are linked to the same reserve ID."
+      ]
+    },
+    {
+      "test_id": "QA-021",
+      "scenario": "Conflicting payout identifiers",
+      "input_records": [
+        {
+          "record_id": "po-021",
+          "platform": "shopify",
+          "transaction_at": "2026-06-22T18:00:00-04:00",
+          "currency": "USD",
+          "source_amount": -1200,
+          "source_label": "payout",
+          "payout_id": "po-fic-A",
+          "bank_trace": "trace-fic-021"
+        },
+        {
+          "record_id": "bank-021",
+          "platform": "bank",
+          "transaction_at": "2026-06-24T09:00:00-04:00",
+          "currency": "USD",
+          "source_amount": 1200,
+          "source_label": "SHOPIFY DEPOSIT",
+          "payout_id": "po-fic-B",
+          "bank_trace": "trace-fic-021"
+        }
+      ],
+      "expected_classification": [
+        {
+          "record_ids": [
+            "po-021"
+          ],
+          "taxonomy_code": "TRF_PAYOUT"
+        },
+        {
+          "record_ids": [
+            "bank-021"
+          ],
+          "taxonomy_code": "TRF_BANK_DEPOSIT"
+        }
+      ],
+      "expected_calculations": [
+        {
+          "calculation_code": "amount_variance",
+          "formula": "1200 - 1200",
+          "expected_value": 0,
+          "tolerance": 0.01,
+          "currency": "USD"
+        }
+      ],
+      "expected_reconciliation_status": "human_review_required",
+      "expected_confidence": "Medium",
+      "expected_warnings": [
+        "Payout identifiers conflict even though amount and bank trace match."
+      ],
+      "expected_user_facing_response": "The $1,200 amount and bank trace align, but the payout identifiers conflict. Treat the proposed match as provisional until a human verifies the source records.",
+      "expected_escalation": {
+        "required": true,
+        "reason": "Conflicting identifiers require manual verification.",
+        "target_role": "finance operator"
+      },
+      "pass_criteria": [
+        "Status is human_review_required.",
+        "Confidence is Medium.",
+        "The system does not auto-approve the match solely from amount equality."
+      ]
+    }
+  ]
+}

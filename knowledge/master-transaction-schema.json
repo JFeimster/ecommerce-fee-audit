@@ -1,0 +1,998 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://moonshine.example/schemas/master-transaction-schema-1.0.0.json",
+  "title": "AI Platform Fee Audit Copilot Master Transaction Schema",
+  "description": "Canonical normalized record for ecommerce transaction, settlement, payout, advertising, reserve, financing, and bank reconciliation activity.",
+  "x-metadata": {
+    "filename": "master-transaction-schema.json",
+    "version": "1.0.0",
+    "status": "production-ready",
+    "last_updated": "2026-07-27",
+    "default_example_currency": "USD",
+    "date_standard": "ISO 8601",
+    "currency_standard": "ISO 4217",
+    "related_files": [
+      "normalized-platform-fee-taxonomy.yaml",
+      "column-mapping-library.json",
+      "reconciliation-and-calculation-rules.md"
+    ]
+  },
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "transaction_id",
+    "source_system",
+    "source_file_id",
+    "source_filename",
+    "platform",
+    "transaction_at",
+    "analysis_timezone",
+    "transaction_currency",
+    "source_amount",
+    "normalized_classification",
+    "classification_parent",
+    "classification_method",
+    "mapping_confidence",
+    "classification_confidence",
+    "evidence_label",
+    "duplicate_fingerprint",
+    "duplicate_status",
+    "reconciliation_status",
+    "matched_record_ids",
+    "exception_status",
+    "review_status",
+    "human_review_required",
+    "ingested_at",
+    "normalized_at",
+    "record_version",
+    "source_record_hash"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "description": "Schema version used to normalize this record.",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "transaction_id": {
+      "type": "string",
+      "description": "Globally unique normalized record identifier.",
+      "pattern": "^[A-Za-z0-9._:-]+$"
+    },
+    "parent_transaction_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Parent normalized event for component or lifecycle records."
+    },
+    "source_system": {
+      "type": "string",
+      "description": "Canonical source-system code."
+    },
+    "source_account_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Redacted or platform account identifier."
+    },
+    "source_file_id": {
+      "type": "string",
+      "description": "Stable imported-file identifier."
+    },
+    "source_filename": {
+      "type": "string",
+      "description": "Original filename without local path or credentials."
+    },
+    "source_row_number": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "description": "One-based source row number.",
+      "minimum": 1
+    },
+    "source_record_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Original transaction, balance-transaction, event, or line identifier."
+    },
+    "source_description": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Unmodified source description or label."
+    },
+    "source_transaction_type": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Unmodified source transaction type."
+    },
+    "platform": {
+      "type": "string",
+      "enum": [
+        "shopify",
+        "amazon",
+        "stripe",
+        "meta_ads",
+        "google_ads",
+        "tiktok_ads",
+        "generic_processor",
+        "bank",
+        "other"
+      ],
+      "description": "Canonical platform."
+    },
+    "platform_account_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Store, seller, processor, advertising, or bank account ID or alias."
+    },
+    "store_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Storefront or sales-channel identifier."
+    },
+    "marketplace_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Marketplace or regional marketplace identifier."
+    },
+    "order_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Order identifier."
+    },
+    "line_item_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Order line-item identifier."
+    },
+    "transaction_reference_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Payment, charge, shipment, campaign, or transaction reference."
+    },
+    "settlement_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Settlement grouping identifier."
+    },
+    "payout_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Platform or processor payout identifier."
+    },
+    "payout_trace_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Bank trace or reference identifier for payout matching."
+    },
+    "bank_transaction_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Bank-side transaction identifier."
+    },
+    "sku": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Merchant SKU."
+    },
+    "asin": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Amazon Standard Identification Number."
+    },
+    "product_name": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Product or offer name; customer data must be redacted."
+    },
+    "quantity": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Source quantity."
+    },
+    "quantity_direction": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "sold",
+            "returned",
+            "adjusted_in",
+            "adjusted_out",
+            "not_applicable",
+            "unknown"
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Direction or meaning of quantity."
+    },
+    "transaction_at": {
+      "type": "string",
+      "description": "Source transaction timestamp including offset when available.",
+      "format": "date-time"
+    },
+    "available_on": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Date funds become available in the platform balance.",
+      "format": "date"
+    },
+    "settlement_date": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Settlement date.",
+      "format": "date"
+    },
+    "payout_initiated_date": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Date payout was initiated or sent.",
+      "format": "date"
+    },
+    "expected_arrival_date": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Expected bank-arrival date.",
+      "format": "date"
+    },
+    "bank_posted_date": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Bank-posted date.",
+      "format": "date"
+    },
+    "source_timezone": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Source timezone or UTC offset."
+    },
+    "analysis_timezone": {
+      "type": "string",
+      "description": "Timezone used for period cutoffs."
+    },
+    "transaction_currency": {
+      "type": "string",
+      "description": "ISO 4217 transaction currency.",
+      "pattern": "^[A-Z]{3}$"
+    },
+    "settlement_currency": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "ISO 4217 settlement currency.",
+      "pattern": "^[A-Z]{3}$"
+    },
+    "bank_currency": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "ISO 4217 bank currency.",
+      "pattern": "^[A-Z]{3}$"
+    },
+    "exchange_rate": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Units of quote currency per one base-currency unit.",
+      "exclusiveMinimum": 0
+    },
+    "exchange_rate_quote": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Explicit quote direction, e.g. USD_per_EUR."
+    },
+    "exchange_rate_source": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Platform, bank, contract, or approved external rate source."
+    },
+    "source_amount": {
+      "type": "number",
+      "description": "Unmodified monetary value from the source row."
+    },
+    "normalized_amount": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Signed merchant impact: positive increases value or cash; negative decreases it."
+    },
+    "gross_amount": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Non-negative gross magnitude.",
+      "minimum": 0
+    },
+    "discount_amount": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Non-negative discount magnitude.",
+      "minimum": 0
+    },
+    "shipping_income_amount": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Non-negative customer shipping income.",
+      "minimum": 0
+    },
+    "tip_amount": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Non-negative tip magnitude.",
+      "minimum": 0
+    },
+    "tax_amount": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Signed tax collection, reversal, withholding, or remittance amount."
+    },
+    "duty_amount": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Signed duty collection, withholding, or payment amount."
+    },
+    "fee_amount": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Non-negative permanent fee magnitude.",
+      "minimum": 0
+    },
+    "refund_amount": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Non-negative refunded-principal magnitude.",
+      "minimum": 0
+    },
+    "chargeback_amount": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Non-negative chargeback-principal magnitude.",
+      "minimum": 0
+    },
+    "reserve_hold_amount": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Non-negative new reserve-hold magnitude.",
+      "minimum": 0
+    },
+    "reserve_release_amount": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Non-negative reserve-release magnitude.",
+      "minimum": 0
+    },
+    "financing_remittance_amount": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Non-negative financing remittance magnitude.",
+      "minimum": 0
+    },
+    "financing_principal_amount": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Supported principal component.",
+      "minimum": 0
+    },
+    "financing_cost_amount": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Supported financing-cost component.",
+      "minimum": 0
+    },
+    "reimbursement_amount": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Non-negative reimbursement magnitude.",
+      "minimum": 0
+    },
+    "advertising_amount": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Non-negative advertising-cost magnitude.",
+      "minimum": 0
+    },
+    "cogs_amount": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Non-negative cost-of-goods-sold magnitude.",
+      "minimum": 0
+    },
+    "fulfillment_amount": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Non-negative fulfillment-cost magnitude.",
+      "minimum": 0
+    },
+    "shipping_cost_amount": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Non-negative shipping-cost magnitude.",
+      "minimum": 0
+    },
+    "net_amount": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Signed net impact reported or calculated for this record."
+    },
+    "deposit_amount": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Signed bank deposit or withdrawal amount."
+    },
+    "normalized_classification": {
+      "type": "string",
+      "description": "Canonical code from normalized-platform-fee-taxonomy.yaml."
+    },
+    "classification_parent": {
+      "type": "string",
+      "description": "Parent category from the taxonomy."
+    },
+    "classification_method": {
+      "type": "string",
+      "enum": [
+        "exact_rule",
+        "alias_rule",
+        "composite_rule",
+        "manual",
+        "inferred",
+        "unclassified"
+      ],
+      "description": "Method used to classify the row."
+    },
+    "mapping_confidence": {
+      "type": "string",
+      "enum": [
+        "high",
+        "medium",
+        "low",
+        "unable_to_determine"
+      ],
+      "description": "Confidence in source-column mapping."
+    },
+    "classification_confidence": {
+      "type": "string",
+      "enum": [
+        "high",
+        "medium",
+        "low",
+        "unable_to_determine"
+      ],
+      "description": "Confidence in canonical classification."
+    },
+    "evidence_label": {
+      "type": "string",
+      "enum": [
+        "verified_fact",
+        "user_provided_data",
+        "assumption",
+        "calculation",
+        "inference",
+        "recommendation"
+      ],
+      "description": "Evidence type for this record or derived field."
+    },
+    "assumption_note": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Required when a material field relies on an assumption or inference."
+    },
+    "duplicate_fingerprint": {
+      "type": "string",
+      "description": "Deterministic duplicate fingerprint."
+    },
+    "duplicate_group_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Identifier shared by suspected duplicate records."
+    },
+    "duplicate_status": {
+      "type": "string",
+      "enum": [
+        "not_checked",
+        "unique",
+        "exact_duplicate",
+        "probable_duplicate",
+        "related_not_duplicate",
+        "human_review_required"
+      ],
+      "description": "Duplicate-review status."
+    },
+    "reconciliation_status": {
+      "type": "string",
+      "enum": [
+        "not_started",
+        "partial",
+        "matched",
+        "matched_with_timing_difference",
+        "unmatched",
+        "data_gap",
+        "human_review_required"
+      ],
+      "description": "Reconciliation status."
+    },
+    "matched_record_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Normalized IDs matched across order, settlement, payout, or bank layers."
+    },
+    "match_method": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "exact_id",
+            "exact_amount_date",
+            "one_to_many",
+            "many_to_one",
+            "fx_adjusted",
+            "manual",
+            "none"
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Method used to match related records."
+    },
+    "amount_variance": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Difference between matched amounts in comparison currency."
+    },
+    "date_variance_days": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "description": "Calendar-day difference between compared dates."
+    },
+    "exception_status": {
+      "type": "string",
+      "enum": [
+        "none",
+        "open",
+        "investigating",
+        "awaiting_data",
+        "resolved",
+        "waived",
+        "escalated"
+      ],
+      "description": "Exception status."
+    },
+    "exception_code": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Machine-readable exception code."
+    },
+    "review_status": {
+      "type": "string",
+      "enum": [
+        "unreviewed",
+        "reviewed",
+        "approved",
+        "rejected",
+        "escalated"
+      ],
+      "description": "Human-review status."
+    },
+    "human_review_required": {
+      "type": "boolean",
+      "description": "Whether qualified human review is required."
+    },
+    "review_reason": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Reason for human review."
+    },
+    "notes": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Non-sensitive operational notes."
+    },
+    "ingested_at": {
+      "type": "string",
+      "description": "Timestamp at which the source row was ingested.",
+      "format": "date-time"
+    },
+    "normalized_at": {
+      "type": "string",
+      "description": "Timestamp at which the normalized record was created.",
+      "format": "date-time"
+    },
+    "record_version": {
+      "type": "integer",
+      "description": "Monotonic record version.",
+      "minimum": 1
+    },
+    "source_record_hash": {
+      "type": "string",
+      "description": "Hash of immutable source fields used for change detection."
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "evidence_label": {
+            "const": "assumption"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "assumption_note"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "match_method": {
+            "enum": [
+              "exact_id",
+              "exact_amount_date",
+              "one_to_many",
+              "many_to_one",
+              "fx_adjusted",
+              "manual"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "matched_record_ids": {
+            "minItems": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "platform": {
+            "const": "bank"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "bank_transaction_id",
+          "bank_posted_date",
+          "bank_currency"
+        ]
+      }
+    }
+  ],
+  "x-business-rules": {
+    "null_handling": [
+      "null means unknown, unavailable, or not applicable; never coerce it to zero.",
+      "zero means a confirmed numeric zero.",
+      "Missing required financial fields trigger validation failure or a Data Gap Report."
+    ],
+    "sign_conventions": [
+      "source_amount preserves the original source sign.",
+      "normalized_amount is positive when merchant economic value or cash increases and negative when it decreases.",
+      "Component cost fields are non-negative magnitudes.",
+      "Payout is negative at platform balance and matching bank deposit is positive at bank; neither is revenue.",
+      "Reserve hold reduces available cash and reserve release increases it; neither is automatically margin."
+    ],
+    "rounding_rules": [
+      "Preserve source precision.",
+      "Use decimal arithmetic in production.",
+      "Calculate with at least four decimal places or platform-native precision.",
+      "Round only presentation values using the currency minor unit."
+    ],
+    "duplicate_fingerprint_default": "SHA-256 of normalized source_system|source_account_id|source_record_id|transaction_at|transaction_currency|source_amount|source_transaction_type|order_id|settlement_id|payout_id.",
+    "validation_rules": [
+      "Currency is required for monetary records.",
+      "Exchange rate, quote direction, and source are required when currencies differ and amounts are compared.",
+      "Tax, duty, material unclassified, financing split, ambiguous reserve, dispute, and unsupported mappings require human review.",
+      "A record cannot be marked matched when unexplained variance exceeds approved materiality."
+    ]
+  },
+  "examples": [
+    {
+      "schema_version": "1.0.0",
+      "transaction_id": "NTX-DEMO-0001",
+      "parent_transaction_id": null,
+      "source_system": "shopify_payments",
+      "source_account_id": "store_demo_01",
+      "source_file_id": "F-DEMO-001",
+      "source_filename": "shopify_payout_demo.csv",
+      "source_row_number": 2,
+      "source_record_id": "txn_demo_1001",
+      "source_description": "Charge",
+      "source_transaction_type": "charge",
+      "platform": "shopify",
+      "platform_account_id": "store_demo_01",
+      "store_id": "northstar-demo",
+      "marketplace_id": null,
+      "order_id": "ORD-DEMO-1001",
+      "line_item_id": null,
+      "transaction_reference_id": "txn_demo_1001",
+      "settlement_id": "SET-DEMO-01",
+      "payout_id": "PO-DEMO-01",
+      "payout_trace_id": null,
+      "bank_transaction_id": null,
+      "sku": "NS-MUG-BLK",
+      "asin": null,
+      "product_name": "Fictional Black Mug",
+      "quantity": 2,
+      "quantity_direction": "sold",
+      "transaction_at": "2026-06-05T14:22:31-04:00",
+      "available_on": "2026-06-07",
+      "settlement_date": "2026-06-07",
+      "payout_initiated_date": "2026-06-08",
+      "expected_arrival_date": "2026-06-10",
+      "bank_posted_date": null,
+      "source_timezone": "-04:00",
+      "analysis_timezone": "America/New_York",
+      "transaction_currency": "USD",
+      "settlement_currency": "USD",
+      "bank_currency": "USD",
+      "exchange_rate": 1.0,
+      "exchange_rate_quote": "USD_per_USD",
+      "exchange_rate_source": "identity",
+      "source_amount": 60.0,
+      "normalized_amount": 60.0,
+      "gross_amount": 60.0,
+      "discount_amount": 0.0,
+      "shipping_income_amount": null,
+      "tip_amount": null,
+      "tax_amount": null,
+      "duty_amount": null,
+      "fee_amount": null,
+      "refund_amount": null,
+      "chargeback_amount": null,
+      "reserve_hold_amount": null,
+      "reserve_release_amount": null,
+      "financing_remittance_amount": null,
+      "financing_principal_amount": null,
+      "financing_cost_amount": null,
+      "reimbursement_amount": null,
+      "advertising_amount": null,
+      "cogs_amount": null,
+      "fulfillment_amount": null,
+      "shipping_cost_amount": null,
+      "net_amount": 60.0,
+      "deposit_amount": null,
+      "normalized_classification": "REV_GROSS_SALES",
+      "classification_parent": "revenue",
+      "classification_method": "exact_rule",
+      "mapping_confidence": "high",
+      "classification_confidence": "high",
+      "evidence_label": "verified_fact",
+      "assumption_note": null,
+      "duplicate_fingerprint": "sha256:demo_charge_0001",
+      "duplicate_group_id": null,
+      "duplicate_status": "unique",
+      "reconciliation_status": "matched",
+      "matched_record_ids": [
+        "NTX-DEMO-0002"
+      ],
+      "match_method": "exact_id",
+      "amount_variance": 0.0,
+      "date_variance_days": 0,
+      "exception_status": "none",
+      "exception_code": null,
+      "review_status": "reviewed",
+      "human_review_required": false,
+      "review_reason": null,
+      "notes": "Fictional example only.",
+      "ingested_at": "2026-07-27T12:00:00-04:00",
+      "normalized_at": "2026-07-27T12:01:00-04:00",
+      "record_version": 1,
+      "source_record_hash": "sha256:demo_source_0001"
+    },
+    {
+      "schema_version": "1.0.0",
+      "transaction_id": "NTX-DEMO-BANK-0001",
+      "parent_transaction_id": null,
+      "source_system": "bank",
+      "source_account_id": "store_demo_01",
+      "source_file_id": "F-DEMO-003",
+      "source_filename": "bank_demo_redacted.csv",
+      "source_row_number": 10,
+      "source_record_id": "bank_demo_tx_77",
+      "source_description": "ACH CREDIT SHOPIFY",
+      "source_transaction_type": "deposit",
+      "platform": "bank",
+      "platform_account_id": "bank_demo_01",
+      "store_id": null,
+      "marketplace_id": null,
+      "order_id": null,
+      "line_item_id": null,
+      "transaction_reference_id": null,
+      "settlement_id": null,
+      "payout_id": "PO-DEMO-01",
+      "payout_trace_id": "trace_demo_01",
+      "bank_transaction_id": "bank_demo_tx_77",
+      "sku": null,
+      "asin": null,
+      "product_name": null,
+      "quantity": null,
+      "quantity_direction": "not_applicable",
+      "transaction_at": "2026-06-10T09:03:00-04:00",
+      "available_on": null,
+      "settlement_date": null,
+      "payout_initiated_date": "2026-06-08",
+      "expected_arrival_date": "2026-06-10",
+      "bank_posted_date": "2026-06-10",
+      "source_timezone": "America/New_York",
+      "analysis_timezone": "America/New_York",
+      "transaction_currency": "USD",
+      "settlement_currency": "USD",
+      "bank_currency": "USD",
+      "exchange_rate": 1.0,
+      "exchange_rate_quote": "USD_per_USD",
+      "exchange_rate_source": "identity",
+      "source_amount": 57.96,
+      "normalized_amount": 57.96,
+      "gross_amount": null,
+      "discount_amount": null,
+      "shipping_income_amount": null,
+      "tip_amount": null,
+      "tax_amount": null,
+      "duty_amount": null,
+      "fee_amount": null,
+      "refund_amount": null,
+      "chargeback_amount": null,
+      "reserve_hold_amount": null,
+      "reserve_release_amount": null,
+      "financing_remittance_amount": null,
+      "financing_principal_amount": null,
+      "financing_cost_amount": null,
+      "reimbursement_amount": null,
+      "advertising_amount": null,
+      "cogs_amount": null,
+      "fulfillment_amount": null,
+      "shipping_cost_amount": null,
+      "net_amount": 57.96,
+      "deposit_amount": 57.96,
+      "normalized_classification": "TRF_BANK_DEPOSIT",
+      "classification_parent": "transfers",
+      "classification_method": "alias_rule",
+      "mapping_confidence": "medium",
+      "classification_confidence": "high",
+      "evidence_label": "verified_fact",
+      "assumption_note": null,
+      "duplicate_fingerprint": "sha256:demo_bank_0001",
+      "duplicate_group_id": null,
+      "duplicate_status": "unique",
+      "reconciliation_status": "matched",
+      "matched_record_ids": [
+        "NTX-DEMO-PAYOUT-0001"
+      ],
+      "match_method": "exact_amount_date",
+      "amount_variance": 0.0,
+      "date_variance_days": 2,
+      "exception_status": "none",
+      "exception_code": null,
+      "review_status": "reviewed",
+      "human_review_required": false,
+      "review_reason": null,
+      "notes": "Fictional example only.",
+      "ingested_at": "2026-07-27T12:00:00-04:00",
+      "normalized_at": "2026-07-27T12:01:00-04:00",
+      "record_version": 1,
+      "source_record_hash": "sha256:demo_source_bank_0001"
+    }
+  ]
+}

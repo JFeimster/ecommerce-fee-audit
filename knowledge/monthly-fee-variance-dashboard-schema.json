@@ -1,0 +1,758 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "metadata": {
+    "title": "Monthly Fee Variance Dashboard Schema",
+    "filename": "monthly-fee-variance-dashboard-schema.json",
+    "version": "1.0.0",
+    "status": "production-ready",
+    "last_updated": "2026-07-27",
+    "default_example_currency": "USD",
+    "purpose": "Chart-ready KPI, variance, alert, filter, and drill-down specification for platform-fee and cash-timing dashboards.",
+    "related_files": [
+      "normalized-platform-fee-taxonomy.yaml",
+      "master-transaction-schema.json",
+      "reconciliation-and-calculation-rules.md",
+      "sku-contribution-margin-scorecard.csv",
+      "reserve-and-hold-tracker.csv"
+    ]
+  },
+  "conventions": {
+    "date_format": "ISO 8601",
+    "period_format": "YYYY-MM",
+    "currency_format": "ISO 4217 uppercase",
+    "amount_sign": "Dashboard expense and exposure magnitudes are non-negative; signed source records remain available in drill-down.",
+    "ratio_storage": "Decimal ratio; 0.125 means 12.5%.",
+    "rounding": "Store unrounded values; display currency to currency exponent and ratios to 2 percentage points.",
+    "null_rule": "null means unavailable or unsupported; zero means confirmed zero.",
+    "comparison_rule": "Compare like platform, store, channel, fee category, currency, period length, and data coverage."
+  },
+  "record_schema": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "schema_version",
+      "record_id",
+      "reporting_period",
+      "platform",
+      "store",
+      "channel",
+      "fee_category",
+      "currency",
+      "current_period",
+      "prior_period",
+      "absolute_variance",
+      "percentage_variance",
+      "alert_status",
+      "gross_sales",
+      "net_sales",
+      "total_fees",
+      "effective_fee_rate",
+      "refund_rate",
+      "chargeback_rate",
+      "advertising_ratio",
+      "reserve_exposure",
+      "financing_deductions",
+      "net_payout",
+      "payout_delay",
+      "unmatched_amount",
+      "unclassified_amount",
+      "data_confidence",
+      "reconciliation_status",
+      "generated_at"
+    ],
+    "properties": {
+      "schema_version": {
+        "type": "string",
+        "pattern": "^\\d+\\.\\d+\\.\\d+$"
+      },
+      "record_id": {
+        "type": "string"
+      },
+      "reporting_period": {
+        "type": "string",
+        "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+      },
+      "period_start": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "format": "date"
+      },
+      "period_end": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "format": "date"
+      },
+      "comparison_period": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+      },
+      "platform": {
+        "type": "string",
+        "enum": [
+          "shopify",
+          "amazon",
+          "stripe",
+          "meta_ads",
+          "google_ads",
+          "tiktok_ads",
+          "generic_processor",
+          "bank",
+          "other",
+          "all"
+        ]
+      },
+      "store": {
+        "type": "string"
+      },
+      "channel": {
+        "type": "string"
+      },
+      "fee_category": {
+        "type": "string"
+      },
+      "currency": {
+        "type": "string",
+        "pattern": "^[A-Z]{3}$"
+      },
+      "current_period": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "prior_period": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "budget_or_benchmark": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "absolute_variance": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "percentage_variance": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "alert_status": {
+        "type": "string",
+        "enum": [
+          "none",
+          "watch",
+          "warning",
+          "critical",
+          "data_gap",
+          "human_review_required"
+        ]
+      },
+      "gross_sales": {
+        "type": [
+          "number",
+          "null"
+        ],
+        "minimum": 0
+      },
+      "net_sales": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "total_fees": {
+        "type": [
+          "number",
+          "null"
+        ],
+        "minimum": 0
+      },
+      "effective_fee_rate": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "refund_rate": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "chargeback_rate": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "advertising_ratio": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "reserve_exposure": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "financing_deductions": {
+        "type": [
+          "number",
+          "null"
+        ],
+        "minimum": 0
+      },
+      "net_payout": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "payout_delay": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "unmatched_amount": {
+        "type": [
+          "number",
+          "null"
+        ],
+        "minimum": 0
+      },
+      "unclassified_amount": {
+        "type": [
+          "number",
+          "null"
+        ],
+        "minimum": 0
+      },
+      "unclassified_share": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "data_confidence": {
+        "type": "string",
+        "enum": [
+          "high",
+          "medium",
+          "low",
+          "unable_to_determine"
+        ]
+      },
+      "reconciliation_status": {
+        "type": "string",
+        "enum": [
+          "not_started",
+          "partial",
+          "matched",
+          "matched_with_timing_difference",
+          "unmatched",
+          "data_gap",
+          "human_review_required"
+        ]
+      },
+      "source_record_count": {
+        "type": [
+          "integer",
+          "null"
+        ],
+        "minimum": 0
+      },
+      "exception_count": {
+        "type": [
+          "integer",
+          "null"
+        ],
+        "minimum": 0
+      },
+      "notes": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "generated_at": {
+        "type": "string",
+        "format": "date-time"
+      }
+    }
+  },
+  "kpi_definitions": [
+    {
+      "kpi_code": "gross_sales",
+      "display_name": "Gross sales",
+      "definition": "Merchandise sales before discounts, refunds, taxes, duties, tips, and shipping income.",
+      "formula": "sum(gross_sales)",
+      "unit": "currency",
+      "direction": "context",
+      "required_fields": [
+        "gross_sales",
+        "currency"
+      ],
+      "alert_logic": "informational_only"
+    },
+    {
+      "kpi_code": "net_sales",
+      "display_name": "Net sales",
+      "definition": "Gross sales less merchant-funded discounts and refunds.",
+      "formula": "gross_sales - discounts - refunds",
+      "unit": "currency",
+      "direction": "higher_is_generally_better",
+      "required_fields": [
+        "gross_sales",
+        "discounts",
+        "refunds",
+        "currency"
+      ],
+      "alert_logic": "compare_to_prior_and_budget"
+    },
+    {
+      "kpi_code": "total_fees",
+      "display_name": "Total fees",
+      "definition": "Sum of processing, marketplace, fulfillment, storage, advertising, currency, international, instant-payout, shipping-label, and supported fee categories. Financing principal and reserve holds are excluded.",
+      "formula": "sum(fee_categories)",
+      "unit": "currency",
+      "direction": "lower_is_generally_better",
+      "required_fields": [
+        "fee_category",
+        "total_fees",
+        "currency"
+      ],
+      "alert_logic": "fee_variance_thresholds"
+    },
+    {
+      "kpi_code": "effective_fee_rate",
+      "display_name": "Effective fee rate",
+      "definition": "Total operating platform fees divided by gross sales.",
+      "formula": "total_fees / gross_sales",
+      "unit": "ratio",
+      "direction": "lower_is_generally_better",
+      "required_fields": [
+        "total_fees",
+        "gross_sales"
+      ],
+      "alert_logic": "ratio_variance_thresholds"
+    },
+    {
+      "kpi_code": "refund_rate",
+      "display_name": "Refund rate",
+      "definition": "Refund magnitude divided by gross sales.",
+      "formula": "refunds / gross_sales",
+      "unit": "ratio",
+      "direction": "lower_is_generally_better",
+      "required_fields": [
+        "refunds",
+        "gross_sales"
+      ],
+      "alert_logic": "ratio_variance_thresholds"
+    },
+    {
+      "kpi_code": "chargeback_rate",
+      "display_name": "Chargeback rate",
+      "definition": "Chargeback amount divided by gross sales.",
+      "formula": "chargebacks / gross_sales",
+      "unit": "ratio",
+      "direction": "lower_is_generally_better",
+      "required_fields": [
+        "chargebacks",
+        "gross_sales"
+      ],
+      "alert_logic": "ratio_variance_thresholds"
+    },
+    {
+      "kpi_code": "advertising_ratio",
+      "display_name": "Advertising-to-sales ratio",
+      "definition": "Advertising cost divided by net sales.",
+      "formula": "advertising_cost / net_sales",
+      "unit": "ratio",
+      "direction": "lower_is_context_dependent",
+      "required_fields": [
+        "advertising_cost",
+        "net_sales"
+      ],
+      "alert_logic": "ratio_variance_thresholds"
+    },
+    {
+      "kpi_code": "reserve_exposure",
+      "display_name": "Reserve exposure ratio",
+      "definition": "Closing restricted reserve and hold balance divided by trailing gross sales for the approved window.",
+      "formula": "reserve_balance / trailing_gross_sales",
+      "unit": "ratio",
+      "direction": "lower_is_generally_better",
+      "required_fields": [
+        "reserve_balance",
+        "trailing_gross_sales"
+      ],
+      "alert_logic": "reserve_thresholds"
+    },
+    {
+      "kpi_code": "financing_deductions",
+      "display_name": "Financing deductions",
+      "definition": "Cash deducted for financing remittances during the period.",
+      "formula": "sum(financing_deductions)",
+      "unit": "currency",
+      "direction": "lower_is_context_dependent",
+      "required_fields": [
+        "financing_deductions",
+        "currency"
+      ],
+      "alert_logic": "compare_to_cash_and_prior"
+    },
+    {
+      "kpi_code": "net_payout",
+      "display_name": "Net payout",
+      "definition": "Total payouts transferred from platform or processor balance during the period.",
+      "formula": "sum(net_payout)",
+      "unit": "currency",
+      "direction": "context",
+      "required_fields": [
+        "net_payout",
+        "currency"
+      ],
+      "alert_logic": "reconciliation_control"
+    },
+    {
+      "kpi_code": "payout_delay_days",
+      "display_name": "Payout delay",
+      "definition": "Calendar days from payout initiation to bank posting, reported separately from settlement delay.",
+      "formula": "bank_posted_date - payout_initiated_date",
+      "unit": "days",
+      "direction": "lower_is_generally_better",
+      "required_fields": [
+        "payout_initiated_date",
+        "bank_posted_date"
+      ],
+      "alert_logic": "timing_thresholds"
+    },
+    {
+      "kpi_code": "unmatched_amount",
+      "display_name": "Unmatched amount",
+      "definition": "Absolute value of material payout, settlement, or bank amounts not matched within approved rules.",
+      "formula": "sum(abs(unmatched_amount))",
+      "unit": "currency",
+      "direction": "lower_is_better",
+      "required_fields": [
+        "unmatched_amount",
+        "currency"
+      ],
+      "alert_logic": "materiality_thresholds"
+    },
+    {
+      "kpi_code": "unclassified_amount",
+      "display_name": "Unclassified amount",
+      "definition": "Absolute value of transactions classified as UNCLASSIFIED.",
+      "formula": "sum(abs(unclassified_amount))",
+      "unit": "currency",
+      "direction": "lower_is_better",
+      "required_fields": [
+        "unclassified_amount",
+        "currency"
+      ],
+      "alert_logic": "unclassified_thresholds"
+    }
+  ],
+  "variance_formulas": {
+    "absolute_variance": "current_period - prior_period",
+    "percentage_variance": "(current_period - prior_period) / abs(prior_period)",
+    "benchmark_variance": "current_period - budget_or_benchmark",
+    "percentage_variance_zero_prior_rule": "Return null when prior_period is zero; show new_activity flag instead of infinity.",
+    "favorable_direction_rule": "Store raw mathematical variance; derive favorable/unfavorable using each KPI direction."
+  },
+  "alert_thresholds": {
+    "operational_defaults_notice": "These are configurable operator defaults, not accounting standards or platform guarantees. User-approved thresholds override them.",
+    "materiality": {
+      "currency_floor": 10.0,
+      "gross_sales_ratio": 0.001,
+      "formula": "max(currency_floor, gross_sales_ratio × abs(gross_sales))"
+    },
+    "fee_variance_thresholds": [
+      {
+        "status": "none",
+        "condition": "abs(percentage_variance) < 0.05 and absolute_variance < materiality"
+      },
+      {
+        "status": "watch",
+        "condition": "percentage_variance >= 0.05 or absolute_variance >= materiality"
+      },
+      {
+        "status": "warning",
+        "condition": "percentage_variance >= 0.10 and absolute_variance >= materiality"
+      },
+      {
+        "status": "critical",
+        "condition": "percentage_variance >= 0.20 and absolute_variance >= 5 × materiality"
+      }
+    ],
+    "ratio_variance_thresholds": [
+      {
+        "status": "watch",
+        "condition": "current ratio increases by at least 0.01 absolute"
+      },
+      {
+        "status": "warning",
+        "condition": "current ratio increases by at least 0.03 absolute"
+      },
+      {
+        "status": "critical",
+        "condition": "current ratio increases by at least 0.05 absolute and related amount exceeds materiality"
+      }
+    ],
+    "reserve_thresholds": [
+      {
+        "status": "watch",
+        "condition": "reserve_exposure >= 0.05"
+      },
+      {
+        "status": "warning",
+        "condition": "reserve_exposure >= 0.10"
+      },
+      {
+        "status": "critical",
+        "condition": "reserve_exposure >= 0.20 or release date unknown and restricted amount is material"
+      }
+    ],
+    "timing_thresholds": [
+      {
+        "status": "watch",
+        "condition": "payout_delay exceeds verified normal by 1 day"
+      },
+      {
+        "status": "warning",
+        "condition": "payout_delay exceeds verified normal by 3 days"
+      },
+      {
+        "status": "critical",
+        "condition": "payout is missing, failed, held, or exceeds verified normal by 7 days"
+      }
+    ],
+    "unclassified_thresholds": [
+      {
+        "status": "watch",
+        "condition": "unclassified_share > 0 and <= 0.05"
+      },
+      {
+        "status": "warning",
+        "condition": "unclassified_share > 0.05 and <= 0.20"
+      },
+      {
+        "status": "data_gap",
+        "condition": "unclassified_share > 0.20"
+      }
+    ],
+    "override_rules": [
+      "Any material unmatched payout is at least warning.",
+      "A missing core source file produces data_gap regardless of numeric variance.",
+      "Low or unable_to_determine confidence can raise alert status but cannot lower it.",
+      "Critical tax, legal, accounting, dispute, or funding conclusions require human_review_required."
+    ]
+  },
+  "severity_rules": {
+    "none": "Within approved thresholds and no material data gap.",
+    "watch": "Small variance or emerging trend; verify next period.",
+    "warning": "Material adverse variance or unresolved reconciliation item.",
+    "critical": "Large cash, fee, reserve, or timing exposure requiring prompt review.",
+    "data_gap": "Required evidence is missing or more than 20% of value is unclassified.",
+    "human_review_required": "The finding needs qualified approval or materially ambiguous classification."
+  },
+  "chart_specs": [
+    {
+      "chart_id": "fee_rate_trend",
+      "title": "Effective Fee Rate by Month",
+      "type": "line",
+      "x": "reporting_period",
+      "y": "effective_fee_rate",
+      "series": [
+        "platform",
+        "store"
+      ],
+      "filters": [
+        "currency",
+        "channel"
+      ],
+      "format": "percentage"
+    },
+    {
+      "chart_id": "fee_category_variance",
+      "title": "Fee Variance by Category",
+      "type": "clustered_bar",
+      "x": "fee_category",
+      "y": [
+        "current_period",
+        "prior_period"
+      ],
+      "filters": [
+        "platform",
+        "store",
+        "currency"
+      ],
+      "format": "currency"
+    },
+    {
+      "chart_id": "gross_to_payout_waterfall",
+      "title": "Gross Sales to Net Payout",
+      "type": "waterfall",
+      "steps": [
+        "gross_sales",
+        "discounts",
+        "refunds",
+        "total_fees",
+        "financing_deductions",
+        "reserve_change",
+        "net_payout"
+      ],
+      "filters": [
+        "platform",
+        "store",
+        "currency"
+      ],
+      "format": "currency"
+    },
+    {
+      "chart_id": "reserve_exposure_trend",
+      "title": "Reserve and Hold Exposure",
+      "type": "area",
+      "x": "reporting_period",
+      "y": "reserve_exposure",
+      "series": [
+        "platform"
+      ],
+      "filters": [
+        "store",
+        "currency"
+      ],
+      "format": "percentage"
+    },
+    {
+      "chart_id": "payout_delay_distribution",
+      "title": "Payout Delay Distribution",
+      "type": "histogram",
+      "x": "payout_delay",
+      "filters": [
+        "platform",
+        "store",
+        "currency"
+      ],
+      "format": "days"
+    },
+    {
+      "chart_id": "exceptions_matrix",
+      "title": "Exceptions by Amount and Confidence",
+      "type": "scatter",
+      "x": "unmatched_amount",
+      "y": "unclassified_amount",
+      "size": "exception_count",
+      "series": [
+        "data_confidence"
+      ],
+      "filters": [
+        "platform",
+        "store",
+        "currency"
+      ],
+      "format": "currency"
+    }
+  ],
+  "filter_fields": [
+    "reporting_period",
+    "comparison_period",
+    "platform",
+    "store",
+    "channel",
+    "fee_category",
+    "currency",
+    "data_confidence",
+    "reconciliation_status",
+    "alert_status"
+  ],
+  "drill_down_fields": [
+    "source_system",
+    "source_file_id",
+    "source_filename",
+    "source_record_id",
+    "transaction_id",
+    "order_id",
+    "settlement_id",
+    "payout_id",
+    "bank_transaction_id",
+    "sku",
+    "asin",
+    "normalized_classification",
+    "source_description",
+    "source_amount",
+    "normalized_amount",
+    "amount_variance",
+    "date_variance_days",
+    "duplicate_status",
+    "exception_status",
+    "review_status"
+  ],
+  "example_record": {
+    "schema_version": "1.0.0",
+    "record_id": "DASH-FIC-2026-06-SHOPIFY-ALL",
+    "reporting_period": "2026-06",
+    "period_start": "2026-06-01",
+    "period_end": "2026-06-30",
+    "comparison_period": "2026-05",
+    "platform": "shopify",
+    "store": "Northstar Test Store",
+    "channel": "online_store",
+    "fee_category": "all_operating_fees",
+    "currency": "USD",
+    "current_period": 5320.0,
+    "prior_period": 4480.0,
+    "budget_or_benchmark": 4600.0,
+    "absolute_variance": 840.0,
+    "percentage_variance": 0.1875,
+    "alert_status": "warning",
+    "gross_sales": 85000.0,
+    "net_sales": 79600.0,
+    "total_fees": 5320.0,
+    "effective_fee_rate": 0.062588,
+    "refund_rate": 0.048235,
+    "chargeback_rate": 0.003529,
+    "advertising_ratio": 0.213568,
+    "reserve_exposure": 0.091765,
+    "financing_deductions": 2400.0,
+    "net_payout": 64500.0,
+    "payout_delay": 2.0,
+    "unmatched_amount": 0.0,
+    "unclassified_amount": 125.0,
+    "unclassified_share": 0.001471,
+    "data_confidence": "high",
+    "reconciliation_status": "matched_with_timing_difference",
+    "source_record_count": 3210,
+    "exception_count": 3,
+    "notes": "Fictional example. Fee increase is driven primarily by advertising and shipping-label costs.",
+    "generated_at": "2026-07-27T16:00:00-04:00"
+  },
+  "validation_rules": [
+    "percentage_variance must be null when prior_period is zero.",
+    "Amounts from different currencies cannot be combined in one record unless a documented conversion is applied.",
+    "total_fees excludes financing principal, reserve holds, payouts, and bank deposits.",
+    "net_payout is a transfer control and must not be added to revenue.",
+    "reserve_exposure uses closing restricted balance, not cumulative reserve holds.",
+    "data_confidence and reconciliation_status must reflect missing evidence.",
+    "Every dashboard record must be traceable to source records through drill-down identifiers."
+  ]
+}
