@@ -454,6 +454,33 @@ validate_batch_five_contracts()
 validate_batch_six_contracts()
 validate_batch_seven_contracts()
 
+def validate_remediation_controls():
+    marker = re.compile(r"\*\*\* (?:Add File|Update File|Begin Patch|End Patch)")
+    control_dirs = [ROOT / "config" / name for name in ("security", "qa", "release", "runtime")]
+    ids = set()
+    for directory in control_dirs:
+        for path in directory.rglob("*.yaml"):
+            value = load_yaml(path)
+            text = path.read_text(encoding="utf-8")
+            if marker.search(text): fail(f"{path.relative_to(ROOT)}: patch marker detected")
+            if not isinstance(value, dict) or not value: fail(f"{path.relative_to(ROOT)}: empty control document")
+            for key in ("id", "version", "status", "implementation_status", "owner", "evidence", "controls"):
+                if key not in value: fail(f"{path.relative_to(ROOT)}: missing {key}")
+            identifier = value.get("id")
+            if identifier in ids: fail(f"duplicate control ID: {identifier}")
+            ids.add(identifier)
+    workflows = sorted((ROOT / "workflows" / "n8n").glob("[0-9][0-9]-*.json"))
+    templates = list((ROOT / "workflows" / "n8n" / "templates").glob("*.json"))
+    if len(workflows) != 20 or len(templates) != 5: fail("n8n workflow/template inventory is incomplete")
+    for path in workflows + templates:
+        value = load_json(path)
+        if not isinstance(value, dict) or value.get("active") is not False: fail(f"{path.relative_to(ROOT)}: workflow must be inactive")
+    routes = [p for p in (ROOT / "site" / "api").rglob("*.js") if "_lib" not in p.parts and "_data" not in p.parts]
+    if len(routes) != 10: fail(f"expected exactly 10 physical routes, found {len(routes)}")
+    vercel = load_json(ROOT / "site" / "vercel.json")
+    if not isinstance(vercel, dict) or vercel.get("git", {}).get("deploymentEnabled", {}).get("*") is not False: fail("site/vercel.json: preview deployment lock is missing")
+validate_remediation_controls()
+
 if errors:
     print("Knowledge integrity validation failed:")
     for error in errors:

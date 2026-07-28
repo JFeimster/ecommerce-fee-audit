@@ -6,6 +6,7 @@ owner: internal_operator
 evidence: validation_required
 blocking: true
 controls: {fail_closed: required, secrets: prohibited_in_repository, audit_logging: required, idempotency: required_for_writes}
+release_gates: [{id: secret_scan, blocking: true, evidence: scripts/check-secrets.js, failure_behavior: no_go}]
 readiness: {architecture: ready, contracts: ready, runtime: partial, security: partial, providers: not_ready, products: not_ready, deployment: not_ready}
 external_adapters: adapter_required
 financial_transactions: disabled
