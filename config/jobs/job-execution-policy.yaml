@@ -1,0 +1,1 @@
+policy: {claim: atomic, lease_seconds: 300, heartbeat_seconds: 30, concurrency: keyed, duplicate_prevention: idempotency_key, cancellation: cooperative, checkpoints: required_for_long_jobs, partial_completion: persist_and_report, ambiguous_completion: verify_before_requeue, audit_log: required}

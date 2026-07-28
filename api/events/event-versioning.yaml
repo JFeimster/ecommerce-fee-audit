@@ -1,0 +1,10 @@
+version: 1.0.0
+default_event_version: 1.0.0
+policy: Semantic event versions; additive optional fields are compatible, removals or meaning changes require a major version.
+unknown_fields: ignore_and_preserve_when_possible
+unknown_events: dead_letter_or_safe_ignore
+deprecated_events: retain_alias_and_consumer_notice
+minimum_consumer_compatibility: 90_days
+replay: use_original_version_and_idempotency_key
+producer_upgrade: dual_publish_during_migration
+consumer_fallback: use_last_supported_version

@@ -1,0 +1,2 @@
+classes: {exponential_standard: {attempts: 6, initial_delay_seconds: 30, maximum_delay_seconds: 3600, jitter: true}, provider_managed: {attempts: 0}, manual_requeue: {attempts: 0}}
+ambiguous_external_submission: verify_provider_status_and_idempotency_before_retry

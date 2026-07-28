@@ -1,0 +1,1 @@
+[{"schema_version":"1.0.0","event_id":"event_fixture_funding","event_type":"funding.application_submitted","occurred_at":"2026-07-28T12:00:00Z","producer":"internal_agent","idempotency_key":"idem_fixture_funding","payload":{"audit_id":"audit_fixture_01","reference_id":"application_fixture_01","confidence_level":"high"},"delivery_status":"delivered","human_review_required":false}]

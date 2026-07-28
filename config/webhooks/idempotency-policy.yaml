@@ -1,0 +1,6 @@
+key: provider_event_id_or_sha256(event_type|subject_id|destination|payload_hash)
+window_hours: 72
+duplicate_response: return_prior_result
+conflict: hold_for_review
+storage: durable
+overrides: {funding_application: required, dispute_package: required, connector_sync_request: required, report_delivery: required}

@@ -1,0 +1,1 @@
+[{"schema_version":"1.0.0","event_id":"event_fixture_delivery","event_type":"delivery.dead_lettered","occurred_at":"2026-07-28T12:00:00Z","producer":"internal_agent","idempotency_key":"idem_fixture_delivery","payload":{"audit_id":"audit_fixture_01","reference_id":"delivery_fixture_01","confidence_level":"low"},"delivery_status":"dead_lettered","human_review_required":true}]

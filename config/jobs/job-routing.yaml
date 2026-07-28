@@ -1,0 +1,1 @@
+defaults: {route: /api/jobs, function_slot: 9, queue_class: standard, priority: normal, concurrency_key: subject_id, timeout_policy: standard, retry_policy: exponential_standard, dead_letter_policy: job_dead_letter, execution_mode: autonomous, risk_class: analysis, destination_class: internal_agent, human_review_trigger: configured_threshold}

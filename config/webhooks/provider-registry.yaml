@@ -1,0 +1,22 @@
+version: 1.0.0
+defaults: {function_route: '/api/webhooks/{provider}', function_slot: 8, payload_format: json, production_readiness: placeholder, fallback: manual_queue}
+providers:
+  wix: {category: commerce, inbound: true, outbound: true, signature: provider_specific_hmac, status: provisional, families: [entitlement, delivery]}
+  tally: {category: forms, inbound: true, outbound: false, signature: shared_secret_token, status: provisional, families: [funding, document]}
+  hubspot: {category: crm, inbound: true, outbound: true, signature: provider_specific_hmac, status: provisional, families: [funding, follow_up]}
+  notion: {category: workspace, inbound: true, outbound: false, signature: provider_specific_hmac, status: planned, families: [audit, dispute]}
+  n8n: {category: automation, inbound: true, outbound: true, signature: shared_secret_token, status: provisional, families: [delivery, follow_up]}
+  moonshine_funnel: {category: funnel, inbound: true, outbound: true, signature: shared_secret_token, status: provisional, families: [funding]}
+  partner_api: {category: partner, inbound: true, outbound: true, signature: provider_specific_hmac, status: placeholder, families: [funding, dispute]}
+  custom_gpt: {category: ai, inbound: false, outbound: true, signature: api_key_not_in_payload, status: planned, families: [audit]}
+  internal_agent: {category: internal, inbound: true, outbound: true, signature: platform_authenticated_internal_event, status: active, families: [audit, job, system]}
+  generic_webhook: {category: generic, inbound: true, outbound: true, signature: unverified_development_event, status: placeholder, families: [delivery]}
+  shopify: {category: commerce, inbound: true, outbound: false, signature: hmac_sha256, status: planned, families: [connector]}
+  stripe: {category: processor, inbound: true, outbound: false, signature: asymmetric_signature, status: planned, families: [connector, dispute]}
+  quickbooks: {category: accounting, inbound: true, outbound: false, signature: provider_specific_hmac, status: planned, families: [connector]}
+  xero: {category: accounting, inbound: true, outbound: false, signature: provider_specific_hmac, status: planned, families: [connector]}
+  amazon_seller_central: {category: marketplace, inbound: true, outbound: false, signature: provider_specific_hmac, status: planned, families: [connector, dispute]}
+  walmart_marketplace: {category: marketplace, inbound: true, outbound: false, signature: provider_specific_hmac, status: placeholder, families: [connector]}
+  tiktok_shop: {category: marketplace, inbound: true, outbound: false, signature: provider_specific_hmac, status: placeholder, families: [connector]}
+  google_ads: {category: advertising, inbound: true, outbound: false, signature: provider_specific_hmac, status: planned, families: [connector]}
+  meta_ads: {category: advertising, inbound: true, outbound: false, signature: provider_specific_hmac, status: planned, families: [connector]}

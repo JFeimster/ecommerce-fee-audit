@@ -1,0 +1,1 @@
+policy: {eligible_after: retry_exhausted, redact_payload: true, retention_days: 30, max_requeues: 2, human_review: required, escalation: internal_queue, terminal_closure: audited}

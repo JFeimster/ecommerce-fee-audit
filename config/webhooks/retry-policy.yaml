@@ -1,0 +1,2 @@
+classes: {none: {attempts: 1}, immediate_once: {attempts: 2, initial_delay_seconds: 1}, exponential_short: {attempts: 3, initial_delay_seconds: 5, maximum_delay_seconds: 60}, exponential_standard: {attempts: 6, initial_delay_seconds: 30, maximum_delay_seconds: 3600, jitter: true}, provider_managed: {attempts: 0}, manual_requeue: {attempts: 0}}
+ambiguous_submission: verify_idempotency_and_provider_status_before_retry

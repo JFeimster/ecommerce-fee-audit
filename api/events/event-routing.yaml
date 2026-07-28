@@ -1,0 +1,4 @@
+version: 1.0.0
+webhook: {route: '/api/webhooks/{provider}', function_slot: 8, handling: synchronous, retry_policy: provider_managed, dead_letter_policy: webhook_dead_letter}
+asynchronous: {route: /api/jobs, function_slot: 9, handling: asynchronous, retry_policy: exponential_standard, dead_letter_policy: job_dead_letter}
+rules: [{event_family: connector, producer: provider, target: webhook}, {event_family: delivery, producer: internal_agent, target: asynchronous}, {event_family: job, producer: internal_agent, target: asynchronous}, {event_family: audit, producer: internal_agent, target: asynchronous}, {event_family: funding, producer: internal_agent, target: asynchronous}, {event_family: dispute, producer: internal_agent, target: asynchronous}]

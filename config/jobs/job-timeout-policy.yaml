@@ -1,0 +1,1 @@
+classes: {short: {max_seconds: 60, heartbeat_seconds: 15}, standard: {max_seconds: 300, heartbeat_seconds: 30}, extended: {max_seconds: 1800, heartbeat_seconds: 60}, provider_wait: {max_seconds: 3600, heartbeat_seconds: 120}, manual_review: {max_seconds: 0, heartbeat_seconds: 0}}

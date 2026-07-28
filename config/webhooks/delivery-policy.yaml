@@ -1,0 +1,1 @@
+policy: {timeout_seconds: 20, success_statuses: '200-299', permanent_failures: ['400-499 except 408,429'], retryable: [408,429,'500-599'], redirects: reject, content_types: [application/json], duplicate_handling: idempotent_ack, ambiguous_handling: verify_before_retry, sensitive_response_filtering: required}
