@@ -26,6 +26,8 @@ INGESTION_EXAMPLES = ROOT / "examples" / "ingestion"
 WIX = ROOT / "config" / "wix"
 COMMERCIAL = ROOT / "config" / "commercial"
 WIX_EXAMPLES = ROOT / "examples" / "wix"
+DASHBOARD_EXAMPLES = ROOT / "examples" / "dashboard"
+PUBLIC_DATA = ROOT / "site" / "data"
 BATCH_TWO_SCHEMAS = (
     "audit-intake.schema.json",
     "audit-job.schema.json",
@@ -373,6 +375,17 @@ def validate_batch_six_contracts() -> None:
         fail("examples/wix: expected five fictional JSON examples")
 
 
+def validate_batch_seven_contracts() -> None:
+    for name in ("public-product-catalog.json", "public-connector-catalog.json", "public-fee-taxonomy.json", "sample-audit-summary.json"):
+        value = load_json(PUBLIC_DATA / name)
+        if value is not None and contains_sensitive_example_value(value):
+            fail(f"site/data/{name}: public data may not contain secrets or private data")
+    for path in DASHBOARD_EXAMPLES.glob("*.json"):
+        value = load_json(path)
+        if value is not None and contains_sensitive_example_value(value):
+            fail(f"{path.relative_to(ROOT)}: possible secret or private-data value")
+
+
 for path in KNOWLEDGE.rglob("*.json"):
     load_json(path)
 
@@ -439,6 +452,7 @@ validate_batch_two_schemas()
 validate_batch_three_contracts()
 validate_batch_five_contracts()
 validate_batch_six_contracts()
+validate_batch_seven_contracts()
 
 if errors:
     print("Knowledge integrity validation failed:")
