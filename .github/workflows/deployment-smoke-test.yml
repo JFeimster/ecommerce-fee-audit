@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       base_url:
-        description: Production base URL
-        required: true
-        default: https://ecommerce-fee-audit.vercel.app
+        description: Optional production base URL override
+        required: false
+        default: ""
 
 permissions:
   contents: read
@@ -14,14 +14,28 @@ permissions:
 jobs:
   smoke-test:
     runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: ${{ vars.PRODUCTION_BASE_URL }}
     steps:
-      - name: Check public endpoints
+      - name: Resolve production URL
         shell: bash
         env:
-          BASE_URL: ${{ inputs.base_url }}
+          INPUT_BASE_URL: ${{ inputs.base_url }}
+          ENV_BASE_URL: ${{ vars.PRODUCTION_BASE_URL }}
         run: |
           set -euo pipefail
-          BASE_URL="${BASE_URL%/}"
+          BASE_URL="${INPUT_BASE_URL:-$ENV_BASE_URL}"
+          if [ -z "$BASE_URL" ]; then
+            echo 'Provide base_url or configure PRODUCTION_BASE_URL in the GitHub production environment.' >&2
+            exit 1
+          fi
+          echo "BASE_URL=${BASE_URL%/}" >> "$GITHUB_ENV"
+
+      - name: Check public endpoints
+        shell: bash
+        run: |
+          set -euo pipefail
           for path in / /embed /styles.css /script.js /site.webmanifest /robots.txt; do
             echo "Checking ${BASE_URL}${path}"
             curl --fail --silent --show-error --location --max-time 30 "${BASE_URL}${path}" > /dev/null
@@ -29,10 +43,7 @@ jobs:
 
       - name: Verify homepage and embed markers
         shell: bash
-        env:
-          BASE_URL: ${{ inputs.base_url }}
         run: |
           set -euo pipefail
-          BASE_URL="${BASE_URL%/}"
           curl --fail --silent --location "${BASE_URL}/" | grep -qi 'Ecommerce Fee Audit'
           curl --fail --silent --location "${BASE_URL}/embed" | grep -qi 'Embeddable Audit Signal'
