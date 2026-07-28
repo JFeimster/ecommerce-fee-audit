@@ -1,5 +1,13 @@
+id: qa_mobile_breakpoints
 version: 1.0.0
 status: provisional
+implementation_status: partial
+owner: internal_operator
+evidence: validation_required
+blocking: true
+controls: {fail_closed: required, secrets: prohibited_in_repository, audit_logging: required, idempotency: required_for_writes}
+readiness: {architecture: ready, contracts: ready, runtime: partial, security: partial, providers: not_ready, products: not_ready, deployment: not_ready}
+external_adapters: adapter_required
 financial_transactions: disabled
-live_actions: disabled_or_adapter_required
-controls: [idempotency, redaction, audit_logging, fail_closed]
+funding_submission: disabled
+dispute_submission: disabled

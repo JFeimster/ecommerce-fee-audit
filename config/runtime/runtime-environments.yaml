@@ -1,49 +1,13 @@
+id: runtime_runtime_environments
 version: 1.0.0
-status: placeholder
-production_readiness: adapter_required
-active_function_limit: 10
-reserved_function_slots: 2
-*** Add File: config/runtime/runtime-feature-flags.yaml
-version: 1.0.0
-status: placeholder
-production_readiness: adapter_required
-active_function_limit: 10
-reserved_function_slots: 2
-*** Add File: config/runtime/runtime-error-codes.yaml
-version: 1.0.0
-status: placeholder
-production_readiness: adapter_required
-active_function_limit: 10
-reserved_function_slots: 2
-*** Add File: config/runtime/runtime-rate-limits.yaml
-version: 1.0.0
-status: placeholder
-production_readiness: adapter_required
-active_function_limit: 10
-reserved_function_slots: 2
-*** Add File: config/runtime/runtime-data-stores.yaml
-version: 1.0.0
-status: placeholder
-production_readiness: adapter_required
-active_function_limit: 10
-reserved_function_slots: 2
-*** Add File: config/runtime/runtime-adapters.yaml
-version: 1.0.0
-status: placeholder
-production_readiness: adapter_required
-active_function_limit: 10
-reserved_function_slots: 2
-*** Add File: config/runtime/runtime-observability.yaml
-version: 1.0.0
-status: placeholder
-production_readiness: adapter_required
-active_function_limit: 10
-reserved_function_slots: 2
-*** Add File: config/runtime/runtime-security.yaml
-version: 1.0.0
-status: placeholder
-production_readiness: adapter_required
-active_function_limit: 10
-reserved_function_slots: 2
-*** Add File: tests/runtime/public.test.js
-const test=require('node:test'); const assert=require('node:assert'); test('public runtime contract',()=>assert.ok(true));
+status: provisional
+implementation_status: partial
+owner: internal_operator
+evidence: validation_required
+blocking: true
+controls: {fail_closed: required, secrets: prohibited_in_repository, audit_logging: required, idempotency: required_for_writes}
+readiness: {architecture: ready, contracts: ready, runtime: partial, security: partial, providers: not_ready, products: not_ready, deployment: not_ready}
+external_adapters: adapter_required
+financial_transactions: disabled
+funding_submission: disabled
+dispute_submission: disabled
