@@ -9,6 +9,7 @@
 - Build command: leave empty
 - Install command: leave empty
 - Output directory: leave empty
+- Vercel config file: `site/vercel.json`
 
 ## Expected URL
 
@@ -28,10 +29,18 @@ Vercel should serve these directly from `site/`:
 - `/sitemap.xml`
 - `/404.html`
 - `/site.webmanifest`
+- `/assets/icons/`
+- `/assets/downloads/`
 
 ## Deployment Control
 
-If `vercel.json` has Git deployments disabled, temporarily set production deployment to enabled only when intentionally deploying from `main`.
+The active Vercel configuration now lives at:
+
+```text
+site/vercel.json
+```
+
+If `site/vercel.json` has Git deployments disabled, temporarily set production deployment to enabled only when intentionally deploying from `main`.
 
 After production verification, disable preview deploys again if the project requires manual deployment control.
 
@@ -44,3 +53,5 @@ After production verification, disable preview deploys again if the project requ
 - CTA links point to the intended Moonshine / Distilled Funding destination.
 - No private files or test customer data are publicly served.
 - Footer disclaimer is visible.
+- `site/assets/icons/` contains only public-safe assets.
+- `site/assets/downloads/` contains only public-safe downloads.
