@@ -6,15 +6,16 @@ on:
 permissions:
   contents: read
 
-environment:
-  name: production
-
 jobs:
   validate-and-deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: ${{ vars.PRODUCTION_BASE_URL }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+
       - name: Validate required site files
         shell: bash
         run: |
@@ -24,15 +25,17 @@ jobs:
           test -f site/styles.css
           test -f site/script.js
           test -f site/vercel.json
+
       - name: Require Vercel Deploy Hook secret
         shell: bash
         env:
           DEPLOY_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK_URL }}
         run: |
           if [ -z "$DEPLOY_HOOK" ]; then
-            echo 'VERCEL_DEPLOY_HOOK_URL is not configured in the production environment.' >&2
+            echo 'VERCEL_DEPLOY_HOOK_URL is not configured in the GitHub production environment.' >&2
             exit 1
           fi
+
       - name: Trigger Vercel production deployment
         shell: bash
         env:
@@ -40,6 +43,7 @@ jobs:
         run: |
           set -euo pipefail
           curl --fail-with-body --silent --show-error --request POST "$DEPLOY_HOOK" | tee vercel-deploy-response.json
+
       - name: Upload deployment response
         uses: actions/upload-artifact@v7
         with:
