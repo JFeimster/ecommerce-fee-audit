@@ -1,0 +1,73 @@
+catalog_id: ecommerce_fee_audit_product_catalog
+version: 1.0.0
+status: provisional
+last_updated: '2026-07-28'
+currency: USD
+pricing_governance:
+  approved_pricing: []
+  note: No pricing in this catalog is approved. Values marked provisional require commercial approval before publication or checkout configuration.
+products:
+  - product_id: free_platform_fee_audit_starter
+    name: Free Platform Fee Audit Starter
+    delivery_model: self_service
+    recurring: false
+    target_user: Ecommerce operator seeking a structured first look at payout, fee, reserve, and SKU-margin questions.
+    price_status: provisional
+    monthly_price: 0
+  - product_id: audit_lab
+    name: Audit Lab
+    delivery_model: self_service
+    recurring: true
+    target_user: Operator who can work with exports and follow a monthly audit workflow.
+    price_status: provisional
+    monthly_price: 19
+  - product_id: margin_control
+    name: Margin Control
+    delivery_model: guided
+    recurring: true
+    target_user: Operator who needs structured interpretation, accountability, and human review of material exceptions.
+    price_status: provisional
+    monthly_price: 79
+  - product_id: guided_margin_recovery
+    name: Guided Margin Recovery
+    delivery_model: guided
+    recurring: true
+    target_user: Operator with recurring reconciliation gaps who needs a guided monthly operating cadence.
+    price_status: provisional
+    monthly_price: 299
+    setup_fee_status: placeholder
+  - product_id: ecommerce_finance_ops_desk
+    name: Ecommerce Finance Ops Desk
+    delivery_model: managed
+    recurring: true
+    target_user: Multi-channel operator needing recurring reconciliation, reporting, and cash-visibility support.
+    price_status: provisional
+    monthly_price_from: 1500
+  - product_id: partner_agency_license
+    name: Partner / Agency License
+    delivery_model: partner_enabled
+    recurring: true
+    target_user: Eligible agencies, consultants, bookkeepers, and funding-adjacent partners using approved workflows for client service.
+    price_status: provisional
+    monthly_price_from: 999
+    usage_pricing_status: placeholder
+  - product_id: one_time_platform_fee_leak_scan
+    name: One-time Platform Fee Leak Scan
+    delivery_model: guided
+    recurring: false
+    price_status: placeholder
+  - product_id: historical_reconciliation_sprint
+    name: Historical Reconciliation Sprint
+    delivery_model: managed
+    recurring: false
+    price_status: placeholder
+  - product_id: reserve_and_payout_investigation
+    name: Reserve and Payout Investigation
+    delivery_model: guided
+    recurring: false
+    price_status: placeholder
+  - product_id: sku_margin_reset
+    name: SKU Margin Reset
+    delivery_model: guided
+    recurring: false
+    price_status: placeholder

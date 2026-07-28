@@ -1,0 +1,27 @@
+version: 1.0.0
+status: provisional
+add_ons:
+  - add_on_id: one_time_platform_fee_leak_scan
+    product_id: one_time_platform_fee_leak_scan
+    delivery_model: guided
+    price_status: placeholder
+    purpose: Scoped first-pass review of available fee and payout evidence.
+  - add_on_id: historical_reconciliation_sprint
+    product_id: historical_reconciliation_sprint
+    delivery_model: managed
+    price_status: placeholder
+    purpose: Scoped historical reconciliation work after data-condition review.
+  - add_on_id: reserve_and_payout_investigation
+    product_id: reserve_and_payout_investigation
+    delivery_model: guided
+    price_status: placeholder
+    purpose: Investigation of documented reserve, hold, payout, or bank-match exceptions.
+  - add_on_id: sku_margin_reset
+    product_id: sku_margin_reset
+    delivery_model: guided
+    price_status: placeholder
+    purpose: Documented SKU contribution-margin model reset using authorized source data.
+constraints:
+  - Add-ons do not include tax, legal, accounting, underwriting, or investment advice.
+  - Add-ons do not guarantee fee recovery, savings, funding approval, or platform action.
+  - External submissions require explicit confirmation under knowledge/action-usage-and-confirmation-policy.md.

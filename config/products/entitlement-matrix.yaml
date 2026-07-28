@@ -1,0 +1,15 @@
+matrix_id: ecommerce_fee_audit_entitlements
+version: 1.0.0
+status: provisional
+entitlements:
+  starter_access: {free_platform_fee_audit_starter: true, audit_lab: true, margin_control: true, guided_margin_recovery: true, ecommerce_finance_ops_desk: true, partner_agency_license: true}
+  template_library: {free_platform_fee_audit_starter: limited, audit_lab: full, margin_control: full, guided_margin_recovery: full, ecommerce_finance_ops_desk: full, partner_agency_license: licensed}
+  monthly_self_service_workflow: {free_platform_fee_audit_starter: false, audit_lab: true, margin_control: true, guided_margin_recovery: true, ecommerce_finance_ops_desk: false, partner_agency_license: licensed}
+  group_clinic: {free_platform_fee_audit_starter: false, audit_lab: false, margin_control: true, guided_margin_recovery: true, ecommerce_finance_ops_desk: false, partner_agency_license: optional}
+  material_exception_human_review: {free_platform_fee_audit_starter: false, audit_lab: false, margin_control: limited, guided_margin_recovery: included, ecommerce_finance_ops_desk: included, partner_agency_license: partner_responsibility}
+  private_workspace: {free_platform_fee_audit_starter: false, audit_lab: false, margin_control: false, guided_margin_recovery: included, ecommerce_finance_ops_desk: included, partner_agency_license: implementation_dependent}
+  recurring_reconciliation_support: {free_platform_fee_audit_starter: false, audit_lab: self_directed, margin_control: guided, guided_margin_recovery: guided, ecommerce_finance_ops_desk: managed, partner_agency_license: partner_delivered}
+  dispute_documentation_draft: {free_platform_fee_audit_starter: false, audit_lab: template_only, margin_control: guided, guided_margin_recovery: guided, ecommerce_finance_ops_desk: supported, partner_agency_license: licensed}
+  external_dispute_submission: {free_platform_fee_audit_starter: false, audit_lab: false, margin_control: false, guided_margin_recovery: false, ecommerce_finance_ops_desk: false, partner_agency_license: false}
+  funding_readiness_summary: {free_platform_fee_audit_starter: checklist_only, audit_lab: self_directed, margin_control: guided, guided_margin_recovery: guided, ecommerce_finance_ops_desk: supported, partner_agency_license: licensed}
+  external_funding_submission: {free_platform_fee_audit_starter: false, audit_lab: false, margin_control: false, guided_margin_recovery: false, ecommerce_finance_ops_desk: false, partner_agency_license: false}

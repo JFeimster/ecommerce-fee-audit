@@ -1,0 +1,13 @@
+version: 1.0.0
+status: provisional
+policy: Limits are operating defaults pending approval. Material exceptions, custom work, historical cleanup, and additional platforms require scope review.
+plans:
+  free_platform_fee_audit_starter: {platforms: 1, audit_periods: 1, source_files: 3, human_review: none}
+  audit_lab: {platforms: 2, audit_periods_per_month: 1, source_files_per_period: 10, human_review: none}
+  margin_control: {platforms: 3, audit_periods_per_month: 1, source_files_per_period: 20, human_review: limited}
+  guided_margin_recovery: {platforms: 3, audit_periods_per_month: 1, source_files_per_period: 30, human_review: included}
+  ecommerce_finance_ops_desk: {platforms: scoped, audit_periods_per_month: scoped, source_files_per_period: scoped, human_review: included}
+  partner_agency_license: {platforms: licensed_scope, audit_periods_per_month: licensed_scope, source_files_per_period: licensed_scope, human_review: partner_responsibility}
+notes:
+  - Limits are not production entitlements until a billing and entitlement implementation is approved.
+  - No plan authorizes autonomous external writes, dispute submissions, accounting changes, money movement, or funding applications.

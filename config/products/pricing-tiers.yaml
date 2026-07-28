@@ -1,0 +1,73 @@
+pricing_catalog_id: ecommerce_fee_audit_pricing_tiers
+version: 1.0.0
+status: provisional
+currency: USD
+pricing_policy: All prices require approval before publication, checkout, invoicing, or collection. Taxes, payment-processing charges, and third-party subscriptions are excluded unless a signed order says otherwise.
+tiers:
+  - product_id: free_platform_fee_audit_starter
+    canonical_pricing:
+      status: provisional
+      monthly: 0
+      annual: null
+  - product_id: audit_lab
+    canonical_pricing:
+      status: provisional
+      monthly: 19
+      annual: 190
+      annual_term_months: 12
+  - product_id: margin_control
+    canonical_pricing:
+      status: provisional
+      monthly: 79
+      annual: 790
+      annual_term_months: 12
+  - product_id: guided_margin_recovery
+    canonical_pricing:
+      status: provisional
+      monthly: 299
+      annual: 2990
+      annual_term_months: 12
+      setup_fee:
+        status: placeholder
+        amount: null
+        note: Configurable after scope and source-condition review; not a quoted price.
+    founding_member_pricing:
+      status: founding-member
+      monthly: 299
+      duration_months: 3
+      setup_fee: 500
+      eligibility: First ten approved founding members; terms and continuous-subscription treatment require written approval before use.
+  - product_id: ecommerce_finance_ops_desk
+    canonical_pricing:
+      status: provisional
+      monthly_from: 1500
+      annual_from: 15000
+      annual_term_months: 12
+      setup_fee:
+        status: placeholder
+        amount: null
+  - product_id: partner_agency_license
+    canonical_pricing:
+      status: provisional
+      monthly_from: 999
+      annual_from: 9990
+      annual_term_months: 12
+      usage_fee:
+        status: placeholder
+        amount: null
+  - product_id: one_time_platform_fee_leak_scan
+    canonical_pricing:
+      status: placeholder
+      amount: null
+  - product_id: historical_reconciliation_sprint
+    canonical_pricing:
+      status: placeholder
+      amount: null
+  - product_id: reserve_and_payout_investigation
+    canonical_pricing:
+      status: placeholder
+      amount: null
+  - product_id: sku_margin_reset
+    canonical_pricing:
+      status: placeholder
+      amount: null
