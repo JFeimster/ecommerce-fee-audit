@@ -14,7 +14,7 @@ jobs:
       url: ${{ vars.PRODUCTION_BASE_URL }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Validate required site files
         shell: bash
