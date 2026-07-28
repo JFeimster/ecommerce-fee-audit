@@ -11,10 +11,15 @@
 ├── REPO_STRUCTURE.md
 ├── README.md
 ├── assets/
+│   └── brand/
 ├── docs/
 ├── knowledge/
 ├── scripts/
 ├── site/
+│   └── assets/
+│       ├── images/
+│       ├── icons/
+│       └── downloads/
 └── widget/
 ```
 
@@ -30,6 +35,25 @@ Root-level instruction files are for tools and humans that need global repositor
 - `PROJECT_CONTEXT.md`: business and product context
 - `REPO_STRUCTURE.md`: source map
 
+## assets/
+
+Root `assets/` is for source/design/internal working assets only.
+
+```text
+assets/
+└── brand/
+```
+
+Use `assets/brand/` for editable brand files, source graphics, working design exports, and non-site creative references.
+
+Do not add duplicate root folders such as:
+
+```text
+assets/images/
+assets/icons/
+assets/downloads/
+```
+
 ## site/
 
 Public static site root for Vercel.
@@ -42,6 +66,26 @@ Public static site root for Vercel.
 - `sitemap.xml`: basic sitemap
 - `404.html`: static not-found page
 - `site.webmanifest`: lightweight app metadata
+- `vercel.json`: Vercel config, because Vercel root is `site`
+
+## site/assets/
+
+Use this for files that need to load from the live site.
+
+```text
+site/assets/
+├── images/     Public site images
+├── icons/      Favicons, UI marks, badges, and SVG icons
+└── downloads/  Public-safe PDFs, CSV templates, and lead magnets
+```
+
+Public URL examples after deployment:
+
+```text
+/assets/images/hero.png
+/assets/icons/favicon.svg
+/assets/downloads/platform-fee-audit-checklist.pdf
+```
 
 ## knowledge/
 
