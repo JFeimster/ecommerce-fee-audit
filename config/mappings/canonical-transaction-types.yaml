@@ -1,0 +1,2 @@
+version: 1.0.0
+transaction_types: [sale, order, payment, payout, deposit, fee, refund, chargeback, reserve_hold, reserve_release, adjustment, tax, shipping, discount, advertising_spend, inventory_purchase, invoice, expense, transfer, subscription_charge, dispute, unknown]

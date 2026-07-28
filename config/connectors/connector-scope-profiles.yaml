@@ -1,0 +1,27 @@
+version: 1.0.0
+scope_classes:
+  public_metadata: {purpose: public-safe provider metadata, provider_scope_string: deferred}
+  read_transactions: {purpose: transaction and payment records, provider_scope_string: deferred}
+  read_financial_summary: {purpose: summary balances and settlements, provider_scope_string: deferred}
+  read_orders: {purpose: orders and customer-safe order metadata, provider_scope_string: deferred}
+  read_payouts: {purpose: payouts, deposits, fees, and reserves, provider_scope_string: deferred}
+  read_accounting: {purpose: accounting entries, invoices, expenses, and deposits, provider_scope_string: deferred}
+  read_advertising: {purpose: advertising spend and campaigns, provider_scope_string: deferred}
+  read_inventory: {purpose: products and inventory references, provider_scope_string: deferred}
+  read_disputes: {purpose: dispute and chargeback records, provider_scope_string: deferred}
+  webhook_receive: {purpose: signed inbound event acceptance, provider_scope_string: placeholder}
+  offline_sync: {purpose: permitted scheduled read synchronization, provider_scope_string: deferred}
+connector_scope_classes:
+  shopify: [read_orders, read_transactions, read_inventory, offline_sync, webhook_receive]
+  stripe: [read_transactions, read_payouts, read_disputes, offline_sync, webhook_receive]
+  quickbooks: [read_accounting, offline_sync]
+  xero: [read_accounting, offline_sync]
+  amazon_seller_central: [read_orders, read_transactions, read_payouts, read_inventory, read_disputes, offline_sync, webhook_receive]
+  walmart_marketplace: [read_orders, read_transactions, read_payouts]
+  tiktok_shop: [read_orders, read_transactions, read_payouts]
+  google_ads: [read_advertising, offline_sync]
+  meta_ads: [read_advertising, offline_sync]
+  google_drive: [public_metadata]
+  google_sheets: [public_metadata]
+  generic_partner_api: [read_transactions]
+  generic_webhook: [webhook_receive]

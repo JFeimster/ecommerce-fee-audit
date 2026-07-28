@@ -1,0 +1,8 @@
+version: 1.0.0
+upload_contract: {route: /api/uploads, function_slot: 3, actions: [requestUploadSession, finalizeUpload]}
+asynchronous_processing: {route: /api/jobs, function_slot: 9, target_job_types: [upload_finalize, audit_reprocess]}
+rules:
+  - {detected_provider: confirmed_or_high, file_type: supported, source_type: any, data_domain: any, product_tier: entitled, parsing_status: valid, confidence: high, manual_review_requirement: false, target_job_type: upload_finalize, target_function_slot: 9, quarantine_status: not_quarantined}
+  - {detected_provider: medium, file_type: supported, source_type: any, data_domain: any, product_tier: entitled, parsing_status: valid, confidence: medium, manual_review_requirement: true, target_job_type: upload_finalize, target_function_slot: 9, quarantine_status: review_pending}
+  - {detected_provider: low_or_unknown, file_type: any, source_type: any, data_domain: any, product_tier: any, parsing_status: uncertain, confidence: low, manual_review_requirement: true, target_job_type: audit_reprocess, target_function_slot: 9, quarantine_status: quarantined}
+  - {detected_provider: any, file_type: unsupported, source_type: any, data_domain: any, product_tier: any, parsing_status: rejected, confidence: unknown, manual_review_requirement: true, target_job_type: audit_reprocess, target_function_slot: 9, quarantine_status: quarantined}

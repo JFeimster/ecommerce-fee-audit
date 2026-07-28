@@ -1,0 +1,22 @@
+version: 1.0.0
+capabilities: [read_orders, read_transactions, read_payouts, read_fees, read_refunds, read_chargebacks, read_reserves, read_disputes, read_inventory, read_products, read_ad_spend, read_campaigns, read_bank_deposits, read_accounting_entries, read_invoices, read_expenses, read_customer_safe_metadata, receive_webhooks, scheduled_sync, incremental_sync, historical_backfill, export_source_files, account_selection]
+states: [supported, planned, unsupported, provider_dependent]
+matrix:
+  manual_upload: {read_orders: supported, read_transactions: supported, read_payouts: supported, read_fees: supported, read_refunds: supported, read_chargebacks: supported, read_reserves: supported, read_disputes: supported, read_inventory: supported, read_products: supported, read_ad_spend: supported, read_campaigns: supported, read_bank_deposits: supported, read_accounting_entries: supported, read_invoices: supported, read_expenses: supported, read_customer_safe_metadata: supported, export_source_files: supported, historical_backfill: supported}
+  shopify: {read_orders: planned, read_transactions: planned, read_refunds: planned, read_inventory: planned, read_products: planned, receive_webhooks: planned, scheduled_sync: planned, incremental_sync: planned, historical_backfill: planned, account_selection: planned}
+  stripe: {read_transactions: planned, read_payouts: planned, read_fees: planned, read_refunds: planned, read_chargebacks: planned, read_disputes: planned, receive_webhooks: planned, scheduled_sync: planned, incremental_sync: planned, historical_backfill: planned, account_selection: planned}
+  quickbooks: {read_accounting_entries: planned, read_invoices: planned, read_expenses: planned, read_bank_deposits: planned, scheduled_sync: planned, incremental_sync: planned, historical_backfill: planned, account_selection: planned}
+  xero: {read_accounting_entries: planned, read_invoices: planned, read_expenses: planned, read_bank_deposits: planned, scheduled_sync: planned, incremental_sync: planned, historical_backfill: planned, account_selection: planned}
+  amazon_seller_central: {read_orders: planned, read_transactions: planned, read_payouts: planned, read_fees: planned, read_refunds: planned, read_reserves: provider_dependent, read_disputes: provider_dependent, read_inventory: planned, receive_webhooks: provider_dependent, scheduled_sync: planned, incremental_sync: planned, historical_backfill: planned, account_selection: planned}
+  walmart_marketplace: {read_orders: planned, read_transactions: planned, read_payouts: planned, read_fees: planned, read_refunds: planned, account_selection: planned}
+  tiktok_shop: {read_orders: planned, read_transactions: planned, read_payouts: planned, read_fees: planned, read_refunds: planned, account_selection: planned}
+  google_ads: {read_ad_spend: planned, read_campaigns: planned, scheduled_sync: planned, incremental_sync: planned, historical_backfill: planned, account_selection: planned}
+  meta_ads: {read_ad_spend: planned, read_campaigns: planned, scheduled_sync: planned, incremental_sync: planned, historical_backfill: planned, account_selection: planned}
+  google_drive: {export_source_files: planned, account_selection: planned}
+  google_sheets: {export_source_files: planned, account_selection: planned}
+  generic_partner_api: {read_transactions: provider_dependent, read_payouts: provider_dependent, read_fees: provider_dependent, account_selection: provider_dependent}
+  generic_webhook: {receive_webhooks: provider_dependent}
+  cloud_storage: {export_source_files: provider_dependent, account_selection: provider_dependent}
+  email_attachment: {export_source_files: planned}
+  internal_agent: {read_customer_safe_metadata: supported}
+  custom_gpt: {read_customer_safe_metadata: planned}

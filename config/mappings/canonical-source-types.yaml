@@ -1,0 +1,2 @@
+version: 1.0.0
+source_types: [manual_upload, ecommerce_platform, marketplace, payment_processor, accounting_system, advertising_platform, bank_export, cloud_storage, spreadsheet, webhook, partner_api, internal_tool, customer_provided, unknown]

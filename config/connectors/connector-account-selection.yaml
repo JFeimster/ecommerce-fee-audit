@@ -1,0 +1,13 @@
+version: 1.0.0
+account_discovery: {required_before_sync: true, source: authorized_provider_or_user_manifest, raw_identifier_storage: prohibited}
+ownership_verification: {required_for_financial_or_commerce_accounts: true, methods: [authorized_identity, provider_confirmation, operator_review], failure: ownership_verification_failed}
+account_selection: {explicit_selection_required_when_multiple: true, default_account_prohibition: true, selection_audit_log: required}
+multi_account_support: {supported: true, account_scoped_cursors: required, account_scoped_idempotency: required}
+account_switching: {requires: [explicit_user_selection, ownership_recheck], behavior: preserve_prior_audit_trail}
+disconnected_account_behavior: {stop_sync: true, retain_metadata_per_retention_policy: true, require_reauthorization: true}
+account_aliasing: {allowed: true, raw_identifier_exposure: prohibited}
+masked_identifiers: {required: true, example: acct_••••4831}
+organization_selection: {explicit_when_multiple: true}
+marketplace_selection: {explicit_when_multiple: true}
+ad_account_selection: {explicit_when_multiple: true}
+store_selection: {explicit_when_multiple: true}

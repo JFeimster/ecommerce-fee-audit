@@ -1,0 +1,15 @@
+version: 1.0.0
+relationships:
+  orders_to_transactions: {keys: [order_id, transaction_id], comparison: totals_and_dates}
+  transactions_to_payouts: {keys: [transaction_id, payout_id], comparison: net_and_fee_amounts}
+  payouts_to_bank_deposits: {keys: [payout_id, account_reference], comparison: net_amount_and_posted_date}
+  fees_to_transactions: {keys: [transaction_id, fee_type], comparison: fee_amount}
+  refunds_to_orders: {keys: [refund_id, order_id], comparison: refund_amount}
+  chargebacks_to_transactions: {keys: [chargeback_id, transaction_id], comparison: amount_and_status}
+  reserves_to_payout_adjustments: {keys: [payout_id, source_record_id], comparison: reserve_amount}
+  advertising_spend_to_platform_billing: {keys: [campaign_id, source_record_id], comparison: ad_spend_amount}
+  accounting_entries_to_bank_deposits: {keys: [account_reference, posted_date], comparison: amount}
+  inventory_cost_to_order_or_sku: {keys: [sku, product_id], comparison: inventory_cost_amount}
+  source_totals_to_normalized_totals: {keys: [source_file_reference, reporting_period], comparison: totals}
+variance_statuses: [matched, matched_with_tolerance, partially_matched, unmatched, conflicting, insufficient_data]
+tolerances: {status: configurable, currency_specific: required, no_permanent_financial_thresholds: true}

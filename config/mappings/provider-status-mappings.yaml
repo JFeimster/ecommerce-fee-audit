@@ -1,0 +1,14 @@
+version: 1.0.0
+canonical_statuses: [pending, processing, completed, failed, cancelled, refunded, partially_refunded, disputed, held, released, reversed, unknown]
+profiles:
+  generic: {pending: pending, processing: processing, paid: completed, completed: completed, succeeded: completed, failed: failed, cancelled: cancelled, refunded: refunded, partially_refunded: partially_refunded, disputed: disputed, held: held, released: released, reversed: reversed}
+  shopify: {pending: pending, paid: completed, refunded: refunded, partially_refunded: partially_refunded, voided: cancelled}
+  stripe: {pending: pending, succeeded: completed, failed: failed, canceled: cancelled, refunded: refunded, disputed: disputed}
+  quickbooks: {pending: pending, paid: completed, voided: cancelled}
+  xero: {draft: pending, submitted: processing, authorised: completed, voided: cancelled}
+  amazon_seller_central: {pending: pending, completed: completed, refunded: refunded, disputed: disputed}
+  walmart_marketplace: {status: placeholder, mapping: {pending: pending, completed: completed, cancelled: cancelled}}
+  tiktok_shop: {status: placeholder, mapping: {pending: pending, completed: completed, cancelled: cancelled}}
+  google_ads: {enabled: processing, removed: cancelled, unknown: unknown}
+  meta_ads: {active: processing, paused: held, deleted: cancelled, unknown: unknown}
+unmapped_behavior: unknown

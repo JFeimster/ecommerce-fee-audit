@@ -1,0 +1,31 @@
+version: 1.0.0
+standards: {dates: ISO_8601_date, timestamps: ISO_8601_timestamp, currencies: ISO_4217, currency_conversion: prohibited_without_explicit_source_and_rate}
+rules:
+  identifiers: {behavior: preserve_provider_reference_and_generate_canonical_record_id, raw_credentials: prohibited}
+  dates: {behavior: normalize_only_when_source_format_is_known, invalid: null_and_quality_flag}
+  timestamps: {behavior: preserve_source_timezone_or_label_unknown, invalid: null_and_quality_flag}
+  time_zones: {behavior: no_silent_timezone_conversion}
+  currencies: {behavior: normalize_code_only, missing: null_and_quality_flag}
+  percentages: {unit: percent, behavior: preserve_explicit_unit}
+  signed_amounts: {unit: currency_minor_or_major_as_labeled, behavior: preserve_source_direction}
+  transaction_direction: {behavior: map_to_signed_amount_and_transaction_type}
+  fee_direction: {behavior: preserve_as_deduction_when_source_confirms}
+  payout_direction: {behavior: label_settlement_or_deposit_context}
+  refunds: {behavior: transaction_type_refund; no_implied_zero}
+  chargebacks: {behavior: transaction_type_chargeback; review_status_when_ambiguous}
+  reserves: {behavior: reserve_hold_or_reserve_release; preserve_source_reference}
+  ad_spend: {behavior: transaction_type_advertising_spend}
+  order_totals: {behavior: gross_amount_and_net_amount_when_supplied}
+  tax_amounts: {behavior: tax_amount; no_tax_conclusion}
+  shipping_amounts: {behavior: shipping_amount}
+  discounts: {behavior: discount_amount}
+  platform_fees: {behavior: fee_type_marketplace_commission_or_platform_subscription_when_supported}
+  processing_fees: {behavior: fee_type_payment_processing_when_supported}
+  marketplace_fees: {behavior: fee_type_marketplace_commission_when_supported}
+  subscription_fees: {behavior: fee_type_platform_subscription_or_app_subscription_when_supported}
+  advertising_fees: {behavior: fee_type_advertising_when_supported}
+  bank_deposits: {behavior: transaction_type_deposit}
+  accounting_entries: {behavior: transaction_type_invoice_expense_transfer_or_adjustment_when_supported}
+  inventory_costs: {behavior: transaction_type_inventory_purchase_or_inventory_cost_amount_when_supported}
+  source_references: {behavior: masked_or_provider_generated_reference}
+  provider_statuses: {behavior: map_via_provider_status_mappings_or_unknown}

@@ -1,0 +1,18 @@
+version: 1.0.0
+minimum_necessary_data: audit_reconciliation_disputes_qualification_routing_or_reporting_only
+detections:
+  full_account_numbers: mask
+  routing_numbers: mask
+  ssns: reject
+  tax_ids: quarantine
+  payment_card_numbers: reject
+  access_tokens: reject
+  api_keys: reject
+  oauth_tokens: reject
+  passwords: reject
+  private_webhook_secrets: reject
+  personal_addresses: remove_or_mask
+  birth_dates: remove
+  unneeded_customer_pii: remove_or_hash
+actions: [mask, remove, hash, retain_encrypted, reject, quarantine, manual_review]
+controls: {redaction_before_examples_or_logs: required, raw_secret_logging: prohibited, review_before_release: required}

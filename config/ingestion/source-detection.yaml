@@ -1,0 +1,9 @@
+version: 1.0.0
+signals: [filename_pattern, header_names, worksheet_names, json_keys, provider_metadata, report_title, column_combinations, currency_patterns, date_formats, transaction_type_patterns, statement_identifiers, user_selected_source, connector_metadata]
+confidence_levels:
+  confirmed: {behavior: route_to_matching_profile}
+  high: {behavior: route_to_matching_profile_and_log}
+  medium: {behavior: request_confirmation_or_review}
+  low: {behavior: do_not_assume_provider, action: quarantine_or_manual_mapping}
+  unknown: {behavior: do_not_assume_provider, action: quarantine_or_manual_mapping}
+resolution: {user_selected_source_precedence: high, connector_metadata_precedence: confirmed_when_verified, conflicting_signals: manual_review_required}

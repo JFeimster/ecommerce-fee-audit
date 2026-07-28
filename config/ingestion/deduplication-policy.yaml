@@ -1,0 +1,7 @@
+version: 1.0.0
+signals: [provider_record_id, transaction_id, order_id, payout_id, composite_key, checksum, amount_and_date, source_file_identity, connector_cursor, webhook_event_id, account_reference]
+classes:
+  exact_duplicate: {match: stable_identifier_or_checksum, behavior: idempotent_return_existing, audit_log: required}
+  likely_duplicate: {match: composite_or_amount_and_date, behavior: retain_pending_review, audit_log: required}
+  conflicting_duplicate: {match: same_identifier_with_conflicting_values, behavior: preserve_both_and_flag, audit_log: required}
+resolution: {merge_behavior: only_for_exact_duplicate, preserve_both_behavior: required_for_conflicts, manual_review_behavior: required_for_likely_or_conflicting, idempotency_behavior: source_scoped_key_required, audit_log_behavior: required}

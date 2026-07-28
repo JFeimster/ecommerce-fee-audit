@@ -1,0 +1,7 @@
+version: 1.0.0
+periods: {source_period: preserve_as_supplied, transaction_date: transaction_event_date, payout_date: payout_initiation_or_issue_date, settlement_date: settlement_date, bank_posted_date: bank_posting_date, accounting_date: accounting_entry_date, reporting_period: explicitly_labeled, ad_attribution_period: platform_attribution_period, reserve_release_date: reserve_release_event_date}
+time_zone_handling: {preserve_source_timezone: true, unknown_timezone: null_or_label_unknown, conversion: explicit_only}
+partial_period_handling: {label: partial_period, no_full_period_inference: true}
+overlapping_period_handling: {deduplicate_before_aggregate: true, manual_review_on_conflict: true}
+missing_period_handling: {reporting_period: null, quality_flag: required}
+rule: Do not mix transaction periods and payout periods without explicit labels.

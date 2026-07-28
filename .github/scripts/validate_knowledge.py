@@ -17,6 +17,12 @@ API_SCHEMAS = ROOT / "api" / "schemas"
 PRODUCT_CATALOG = ROOT / "config" / "products" / "product-catalog.yaml"
 OPENAPI = ROOT / "api" / "openapi"
 ACTIONS = ROOT / "config" / "actions"
+CONNECTORS = ROOT / "config" / "connectors"
+INGESTION = ROOT / "config" / "ingestion"
+MAPPINGS = ROOT / "config" / "mappings"
+JOBS = ROOT / "config" / "jobs"
+EVENTS = ROOT / "api" / "events"
+INGESTION_EXAMPLES = ROOT / "examples" / "ingestion"
 BATCH_TWO_SCHEMAS = (
     "audit-intake.schema.json",
     "audit-job.schema.json",
@@ -234,6 +240,94 @@ def validate_batch_three_contracts() -> None:
         fail("config/actions/function-budget.yaml: must preserve 10 active and 2 reserved slots")
 
 
+def validate_batch_five_contracts() -> None:
+    required_connector_ids = {
+        "manual_upload", "google_drive", "google_sheets", "shopify", "stripe", "quickbooks", "xero",
+        "amazon_seller_central", "walmart_marketplace", "tiktok_shop", "google_ads", "meta_ads",
+        "generic_partner_api", "generic_webhook", "cloud_storage", "email_attachment", "internal_agent", "custom_gpt",
+    }
+    expected_files = [
+        *(CONNECTORS / name for name in ("connector-catalog.yaml", "connector-capabilities.yaml", "connector-auth-profiles.yaml", "connector-scope-profiles.yaml", "connector-sync-policies.yaml", "connector-rate-limits.yaml", "connector-account-selection.yaml", "connector-data-retention.yaml", "connector-error-codes.yaml")),
+        *(INGESTION / name for name in ("supported-file-types.yaml", "upload-policy.yaml", "file-validation-policy.yaml", "file-routing.yaml", "source-detection.yaml", "data-quality-rules.yaml", "normalization-policy.yaml", "deduplication-policy.yaml", "reconciliation-policy.yaml", "period-alignment-policy.yaml", "redaction-policy.yaml", "quarantine-policy.yaml")),
+        *(MAPPINGS / name for name in ("canonical-field-registry.yaml", "canonical-transaction-types.yaml", "canonical-fee-types.yaml", "canonical-source-types.yaml", "provider-field-mappings.yaml", "provider-status-mappings.yaml", "provider-currency-mappings.yaml")),
+    ]
+    for path in expected_files:
+        if not path.exists():
+            fail(f"Missing Batch 5 contract: {path.relative_to(ROOT)}")
+        else:
+            load_yaml(path)
+
+    catalog = load_yaml(CONNECTORS / "connector-catalog.yaml")
+    budget = load_yaml(ACTIONS / "function-budget.yaml")
+    jobs = load_yaml(JOBS / "job-types.yaml")
+    events = load_yaml(EVENTS / "event-catalog.yaml")
+    if not isinstance(catalog, dict):
+        return
+    connector_map = catalog.get("connectors", {})
+    if set(connector_map) != required_connector_ids:
+        fail("config/connectors/connector-catalog.yaml: connector IDs must exactly match the Batch 5 inventory")
+    known_jobs = set(jobs.get("job_types", [])) if isinstance(jobs, dict) else set()
+    known_events = set(events.get("event_types", [])) if isinstance(events, dict) else set()
+    allowed_routes = {("/api/uploads", 3), ("/api/connectors", 6), ("/api/oauth-callback", 7), ("/api/webhooks/{provider}", 8), ("/api/jobs", 9)}
+    for connector_id, connector in connector_map.items():
+        if not isinstance(connector, dict):
+            fail(f"config/connectors/connector-catalog.yaml {connector_id}: connector must be a mapping")
+            continue
+        for field in ("provider_id", "current_status", "connection_method", "authentication_profile", "supported_source_types", "supported_file_types", "supported_data_domains", "function_route", "function_slot", "job_types", "emitted_event_types", "fallback_method", "data_sensitivity_classification"):
+            if field not in connector:
+                fail(f"config/connectors/connector-catalog.yaml {connector_id}: missing {field}")
+        if connector.get("current_status") not in {"active", "provisional", "planned", "placeholder", "unsupported"}:
+            fail(f"config/connectors/connector-catalog.yaml {connector_id}: invalid current_status")
+        route_slot = (connector.get("function_route"), connector.get("function_slot"))
+        if route_slot not in allowed_routes:
+            fail(f"config/connectors/connector-catalog.yaml {connector_id}: invalid connector route/slot {route_slot}")
+        if not set(connector.get("job_types", [])).issubset(known_jobs):
+            fail(f"config/connectors/connector-catalog.yaml {connector_id}: references unknown job type")
+        if not set(connector.get("emitted_event_types", [])).issubset(known_events):
+            fail(f"config/connectors/connector-catalog.yaml {connector_id}: references unknown event type")
+    if not isinstance(budget, dict) or (budget.get("active_function_limit"), budget.get("reserved_function_slots"), budget.get("maximum_total_slots")) != (10, 2, 12):
+        fail("Batch 5 requires the preserved 10 active and 2 reserved function budget")
+
+    fields = load_yaml(MAPPINGS / "canonical-field-registry.yaml")
+    transaction_types = load_yaml(MAPPINGS / "canonical-transaction-types.yaml")
+    fee_types = load_yaml(MAPPINGS / "canonical-fee-types.yaml")
+    source_types = load_yaml(MAPPINGS / "canonical-source-types.yaml")
+    status_mappings = load_yaml(MAPPINGS / "provider-status-mappings.yaml")
+    provider_mappings = load_yaml(MAPPINGS / "provider-field-mappings.yaml")
+    if isinstance(fields, dict):
+        field_names = [item.get("canonical_name") for item in fields.get("fields", []) if isinstance(item, dict)]
+        if len(field_names) != 46 or len(field_names) != len(set(field_names)) or None in field_names:
+            fail("config/mappings/canonical-field-registry.yaml: expected 46 unique canonical fields")
+        for item in fields.get("fields", []):
+            if isinstance(item, dict) and not {"data_type", "nullability", "zero_semantics", "unit", "normalization_rule", "example"}.issubset(item):
+                fail("config/mappings/canonical-field-registry.yaml: every field requires type, nullability, zero semantics, unit, rule, and example")
+    for path, data, key, expected in (
+        (MAPPINGS / "canonical-transaction-types.yaml", transaction_types, "transaction_types", 22),
+        (MAPPINGS / "canonical-fee-types.yaml", fee_types, "fee_types", 20),
+        (MAPPINGS / "canonical-source-types.yaml", source_types, "source_types", 14),
+    ):
+        values = data.get(key, []) if isinstance(data, dict) else []
+        if len(values) != expected or len(values) != len(set(values)):
+            fail(f"{path.relative_to(ROOT)}: requires {expected} unique values")
+    field_set = {item.get("canonical_name") for item in fields.get("fields", [])} if isinstance(fields, dict) else set()
+    if isinstance(provider_mappings, dict):
+        for name, profile in provider_mappings.get("profiles", {}).items():
+            concepts = profile.get("concepts", {}) if isinstance(profile, dict) else {}
+            invalid = set(concepts.values()) - field_set
+            if invalid:
+                fail(f"config/mappings/provider-field-mappings.yaml {name}: unknown canonical fields {sorted(invalid)}")
+    canonical_statuses = set(status_mappings.get("canonical_statuses", [])) if isinstance(status_mappings, dict) else set()
+    if canonical_statuses != {"pending", "processing", "completed", "failed", "cancelled", "refunded", "partially_refunded", "disputed", "held", "released", "reversed", "unknown"}:
+        fail("config/mappings/provider-status-mappings.yaml: canonical statuses do not match Batch 5 inventory")
+
+    for path in INGESTION_EXAMPLES.glob("*.json"):
+        example = load_json(path)
+        if example is not None and contains_sensitive_example_value(example):
+            fail(f"{path.relative_to(ROOT)}: possible secret or private-data value")
+    if len(list(INGESTION_EXAMPLES.glob("*.json"))) != 8:
+        fail("examples/ingestion: expected eight fictional JSON examples")
+
+
 for path in KNOWLEDGE.rglob("*.json"):
     load_json(path)
 
@@ -298,6 +392,7 @@ for path in KNOWLEDGE.rglob("*.md"):
 
 validate_batch_two_schemas()
 validate_batch_three_contracts()
+validate_batch_five_contracts()
 
 if errors:
     print("Knowledge integrity validation failed:")

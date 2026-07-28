@@ -1,0 +1,11 @@
+version: 1.0.0
+rules:
+  ISO_4217_normalization: uppercase_three_letter_code
+  symbol_to_code_handling: allowed_only_with_provider_or_account_currency_context
+  ambiguous_symbol_behavior: null_and_manual_review
+  decimal_precision_behavior: preserve_provider_precision_then_validate_currency_metadata
+  minor_unit_handling: require_explicit_provider_unit_before_conversion
+  unsupported_currency_behavior: preserve_source_value_with_currency_null_and_quality_flag
+  mixed_currency_handling: retain_separate_currency_buckets_no_implicit_conversion
+  exchange_rate_prohibition_without_explicit_source: true
+examples: {USD: USD, usd: USD, '$ with USD account context': USD, '€ without account context': null}

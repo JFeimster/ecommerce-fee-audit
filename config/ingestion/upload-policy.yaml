@@ -1,0 +1,5 @@
+version: 1.0.0
+upload_session: {route: /api/uploads, function_slot: 3, signed_upload_session: required, direct_to_storage_upload: required_for_large_files, expiry: configurable_short_duration, user_confirmation: required, audit_logging: required}
+limits: {small: configurable, standard: configurable, large: configurable, serverless_request_body: metadata_only}
+transfer: {chunking_support: provider_dependent, resumable_upload_support: provider_dependent, allowed_content_types: [csv, xlsx, json, pdf, zip, txt, tsv, ofx, qfx], rejected_content_types: [executables, scripts, disk_images], checksum: required, encryption: in_transit_and_at_rest, temporary_storage: encrypted_and_expiring}
+lifecycle: {malware_scan: required_before_processing, finalization: explicit_verified_finalize, quarantine: required_on_policy_failure, deletion: retention_policy_controlled}

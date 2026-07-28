@@ -1,0 +1,24 @@
+version: 1.0.0
+checks:
+  file_extension: {required: true, failure: quarantine}
+  mime_type: {required: true, failure: quarantine}
+  magic_bytes: {required: true, failure: quarantine}
+  checksum: {required: true, failure: reject_or_retry}
+  archive_traversal: {required: true, failure: quarantine}
+  archive_expansion_limit: {required: true, failure: quarantine}
+  password_protection: {required: true, failure: quarantine}
+  malformed_csv: {required: true, failure: manual_review}
+  workbook_sheet_count: {required: true, failure: manual_review}
+  hidden_worksheet_behavior: {required: true, behavior: flag_for_review}
+  formula_handling: {required: true, behavior: use_displayed_values_only_when_confirmed}
+  executable_content: {required: true, failure: reject_and_quarantine}
+  embedded_macros: {required: true, failure: quarantine}
+  duplicate_file: {required: true, behavior: idempotent_return_or_review}
+  empty_file: {required: true, failure: reject}
+  unexpected_encoding: {required: true, failure: manual_review}
+  unsupported_delimiter: {required: true, failure: manual_review}
+  invalid_json: {required: true, failure: reject}
+  oversized_row_count: {required: true, behavior: async_partition_or_quarantine}
+  malformed_dates: {required: true, behavior: data_quality_review}
+  currency_ambiguity: {required: true, behavior: data_quality_review}
+  sensitive_data_detection: {required: true, behavior: redact_or_quarantine}

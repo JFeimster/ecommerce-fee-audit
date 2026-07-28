@@ -1,0 +1,15 @@
+version: 1.0.0
+status: provisional_or_placeholder; not_every_export_or_api_version_is_covered
+profiles:
+  shopify: {status: provisional, concepts: {id: source_record_id, order_number: order_id, created_at: transaction_date, total_price: gross_amount, total_discounts: discount_amount, total_tax: tax_amount, currency: currency, line_item_sku: sku, financial_status: status}}
+  stripe: {status: provisional, concepts: {id: source_record_id, balance_transaction_id: transaction_id, payout: payout_id, created: transaction_date, amount: amount, fee: fee_amount, net: net_amount, currency: currency, status: status, dispute: dispute_id, refund: refund_id}}
+  quickbooks: {status: provisional, concepts: {transaction_id: source_record_id, txn_date: transaction_date, account: account_reference, amount: amount, doc_number: invoice_id, transaction_type: transaction_type, currency: currency}}
+  xero: {status: provisional, concepts: {transaction_id: source_record_id, date: transaction_date, bank_account: account_reference, total: amount, invoice_number: invoice_id, status: status, currency_code: currency}}
+  amazon_seller_central: {status: provisional, concepts: {settlement_id: payout_id, transaction_id: transaction_id, order_id: order_id, posted_date: posted_date, amount: amount, fee_amount: fee_amount, currency: currency, sku: sku, transaction_type: transaction_type}}
+  walmart_marketplace: {status: placeholder, concepts: {order_id: order_id, transaction_id: transaction_id, settlement_date: settlement_date, amount: amount, fee: fee_amount, currency: currency, sku: sku, status: status}}
+  tiktok_shop: {status: placeholder, concepts: {order_id: order_id, transaction_id: transaction_id, payout_id: payout_id, amount: amount, fee_amount: fee_amount, currency: currency, sku: sku, status: status}}
+  google_ads: {status: provisional, concepts: {campaign_id: campaign_id, date: transaction_date, cost: ad_spend_amount, currency: currency, campaign_name: customer_safe_reference}}
+  meta_ads: {status: provisional, concepts: {campaign_id: campaign_id, date_start: transaction_date, spend: ad_spend_amount, account_currency: currency, campaign_name: customer_safe_reference}}
+  generic_csv: {status: provisional, concepts: {record_identifier: source_record_id, date: transaction_date, amount: amount, currency: currency, status: status, type: transaction_type}}
+  generic_accounting_export: {status: provisional, concepts: {entry_id: source_record_id, date: transaction_date, account: account_reference, debit_or_credit: amount, currency: currency, document_number: invoice_id}}
+  generic_marketplace_export: {status: provisional, concepts: {order: order_id, transaction: transaction_id, payout: payout_id, date: transaction_date, amount: amount, fee: fee_amount, currency: currency, sku: sku}}

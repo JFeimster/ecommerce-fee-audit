@@ -1,0 +1,4 @@
+version: 1.0.0
+reasons: [malware_suspected, encrypted_archive, unsupported_format, invalid_structure, sensitive_data_exposure, provider_unknown, low_source_confidence, oversized_expansion, duplicate_conflict, incomplete_file, malformed_financial_totals, manual_review_required]
+statuses: [quarantined, review_pending, released, deleted]
+handling: {retention: provisional_configurable_short_retention, user_notification: required_when_actionable, operator_notification: required_for_security_or_review, release_requirements: [validation_passed, sensitive_data_resolved, reviewer_or_rule_approval], deletion_behavior: secure_delete_after_resolution_or_expiry, audit_logging: required, reprocessing_rules: new_idempotency_key_and_audit_trace}

@@ -1,0 +1,3 @@
+version: 1.0.0
+fee_types: [payment_processing, marketplace_commission, platform_subscription, listing, fulfillment, storage, advertising, refund, chargeback, dispute, reserve, currency_conversion, payout, shipping, tax_service, app_subscription, financing, penalty, other, unknown]
+financing_principal: {classification: not_a_fee, behavior: preserve_as_separate_transaction_or_adjustment_when_supported}
