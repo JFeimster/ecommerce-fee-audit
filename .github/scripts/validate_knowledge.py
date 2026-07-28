@@ -8,9 +8,27 @@ from pathlib import Path
 
 import yaml
 from jsonschema import Draft202012Validator
+from jsonschema import FormatChecker
+from referencing import Registry, Resource
 
 ROOT = Path(__file__).resolve().parents[2]
 KNOWLEDGE = ROOT / "knowledge"
+API_SCHEMAS = ROOT / "api" / "schemas"
+PRODUCT_CATALOG = ROOT / "config" / "products" / "product-catalog.yaml"
+BATCH_TWO_SCHEMAS = (
+    "audit-intake.schema.json",
+    "audit-job.schema.json",
+    "audit-source.schema.json",
+    "audit-finding.schema.json",
+    "event-envelope.schema.json",
+    "connector-config.schema.json",
+    "product-entitlement.schema.json",
+    "export-request.schema.json",
+    "upload-session.schema.json",
+    "user-consent.schema.json",
+    "audit-period.schema.json",
+    "service-order.schema.json",
+)
 errors: list[str] = []
 
 
@@ -57,6 +75,108 @@ def related_file_exists(source_path: Path, reference: str) -> bool:
         return False
     candidates = (source_path.parent / reference, KNOWLEDGE / reference)
     return any(candidate.resolve().is_file() for candidate in candidates)
+
+
+def nested_values(value, key: str):
+    if isinstance(value, dict):
+        if key in value:
+            yield value[key]
+        for child in value.values():
+            yield from nested_values(child, key)
+    elif isinstance(value, list):
+        for child in value:
+            yield from nested_values(child, key)
+
+
+def contains_sensitive_example_value(value) -> bool:
+    sensitive_key = re.compile(r"(?i)(api[_-]?key|access[_-]?token|refresh[_-]?token|secret|password|credential|ssn|bank[_-]?account)")
+    sensitive_value = re.compile(r"(?i)(sk-[a-z0-9]{20,}|akia[0-9a-z]{16}|-----begin (?:rsa )?private key-----)")
+    if isinstance(value, dict):
+        return any(sensitive_key.search(str(key)) or contains_sensitive_example_value(item) for key, item in value.items())
+    if isinstance(value, list):
+        return any(contains_sensitive_example_value(item) for item in value)
+    return isinstance(value, str) and bool(sensitive_value.search(value))
+
+
+def validate_batch_two_schemas() -> None:
+    catalog = load_yaml(PRODUCT_CATALOG)
+    if not isinstance(catalog, dict):
+        fail(f"Missing or invalid canonical product catalog: {PRODUCT_CATALOG.relative_to(ROOT)}")
+        return
+    product_ids = {item.get("product_id") for item in catalog.get("products", []) if isinstance(item, dict)}
+    if len(product_ids) != 10 or None in product_ids:
+        fail("config/products/product-catalog.yaml: expected 10 canonical product IDs")
+
+    schemas: list[tuple[Path, dict]] = []
+    ids: set[str] = set()
+    required_keys = {"$schema", "$id", "title", "description", "type", "required", "additionalProperties", "examples", "x-value-semantics"}
+    required_semantics = {"null", "zero", "omitted", "currency", "percentage"}
+    for filename in BATCH_TWO_SCHEMAS:
+        path = API_SCHEMAS / filename
+        if not path.exists():
+            fail(f"Missing Batch 2 schema: {path.relative_to(ROOT)}")
+            continue
+        schema = load_json(path)
+        if not isinstance(schema, dict):
+            continue
+        missing_keys = required_keys - schema.keys()
+        if missing_keys:
+            fail(f"{path.relative_to(ROOT)}: missing required schema keys {sorted(missing_keys)}")
+        if schema.get("$schema") != "https://json-schema.org/draft/2020-12/schema":
+            fail(f"{path.relative_to(ROOT)}: must declare JSON Schema Draft 2020-12")
+        schema_id = schema.get("$id")
+        if not isinstance(schema_id, str) or not schema_id:
+            fail(f"{path.relative_to(ROOT)}: missing stable $id")
+        elif schema_id in ids:
+            fail(f"Duplicate Batch 2 schema $id: {schema_id}")
+        else:
+            ids.add(schema_id)
+        semantics = schema.get("x-value-semantics")
+        if not isinstance(semantics, dict) or not required_semantics.issubset(semantics):
+            fail(f"{path.relative_to(ROOT)}: x-value-semantics must define null, zero, omitted, currency, and percentage")
+        try:
+            Draft202012Validator.check_schema(schema)
+        except Exception as exc:
+            fail(f"{path.relative_to(ROOT)}: Draft 2020-12 schema error: {exc}")
+        schemas.append((path, schema))
+
+    registry = Registry()
+    for _, schema in schemas:
+        schema_id = schema.get("$id")
+        if isinstance(schema_id, str):
+            registry = registry.with_resource(schema_id, Resource.from_contents(schema))
+
+    for path, schema in schemas:
+        for reference in nested_values(schema, "$ref"):
+            if not isinstance(reference, str) or reference.startswith("#"):
+                continue
+            if "://" in reference:
+                fail(f"{path.relative_to(ROOT)}: external $ref is not permitted: {reference}")
+                continue
+            target = (path.parent / reference.split("#", 1)[0]).resolve()
+            if not target.is_file():
+                fail(f"{path.relative_to(ROOT)}: unresolved relative $ref: {reference}")
+        for enum in nested_values(schema, "enum"):
+            if isinstance(enum, list) and set(enum) & product_ids and set(enum) != product_ids:
+                fail(f"{path.relative_to(ROOT)}: product ID enum does not match the canonical catalog")
+        for enum in nested_values(schema, "enum"):
+            if isinstance(enum, list):
+                statuses = [value for value in enum if isinstance(value, str) and value in {"draft", "open", "closed", "archived", "submitted", "accepted", "declined", "queued", "running", "succeeded", "failed", "cancelled", "blocked", "pending", "granted", "expired", "revoked", "unreviewed", "reviewed", "approved", "rejected", "escalated", "active", "suspended", "ready", "generating", "requested", "completed", "connected", "disabled", "error", "unsupported", "not_configured", "pending_consent", "processing", "available", "unusable", "withheld", "investigating", "awaiting_data", "resolved", "waived", "out_of_scope", "scoped", "unscoped"}]
+                if any(value != value.lower() for value in statuses):
+                    fail(f"{path.relative_to(ROOT)}: machine status enums must be lowercase")
+        try:
+            validator = Draft202012Validator(schema, registry=registry, format_checker=FormatChecker())
+            examples = schema.get("examples", [])
+            if not isinstance(examples, list) or not examples:
+                fail(f"{path.relative_to(ROOT)}: requires at least one fictional valid example")
+            for index, example in enumerate(examples, start=1):
+                if contains_sensitive_example_value(example):
+                    fail(f"{path.relative_to(ROOT)} example {index}: possible secret or private-data field")
+                found = list(validator.iter_errors(example))
+                if found:
+                    fail(f"{path.relative_to(ROOT)} example {index}: {found[0].message}")
+        except Exception as exc:
+            fail(f"{path.relative_to(ROOT)}: example validation error: {exc}")
 
 
 for path in KNOWLEDGE.rglob("*.json"):
@@ -120,6 +240,8 @@ for path in KNOWLEDGE.rglob("*.md"):
                     fail(f"{path.relative_to(ROOT)}: related_files target does not exist: {reference}")
     if re.search(r"(?i)(sk-[a-z0-9]{20,}|api[_-]?key\s*[:=]\s*\S+|password\s*[:=]\s*\S+)", text):
         fail(f"{path.relative_to(ROOT)}: possible credential pattern")
+
+validate_batch_two_schemas()
 
 if errors:
     print("Knowledge integrity validation failed:")

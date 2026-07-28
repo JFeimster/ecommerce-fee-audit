@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ecommerce-fee-audit.example/api/schemas/product-entitlement.schema.json",
+  "title": "Product Entitlement",
+  "description": "A provisional, auditable entitlement record for a canonical Batch 1 product; it is not a billing authorization.",
+  "type": "object",
+  "additionalProperties": false,
+  "x-value-semantics": {"null": "unavailable, unknown, withheld, or unsupported", "zero": "verified numeric zero", "omitted": "not supplied and never assumed to be zero", "currency": "ISO 4217 code; examples use USD", "percentage": "decimal ratio from 0 through 1 unless stated otherwise"},
+  "required": ["schema_version", "entitlement_id", "subject_reference", "product_id", "entitlement_status", "effective_at", "human_review_required", "review_status", "audit_trail"],
+  "$defs": {
+    "product_id": {"type": "string", "enum": ["free_platform_fee_audit_starter", "audit_lab", "margin_control", "guided_margin_recovery", "ecommerce_finance_ops_desk", "partner_agency_license", "one_time_platform_fee_leak_scan", "historical_reconciliation_sprint", "reserve_and_payout_investigation", "sku_margin_reset"], "description": "Canonical product ID from config/products/product-catalog.yaml."},
+    "audit_trail": {"type": "object", "additionalProperties": false, "required": ["created_at", "updated_at", "created_by"], "properties": {"created_at": {"type": "string", "format": "date-time"}, "updated_at": {"type": "string", "format": "date-time"}, "created_by": {"type": "string", "pattern": "^(system|user|partner)_[a-z0-9_-]+$"}, "change_reason": {"type": ["string", "null"]}}}
+  },
+  "properties": {
+    "schema_version": {"type": "string", "const": "1.0.0"},
+    "entitlement_id": {"type": "string", "pattern": "^entitlement_[a-z0-9_-]+$"},
+    "subject_reference": {"type": "string", "pattern": "^(member|partner|organization)_[a-z0-9_-]+$", "description": "Pseudonymous subject reference; not an email address or account credential."},
+    "product_id": {"$ref": "#/$defs/product_id"},
+    "entitlement_status": {"type": "string", "enum": ["provisional", "active", "suspended", "expired", "revoked"], "description": "Lowercase entitlement state; active does not make pricing approved."},
+    "effective_at": {"type": "string", "format": "date-time"},
+    "expires_at": {"type": ["string", "null"], "format": "date-time"},
+    "limits_snapshot": {"type": "object", "additionalProperties": false, "required": ["platforms", "human_review"], "properties": {"platforms": {"type": ["integer", "string", "null"], "description": "Verified plan platform limit, scoped value, or null when unavailable."}, "human_review": {"type": "string", "enum": ["none", "limited", "included", "partner_responsibility", "scoped", "licensed_scope"]}}},
+    "human_review_required": {"type": "boolean"},
+    "review_status": {"type": "string", "enum": ["unreviewed", "reviewed", "approved", "rejected", "escalated"]},
+    "audit_trail": {"$ref": "#/$defs/audit_trail"}
+  },
+  "examples": [{"schema_version": "1.0.0", "entitlement_id": "entitlement_northstar_audit_lab", "subject_reference": "organization_northstar_demo", "product_id": "audit_lab", "entitlement_status": "provisional", "effective_at": "2026-07-01T00:00:00Z", "expires_at": null, "limits_snapshot": {"platforms": 2, "human_review": "none"}, "human_review_required": false, "review_status": "reviewed", "audit_trail": {"created_at": "2026-07-01T00:00:00Z", "updated_at": "2026-07-01T00:00:00Z", "created_by": "system_fixture", "change_reason": "Fictional validation example."}}]
+}

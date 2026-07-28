@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ecommerce-fee-audit.example/api/schemas/user-consent.schema.json",
+  "title": "User Consent",
+  "description": "An auditable statement of consent scope for supplied or authorized data. It does not authorize money movement, disputes, funding applications, or other external writes.",
+  "type": "object",
+  "additionalProperties": false,
+  "x-value-semantics": {"null": "unavailable, unknown, withheld, or unsupported", "zero": "verified numeric zero", "omitted": "not supplied and never assumed to be zero", "currency": "ISO 4217 code; examples use USD", "percentage": "decimal ratio from 0 through 1 unless stated otherwise"},
+  "required": ["schema_version", "consent_id", "subject_reference", "purpose", "scopes", "status", "granted_at", "human_review_required", "audit_trail"],
+  "properties": {
+    "schema_version": {"type": "string", "const": "1.0.0"},
+    "consent_id": {"type": "string", "pattern": "^consent_[a-z0-9_-]+$"},
+    "subject_reference": {"type": "string", "pattern": "^(organization|member|partner)_[a-z0-9_-]+$"},
+    "purpose": {"type": "string", "enum": ["audit_analysis", "local_export_generation", "connector_read_access"]},
+    "scopes": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "enum": ["transactions.read", "settlements.read", "payouts.read", "bank_transactions.read", "advertising.read", "reserves.read", "documents.read", "reports.generate", "exports.generate"]}},
+    "status": {"type": "string", "enum": ["pending", "granted", "declined", "expired", "revoked"]},
+    "granted_at": {"type": ["string", "null"], "format": "date-time"},
+    "expires_at": {"type": ["string", "null"], "format": "date-time"},
+    "human_review_required": {"type": "boolean"},
+    "audit_trail": {"type": "object", "additionalProperties": false, "required": ["created_at", "updated_at", "recorded_by"], "properties": {"created_at": {"type": "string", "format": "date-time"}, "updated_at": {"type": "string", "format": "date-time"}, "recorded_by": {"type": "string", "pattern": "^(system|user)_[a-z0-9_-]+$"}, "consent_text_version": {"type": "string", "pattern": "^[0-9]+[.][0-9]+[.][0-9]+$"}}}
+  },
+  "examples": [{"schema_version": "1.0.0", "consent_id": "consent_northstar_analysis", "subject_reference": "organization_northstar_demo", "purpose": "audit_analysis", "scopes": ["transactions.read", "payouts.read", "reports.generate"], "status": "granted", "granted_at": "2026-07-01T09:00:00-04:00", "expires_at": null, "human_review_required": false, "audit_trail": {"created_at": "2026-07-01T09:00:00-04:00", "updated_at": "2026-07-01T09:00:00-04:00", "recorded_by": "user_fixture", "consent_text_version": "1.0.0"}}]
+}

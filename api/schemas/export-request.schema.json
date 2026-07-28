@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ecommerce-fee-audit.example/api/schemas/export-request.schema.json",
+  "title": "Export Request",
+  "description": "A request to generate a local audit export; sharing or uploading the result remains a separate confirmation-required action.",
+  "type": "object",
+  "additionalProperties": false,
+  "x-value-semantics": {"null": "unavailable, unknown, withheld, or unsupported", "zero": "verified numeric zero", "omitted": "not supplied and never assumed to be zero", "currency": "ISO 4217 code; examples use USD", "percentage": "decimal ratio from 0 through 1 unless stated otherwise"},
+  "required": ["schema_version", "export_request_id", "audit_id", "source_job_id", "idempotency_key", "format", "status", "requested_at", "consent_status", "human_review_required"],
+  "properties": {"schema_version": {"type": "string", "const": "1.0.0"}, "export_request_id": {"type": "string", "pattern": "^export_request_[a-z0-9_-]+$"}, "audit_id": {"type": "string", "pattern": "^audit_[a-z0-9_-]+$"}, "source_job_id": {"type": "string", "pattern": "^job_[a-z0-9_-]+$", "description": "Reference to the completed Audit Job used for this export."}, "idempotency_key": {"type": "string", "minLength": 16, "maxLength": 128}, "format": {"type": "string", "enum": ["json", "csv", "markdown"]}, "status": {"type": "string", "enum": ["requested", "generating", "ready", "failed", "expired"]}, "requested_at": {"type": "string", "format": "date-time"}, "expires_at": {"type": ["string", "null"], "format": "date-time"}, "consent_status": {"type": "string", "enum": ["not_requested", "pending", "granted", "declined", "expired", "revoked"]}, "human_review_required": {"type": "boolean"}, "destination": {"type": "string", "const": "local_download", "description": "Batch 2 permits only local-download intent; no external destination is authorized."}},
+  "examples": [{"schema_version": "1.0.0", "export_request_id": "export_request_northstar_json", "audit_id": "audit_northstar_2026", "source_job_id": "job_northstar_reconcile_01", "idempotency_key": "idem_export_northstar_json", "format": "json", "status": "ready", "requested_at": "2026-07-04T12:00:00Z", "expires_at": null, "consent_status": "granted", "human_review_required": false, "destination": "local_download"}]
+}

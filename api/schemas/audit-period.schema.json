@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ecommerce-fee-audit.example/api/schemas/audit-period.schema.json",
+  "title": "Audit Period",
+  "description": "A bounded reporting period for a reconciliation-first ecommerce audit.",
+  "type": "object",
+  "additionalProperties": false,
+  "x-value-semantics": {"null": "unavailable, unknown, withheld, or unsupported", "zero": "verified numeric zero", "omitted": "not supplied and never assumed to be zero", "currency": "ISO 4217 code; examples use USD", "percentage": "decimal ratio from 0 through 1 unless stated otherwise"},
+  "required": ["schema_version", "audit_period_id", "audit_id", "period_start", "period_end", "analysis_timezone", "reporting_currency", "status", "created_at", "updated_at"],
+  "properties": {
+    "schema_version": {"type": "string", "const": "1.0.0", "description": "Machine-readable schema version."},
+    "audit_period_id": {"type": "string", "pattern": "^audit_period_[a-z0-9_-]+$", "description": "Stable audit-period identifier."},
+    "audit_id": {"type": "string", "pattern": "^audit_[a-z0-9_-]+$", "description": "Stable parent audit identifier."},
+    "period_start": {"type": "string", "format": "date", "description": "Inclusive ISO 8601 reporting start date."},
+    "period_end": {"type": "string", "format": "date", "description": "Inclusive ISO 8601 reporting end date."},
+    "analysis_timezone": {"type": "string", "minLength": 1, "description": "IANA timezone used for period cutoffs."},
+    "reporting_currency": {"type": "string", "pattern": "^[A-Z]{3}$", "description": "ISO 4217 currency for consolidated reporting."},
+    "status": {"type": "string", "enum": ["draft", "open", "closed", "archived"], "description": "Lowercase audit-period lifecycle status."},
+    "created_at": {"type": "string", "format": "date-time", "description": "ISO 8601 creation timestamp."},
+    "updated_at": {"type": "string", "format": "date-time", "description": "ISO 8601 latest-update timestamp."},
+    "closed_at": {"type": ["string", "null"], "format": "date-time", "description": "ISO 8601 close timestamp, or null when unavailable."}
+  },
+  "examples": [{"schema_version": "1.0.0", "audit_period_id": "audit_period_northstar_2026_06", "audit_id": "audit_northstar_2026", "period_start": "2026-06-01", "period_end": "2026-06-30", "analysis_timezone": "America/New_York", "reporting_currency": "USD", "status": "closed", "created_at": "2026-07-01T09:00:00-04:00", "updated_at": "2026-07-05T16:30:00-04:00", "closed_at": "2026-07-05T16:30:00-04:00"}]
+}
