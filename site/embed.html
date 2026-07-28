@@ -4,27 +4,64 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#f5e84b">
   <title>Ecommerce Fee Audit Embed</title>
   <link rel="stylesheet" href="./styles.css">
 </head>
 <body class="embed-body">
   <section class="embed-panel" aria-label="Ecommerce Fee Audit embedded module">
-    <p class="kicker">Embed Module</p>
-    <h1 style="font-size: clamp(2.3rem, 7vw, 4.8rem);">Find the fees eating your margin.</h1>
-    <p class="lede">Use this embedded module as the starter card for Wix, WordPress, partner pages, or blog posts. It routes users toward the AI Platform Fee Audit Copilot, a fee-audit membership, or a managed finance-ops review.</p>
+    <p class="kicker">Embeddable Audit Signal</p>
+    <h1>Find the fees eating your margin.</h1>
+    <p class="lede">Drop this compact module into Wix, WordPress, partner pages, or blog posts. It routes operators toward the right audit lane before they upload files or request a deeper review.</p>
 
-    <div class="embed-steps" aria-label="Audit workflow steps">
-      <div class="embed-step">1. Upload platform exports and payout reports.</div>
-      <div class="embed-step">2. Reconcile settlements, payouts, deposits, fees, reserves, and disputes.</div>
-      <div class="embed-step">3. Review SKU margin, cash timing, and funding-readiness gaps.</div>
+    <div class="embed-grid" aria-label="Audit workflow steps">
+      <div class="embed-step">1. Identify the platform mess.</div>
+      <div class="embed-step">2. Pick the highest-pressure cash issue.</div>
+      <div class="embed-step">3. Get the recommended audit lane.</div>
+      <div class="embed-step">4. Open the GPT or request review.</div>
+    </div>
+
+    <div class="radar-panel">
+      <form class="audit-radar-form" data-audit-radar-form>
+        <label>
+          Platform
+          <select name="platform">
+            <option value="shopify">Shopify / DTC</option>
+            <option value="amazon">Amazon Marketplace</option>
+            <option value="stripe">Stripe / Processor</option>
+            <option value="multi">Multi-platform</option>
+          </select>
+        </label>
+        <label>
+          Pain
+          <select name="pain">
+            <option value="payouts">Payout mismatch</option>
+            <option value="fees">Fee leakage</option>
+            <option value="sku">SKU margin</option>
+            <option value="reserves">Reserves / disputes</option>
+          </select>
+        </label>
+        <label>
+          Urgency
+          <select name="urgency">
+            <option value="monthly">Monthly close</option>
+            <option value="cash">Cash pressure</option>
+            <option value="funding">Funding prep</option>
+          </select>
+        </label>
+        <button class="button primary" type="submit" data-cta="embed-run-signal">Run Signal</button>
+      </form>
+      <output class="radar-output" data-audit-output>
+        <strong>Recommended lane:</strong> Start with payout reconciliation. If the money trail is not clean, every margin opinion is wearing clown shoes.
+      </output>
     </div>
 
     <div class="hero-actions">
-      <a class="button primary" data-cta="try-copilot" href="https://chatgpt.com/" target="_blank" rel="noopener">Try the Copilot</a>
-      <a class="button secondary" data-cta="request-review" href="https://www.distilledfunding.com/" target="_blank" rel="noopener">Request a Review</a>
+      <a class="button primary" data-cta="embed-try-copilot" href="https://chatgpt.com/g/g-6a68083042408191a63f291b0c5a7d9f-ai-platform-fee-audit-copilot" target="_blank" rel="noopener">Open Copilot</a>
+      <a class="button secondary" data-cta="embed-request-review" href="https://www.distilledfunding.com/apply" target="_blank" rel="noopener">Request Review</a>
     </div>
 
-    <p style="margin-top:1rem;color:#4d453d;font-size:.9rem;line-height:1.5;">Educational and operational guidance only. Not accounting, tax, legal, lending, underwriting, or funding-approval advice.</p>
+    <p class="embed-note">Educational and operational guidance only. Not accounting, tax, legal, lending, underwriting, or funding-approval advice.</p>
   </section>
   <script src="./script.js"></script>
 </body>
