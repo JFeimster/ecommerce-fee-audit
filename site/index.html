@@ -3,56 +3,116 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Ecommerce platform fee audit system for payout reconciliation, SKU margin visibility, reserves, disputes, cash timing, and funding readiness.">
+  <meta name="description" content="Ecommerce platform fee audit system for payout reconciliation, fee leakage, SKU margin visibility, reserves, cash timing, and funding readiness.">
+  <meta name="theme-color" content="#f5e84b">
   <title>Ecommerce Fee Audit | Platform Margin Control</title>
+  <link rel="manifest" href="./site.webmanifest">
   <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
   <div class="site-shell">
-    <nav class="site-nav" aria-label="Primary navigation">
-      <a class="brand-mark" href="./index.html" aria-label="Ecommerce Fee Audit home"><span class="brand-badge">$</span><span>Ecommerce Fee Audit</span></a>
-      <div class="nav-links">
-        <a href="#how">How it works</a>
+    <header class="site-nav" aria-label="Primary navigation">
+      <a class="brand-mark" href="./index.html" aria-label="Ecommerce Fee Audit home">
+        <span class="brand-badge" aria-hidden="true">$</span>
+        <span class="brand-copy"><strong>Ecommerce Fee Audit</strong><small>Platform Margin Control</small></span>
+      </a>
+      <nav class="nav-links" aria-label="Site sections">
+        <a href="#workflow">Workflow</a>
+        <a href="#radar">Audit Radar</a>
         <a href="#offers">Offers</a>
         <a href="./embed.html">Embed</a>
-        <a class="button primary" data-cta="top-review" href="https://www.distilledfunding.com/" target="_blank" rel="noopener">Request Review</a>
-      </div>
-    </nav>
+        <a class="button mini primary" data-cta="nav-review" href="https://www.distilledfunding.com/apply" target="_blank" rel="noopener">Request Review</a>
+      </nav>
+    </header>
 
-    <main>
-      <section class="hero">
-        <div>
-          <p class="kicker">Platform Fee Audit + Finance Ops</p>
-          <h1>Stop letting platform fees quietly mug your margin.</h1>
-          <p class="lede">The AI Platform Fee Audit Copilot helps ecommerce operators review Shopify, Amazon, Stripe, marketplace, ad, payout, reserve, and SKU data so they can see where the money went before cash flow turns into a hostage negotiation.</p>
+    <main id="main">
+      <section class="hero neo-grid" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="kicker">AI Platform Fee Audit Copilot</p>
+          <h1 id="hero-title">Stop letting platform fees quietly mug your margin.</h1>
+          <p class="lede">A neo-brutalist finance-ops shell for ecommerce sellers who need to reconcile Shopify, Amazon, Stripe, ads, payouts, reserves, refunds, disputes, SKU margin, and cash timing before the bank account starts doing parkour.</p>
           <div class="hero-actions">
-            <a class="button primary" data-cta="hero-copilot" href="https://chatgpt.com/" target="_blank" rel="noopener">Open the Copilot</a>
+            <a class="button primary" data-cta="hero-copilot" href="https://chatgpt.com/g/g-6a68083042408191a63f291b0c5a7d9f-ai-platform-fee-audit-copilot" target="_blank" rel="noopener">Open the Copilot</a>
             <a class="button secondary" data-cta="hero-embed" href="./embed.html">View Embed</a>
           </div>
         </div>
 
-        <aside class="stat-card" aria-label="Audit summary card">
-          <p class="kicker">Audit Stack</p>
-          <h2>Money trail first. Opinions later.</h2>
-          <div class="stat-grid">
-            <div class="stat-row"><span>Payout reconciliation</span><span>Priority 1</span></div>
-            <div class="stat-row"><span>Fee leakage</span><span>Priority 2</span></div>
-            <div class="stat-row"><span>SKU margin</span><span>Priority 3</span></div>
-            <div class="stat-row"><span>Cash timing</span><span>Priority 4</span></div>
-          </div>
+        <aside class="hero-board" aria-label="Audit priority board">
+          <div class="tape-label">Money Trail First</div>
+          <h2>Four-part audit order</h2>
+          <ol class="priority-list">
+            <li><span>Payout reconciliation</span><strong>Priority 1</strong></li>
+            <li><span>Fee leakage</span><strong>Priority 2</strong></li>
+            <li><span>SKU contribution margin</span><strong>Priority 3</strong></li>
+            <li><span>Cash-timing diagnosis</span><strong>Priority 4</strong></li>
+          </ol>
         </aside>
       </section>
 
-      <section id="how" class="section">
-        <div class="section-head">
-          <p class="kicker">How it works</p>
-          <h2>Turn messy platform exports into operator decisions.</h2>
-          <p class="lede">This is not a generic dashboard. The system is built around reconciliation, variance review, margin visibility, reserve tracking, dispute documentation, and funding-readiness preparation.</p>
+      <section class="ticker-strip" aria-label="Audit coverage">
+        <span>Shopify payouts</span>
+        <span>Amazon settlements</span>
+        <span>Stripe fees</span>
+        <span>Ad spend lag</span>
+        <span>Reserves + holds</span>
+        <span>SKU margin</span>
+      </section>
+
+      <section id="workflow" class="section split-section">
+        <div class="section-head sticky-note">
+          <p class="kicker">Workflow</p>
+          <h2>Turn messy exports into operator decisions.</h2>
+          <p>The site is intentionally static-first. The GPT and knowledge library do the analysis. This page acts as the front door, product ladder, embed host, and future Vercel deployment shell.</p>
         </div>
-        <div class="grid-3">
-          <article class="card"><strong>1. Reconcile</strong><p>Match platform settlements, payouts, fees, reserves, refunds, disputes, and bank deposits before making margin decisions.</p></article>
-          <article class="card"><strong>2. Diagnose</strong><p>Classify fees, flag variance, review SKU contribution margin, and identify cash timing problems.</p></article>
-          <article class="card"><strong>3. Act</strong><p>Create a clean action register for disputes, operational fixes, funding-readiness gaps, and next-month controls.</p></article>
+        <div class="stacked-cards">
+          <article class="card loud-card"><strong>01 / Reconcile</strong><p>Match settlements, payouts, bank deposits, platform fees, reserves, refunds, disputes, reimbursements, and financing deductions before making margin decisions.</p></article>
+          <article class="card accent-card"><strong>02 / Diagnose</strong><p>Classify fee categories, flag variance, review SKU contribution margin, and find where cash timing is distorting what the dashboard says.</p></article>
+          <article class="card dark-card"><strong>03 / Act</strong><p>Create clean next actions for disputes, documentation gaps, funding-readiness risks, SKU decisions, and monthly controls.</p></article>
+        </div>
+      </section>
+
+      <section id="radar" class="section radar-section" aria-labelledby="radar-title">
+        <div class="section-head center-head">
+          <p class="kicker">Audit Radar</p>
+          <h2 id="radar-title">Pick the mess. Get the next move.</h2>
+          <p class="lede small">This lightweight front-end signal router is not an underwriting engine, accounting system, or fee-recovery promise. It simply points the user toward the right audit lane.</p>
+        </div>
+
+        <div class="radar-panel">
+          <form class="audit-radar-form" data-audit-radar-form>
+            <label>
+              Platform
+              <select name="platform">
+                <option value="shopify">Shopify / DTC</option>
+                <option value="amazon">Amazon Marketplace</option>
+                <option value="stripe">Stripe / Processor</option>
+                <option value="multi">Multi-platform</option>
+              </select>
+            </label>
+            <label>
+              Biggest pain
+              <select name="pain">
+                <option value="payouts">Payouts do not match deposits</option>
+                <option value="fees">Fees look too high or unclear</option>
+                <option value="sku">SKU margin is fuzzy</option>
+                <option value="reserves">Reserves, holds, or disputes are squeezing cash</option>
+              </select>
+            </label>
+            <label>
+              Urgency
+              <select name="urgency">
+                <option value="monthly">Monthly close cleanup</option>
+                <option value="cash">Cash is getting tight</option>
+                <option value="funding">Preparing for funding</option>
+              </select>
+            </label>
+            <button class="button primary" type="submit" data-cta="radar-run">Run Signal</button>
+          </form>
+          <output class="radar-output" data-audit-output>
+            <strong>Recommended lane:</strong> Start with payout reconciliation. If the money trail is not clean, every margin opinion is wearing clown shoes.
+          </output>
         </div>
       </section>
 
@@ -61,19 +121,46 @@
           <p class="kicker">Product Ladder</p>
           <h2>DIY, DWY, and DFY without consulting soup.</h2>
         </div>
-        <div class="grid-3">
-          <article class="card"><h3>DIY Fee Audit Lab</h3><p>Templates, GPT workflows, monthly close checklists, and member education for self-guided operators.</p></article>
-          <article class="card"><h3>DWY Margin Recovery Desk</h3><p>Guided monthly audits, Notion workspace, exception review, and implementation support.</p></article>
-          <article class="card"><h3>DFY Ecommerce Finance Ops Desk</h3><p>Managed recurring reconciliation, fee variance, SKU margin, reserve tracking, and cash-timing reports.</p></article>
+        <div class="offer-grid">
+          <article class="offer-card yellow-card">
+            <span class="tier">DIY</span>
+            <h3>Fee Audit Lab</h3>
+            <p>Templates, GPT workflows, monthly close checklists, playbooks, downloads, and group education for operators who want the system without a retainer.</p>
+            <a href="./embed.html" class="text-link">Use the embed →</a>
+          </article>
+          <article class="offer-card cyan-card">
+            <span class="tier">DWY</span>
+            <h3>Margin Recovery Desk</h3>
+            <p>Guided monthly audits, Notion workspace, exception review, data-gap cleanup, and operator support when the spreadsheet starts throwing furniture.</p>
+            <a href="https://www.distilledfunding.com/" class="text-link" target="_blank" rel="noopener">Request guidance →</a>
+          </article>
+          <article class="offer-card pink-card">
+            <span class="tier">DFY</span>
+            <h3>Ecommerce Finance Ops Desk</h3>
+            <p>Managed recurring reconciliation, fee variance, reserve tracking, SKU margin, cash-timing summaries, and funding-readiness support.</p>
+            <a href="https://www.distilledfunding.com/apply" class="text-link" target="_blank" rel="noopener">Start review →</a>
+          </article>
         </div>
+      </section>
+
+      <section class="asset-band" aria-label="Repository asset lanes">
+        <div>
+          <p class="kicker">Repo-ready</p>
+          <h2>Static shell now. Product engine later.</h2>
+        </div>
+        <ul class="asset-list">
+          <li><strong>site/assets/icons/</strong><span>Favicons, UI marks, partner badges, and product symbols.</span></li>
+          <li><strong>site/assets/downloads/</strong><span>Public-safe lead magnets, checklists, and non-sensitive sample files.</span></li>
+          <li><strong>knowledge/</strong><span>GPT operating library, product ladder, sales scripts, and implementation playbooks.</span></li>
+        </ul>
       </section>
 
       <section class="cta-band" aria-label="Primary call to action">
         <div>
           <h2>Build the money trail before you chase more capital.</h2>
-          <p>Better platform-fee visibility can support cleaner funding conversations, sharper inventory decisions, and fewer spreadsheet crime scenes. Eligibility and terms still vary. This is not a funding guarantee.</p>
+          <p>Better platform-fee visibility may support cleaner funding conversations, sharper inventory decisions, and fewer cash-flow surprises. Eligibility and terms still vary. This is not a funding guarantee.</p>
         </div>
-        <a class="button dark" data-cta="bottom-review" href="https://www.distilledfunding.com/" target="_blank" rel="noopener">Start Review</a>
+        <a class="button dark" data-cta="bottom-review" href="https://www.distilledfunding.com/apply" target="_blank" rel="noopener">Start Review</a>
       </section>
     </main>
 
@@ -81,6 +168,7 @@
       <p>&copy; <span data-current-year></span> Ecommerce Fee Audit / Moonshine Capital. Educational and operational guidance only. Not accounting, tax, legal, lending, underwriting, or funding-approval advice.</p>
     </footer>
   </div>
+
   <script src="./script.js"></script>
 </body>
 </html>
