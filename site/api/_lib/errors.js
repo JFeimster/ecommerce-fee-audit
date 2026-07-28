@@ -1,0 +1,1 @@
+function error(res,status,code,operationId){return res.status(status).json({error:{code,message:'Request cannot be completed in this runtime mode.',request_id:'mock_request',operation_id:operationId,retryable:false,review_required:false,timestamp:new Date().toISOString()}})} module.exports={error};

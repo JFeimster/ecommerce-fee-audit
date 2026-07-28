@@ -1,0 +1,49 @@
+version: 1.0.0
+status: placeholder
+production_readiness: adapter_required
+active_function_limit: 10
+reserved_function_slots: 2
+*** Add File: config/runtime/runtime-feature-flags.yaml
+version: 1.0.0
+status: placeholder
+production_readiness: adapter_required
+active_function_limit: 10
+reserved_function_slots: 2
+*** Add File: config/runtime/runtime-error-codes.yaml
+version: 1.0.0
+status: placeholder
+production_readiness: adapter_required
+active_function_limit: 10
+reserved_function_slots: 2
+*** Add File: config/runtime/runtime-rate-limits.yaml
+version: 1.0.0
+status: placeholder
+production_readiness: adapter_required
+active_function_limit: 10
+reserved_function_slots: 2
+*** Add File: config/runtime/runtime-data-stores.yaml
+version: 1.0.0
+status: placeholder
+production_readiness: adapter_required
+active_function_limit: 10
+reserved_function_slots: 2
+*** Add File: config/runtime/runtime-adapters.yaml
+version: 1.0.0
+status: placeholder
+production_readiness: adapter_required
+active_function_limit: 10
+reserved_function_slots: 2
+*** Add File: config/runtime/runtime-observability.yaml
+version: 1.0.0
+status: placeholder
+production_readiness: adapter_required
+active_function_limit: 10
+reserved_function_slots: 2
+*** Add File: config/runtime/runtime-security.yaml
+version: 1.0.0
+status: placeholder
+production_readiness: adapter_required
+active_function_limit: 10
+reserved_function_slots: 2
+*** Add File: tests/runtime/public.test.js
+const test=require('node:test'); const assert=require('node:assert'); test('public runtime contract',()=>assert.ok(true));

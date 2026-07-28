@@ -68,6 +68,8 @@ foreach ($DataFile in @("public-product-catalog.json", "public-connector-catalog
     catch { throw "Invalid public JSON: $DataFile" }
 }
 
-if (Test-Path -LiteralPath (Join-Path $SiteRoot "api")) { throw "Batch 7 must not create site/api routes" }
+$Routes = @("public.js","intake.js","uploads.js","audits.js","exports.js","connectors.js","oauth-callback.js","webhooks/[provider].js","jobs.js","health.js")
+foreach ($Route in $Routes) { if (-not (Test-Path -LiteralPath (Join-Path $SiteRoot "api/$Route"))) { throw "Missing approved API route: $Route" } }
+if ((Get-ChildItem -LiteralPath (Join-Path $SiteRoot "api") -File -Recurse | Where-Object { $_.FullName -notmatch '\\_lib\\|\\_data\\' }).Count -ne 10) { throw "Expected exactly 10 physical API routes" }
 
 Write-Host "Static site check passed." -ForegroundColor Green
