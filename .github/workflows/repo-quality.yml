@@ -1,0 +1,52 @@
+name: Repository Quality
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Validate required files and asset structure
+        shell: pwsh
+        run: |
+          $required = @(
+            'site/index.html',
+            'site/embed.html',
+            'site/styles.css',
+            'site/script.js',
+            'site/vercel.json',
+            'site/assets/images/README.md',
+            'site/assets/icons/README.md',
+            'site/assets/downloads/README.md'
+          )
+          $missing = $required | Where-Object { -not (Test-Path $_) }
+          if ($missing) { throw "Missing required files: $($missing -join ', ')" }
+
+          $duplicates = @('assets/images', 'assets/icons', 'assets/downloads') |
+            Where-Object { Test-Path $_ }
+          if ($duplicates) { throw "Duplicate public asset folders found at repo root: $($duplicates -join ', ')" }
+
+          Get-Content site/vercel.json -Raw | ConvertFrom-Json | Out-Null
+
+      - name: Run static-site checks
+        if: ${{ hashFiles('scripts/check-static-site.ps1') != '' }}
+        shell: pwsh
+        run: ./scripts/check-static-site.ps1
+
+      - name: Scan public downloads for suspicious filenames
+        shell: pwsh
+        run: |
+          $patterns = 'secret|credential|token|apikey|api-key|bank-statement|client-data|private'
+          $hits = Get-ChildItem site/assets/downloads -Recurse -File |
+            Where-Object { $_.Name -match $patterns }
+          if ($hits) { throw "Suspicious public download filenames: $($hits.FullName -join ', ')" }
