@@ -1,3 +1,14 @@
+---
+title: Platform Fee Audit Membership Product Ladder (Legacy)
+status: deprecated
+canonical_replacement: knowledge/business-models/platform-fee-audit-product-ladder-v2.md
+preservation_reason: Preserved as historical product-development source material and pricing context.
+deletion_policy: Do not delete this file.
+linking_policy: No new internal links should point to this legacy file.
+---
+
+> **Deprecated:** Use [Platform Fee Audit Product Ladder v2](platform-fee-audit-product-ladder-v2.md) for canonical product, pricing-status, and entitlement guidance.
+
 > From: https://chatgpt.com/g/g-p-6a2680a3a90481919da8965887ace3e1/c/6a67cc17-1fb0-83ea-97df-71f2f336c83d
 
 # chatgpt response

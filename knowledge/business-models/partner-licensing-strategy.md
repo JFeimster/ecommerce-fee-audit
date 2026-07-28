@@ -1,9 +1,15 @@
 ---
-title: Partner Licensing Strategy
-status: scaffold
+title: Partner Licensing Strategy (Legacy)
+status: deprecated
+canonical_replacement: knowledge/products/partner-agency-license.md
+preservation_reason: Preserved as a historical licensing-strategy scaffold.
+deletion_policy: Do not delete this file.
+linking_policy: No new internal links should point to this legacy file.
 ---
 
 # Partner Licensing Strategy
+
+> **Deprecated:** Use [Partner / Agency License](../products/partner-agency-license.md) as the canonical product definition.
 
 ## Purpose
 

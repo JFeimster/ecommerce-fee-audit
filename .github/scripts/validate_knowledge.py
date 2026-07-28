@@ -34,6 +34,31 @@ def load_yaml(path: Path):
         return None
 
 
+def load_front_matter(path: Path):
+    text = path.read_text(encoding="utf-8")
+    match = re.match(r"\A---\s*\n(.*?)\n---\s*(?:\n|\Z)", text, re.DOTALL)
+    if not match:
+        return None
+    try:
+        metadata = yaml.safe_load(match.group(1))
+    except Exception as exc:
+        fail(f"{path.relative_to(ROOT)}: front-matter YAML error: {exc}")
+        return None
+    if metadata is None:
+        return {}
+    if not isinstance(metadata, dict):
+        fail(f"{path.relative_to(ROOT)}: front matter must be a mapping")
+        return None
+    return metadata
+
+
+def related_file_exists(source_path: Path, reference: str) -> bool:
+    if Path(reference).is_absolute():
+        return False
+    candidates = (source_path.parent / reference, KNOWLEDGE / reference)
+    return any(candidate.resolve().is_file() for candidate in candidates)
+
+
 for path in KNOWLEDGE.rglob("*.json"):
     load_json(path)
 
@@ -84,6 +109,15 @@ if instruction_path.exists():
 
 for path in KNOWLEDGE.rglob("*.md"):
     text = path.read_text(encoding="utf-8")
+    metadata = load_front_matter(path)
+    if metadata and "related_files" in metadata:
+        related_files = metadata["related_files"]
+        if not isinstance(related_files, list) or not all(isinstance(item, str) for item in related_files):
+            fail(f"{path.relative_to(ROOT)}: related_files must be a list of paths")
+        else:
+            for reference in related_files:
+                if not related_file_exists(path, reference):
+                    fail(f"{path.relative_to(ROOT)}: related_files target does not exist: {reference}")
     if re.search(r"(?i)(sk-[a-z0-9]{20,}|api[_-]?key\s*[:=]\s*\S+|password\s*[:=]\s*\S+)", text):
         fail(f"{path.relative_to(ROOT)}: possible credential pattern")
 

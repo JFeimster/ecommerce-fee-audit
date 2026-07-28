@@ -11,7 +11,7 @@ primary_users:
   - "ecommerce finance operations teams"
   - "human reviewers"
 related_files:
-  - "ai-platform-fee-audit-copilot-instructions.md"
+  - "ai-platform-fee-audit-copilot-builder-instructions.md"
   - "normalized-platform-fee-taxonomy.yaml"
   - "master-transaction-schema.json"
   - "column-mapping-library.json"

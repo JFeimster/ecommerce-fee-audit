@@ -9,7 +9,7 @@ primary_users:
   - "ecommerce finance operations teams"
   - "operators and human reviewers"
 related_files:
-  - "ai-platform-fee-audit-copilot-instructions.md"
+  - "ai-platform-fee-audit-copilot-builder-instructions.md"
   - "ecommerce-platform-fee-audit-worksheet.md"
   - "normalized-platform-fee-taxonomy.yaml"
   - "master-transaction-schema.json"

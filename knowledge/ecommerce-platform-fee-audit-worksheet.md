@@ -10,7 +10,7 @@ primary_users:
   - "finance operations teams"
   - "fractional finance advisors"
 related_files:
-  - "ai-platform-fee-audit-copilot-instructions.md"
+  - "ai-platform-fee-audit-copilot-builder-instructions.md"
   - "normalized-platform-fee-taxonomy.yaml"
   - "master-transaction-schema.json"
   - "column-mapping-library.json"

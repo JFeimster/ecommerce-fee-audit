@@ -40,9 +40,16 @@ The active Vercel configuration now lives at:
 site/vercel.json
 ```
 
-If `site/vercel.json` has Git deployments disabled, temporarily set production deployment to enabled only when intentionally deploying from `main`.
+The current configuration disables Git deployments for every branch except `main`:
 
-After production verification, disable preview deploys again if the project requires manual deployment control.
+```json
+"deploymentEnabled": {
+  "*": false,
+  "main": true
+}
+```
+
+Change these settings only through an intentional deployment-control decision. This repository uses `site/vercel.json`; there is no repository-root `vercel.json`.
 
 ## QA Checklist
 

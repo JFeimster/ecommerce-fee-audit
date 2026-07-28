@@ -1,9 +1,15 @@
 ---
-title: Upgrade Paths
-status: scaffold
+title: Upgrade Paths (Legacy)
+status: deprecated
+canonical_replacement: knowledge/sales/upgrade-paths-v2.md
+preservation_reason: Preserved as the original upgrade-paths scaffold.
+deletion_policy: Do not delete this file.
+linking_policy: No new internal links should point to this legacy file.
 ---
 
 # Upgrade Paths
+
+> **Deprecated:** Use [Upgrade Paths v2](upgrade-paths-v2.md) as the canonical upgrade guidance.
 
 ## DIY to DWY Triggers
 

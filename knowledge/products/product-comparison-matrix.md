@@ -1,9 +1,15 @@
 ---
-title: Product Comparison Matrix
-status: scaffold
+title: Product Comparison Matrix (Legacy)
+status: deprecated
+canonical_replacement: knowledge/products/product-comparison-matrix-v2.md
+preservation_reason: Preserved as the original product-comparison scaffold.
+deletion_policy: Do not delete this file.
+linking_policy: No new internal links should point to this legacy file.
 ---
 
 # Product Comparison Matrix
+
+> **Deprecated:** Use [Product Comparison Matrix v2](product-comparison-matrix-v2.md) as the canonical comparison.
 
 | Dimension | DIY Fee Audit Lab | DWY Margin Recovery Desk | DFY Ecommerce Finance Ops Desk |
 |---|---|---|---|

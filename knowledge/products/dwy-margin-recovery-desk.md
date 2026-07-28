@@ -1,10 +1,16 @@
 ---
-title: DWY Margin Recovery Desk
-status: scaffold
+title: DWY Margin Recovery Desk (Legacy)
+status: deprecated
+canonical_replacement: knowledge/products/guided-margin-recovery.md
+preservation_reason: Preserved as the original guided-service scaffold.
+deletion_policy: Do not delete this file.
+linking_policy: No new internal links should point to this legacy file.
 offer_type: DWY
 ---
 
 # DWY Margin Recovery Desk
+
+> **Deprecated:** Use [Guided Margin Recovery](guided-margin-recovery.md) as the canonical guided product definition.
 
 ## Core Promise
 

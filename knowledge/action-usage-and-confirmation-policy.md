@@ -10,7 +10,7 @@ primary_users:
   - "finance operations teams"
   - "authorized business users"
 related_files:
-  - "ai-platform-fee-audit-copilot-instructions.md"
+  - "ai-platform-fee-audit-copilot-builder-instructions.md"
   - "privacy-redaction-and-data-handling.md"
   - "output-schema.json"
   - "fee-dispute-documentation-playbook.md"
