@@ -1,0 +1,1 @@
+function response(){return{statusCode:null,body:null,status(code){this.statusCode=code;return this;},json(body){this.body=body;return this;}};}function request({method='GET',headers={},query={},body={},params={}}={}){return{method,headers,query,body,params};}module.exports={request,response};

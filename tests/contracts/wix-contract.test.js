@@ -1,1 +1,3 @@
-const test=require('node:test');const assert=require('node:assert');test('wix-contract',()=>assert.ok(true));
+const test=require('node:test');const assert=require('node:assert/strict');const{files,load}=require('../helpers/loaders');const siteId='cc61a0cb-edcd-43dc-bdda-42c76443dcd6';
+test('Wix mappings retain the verified site ID and shared webhook slot',()=>{const wix=files('config/wix');const text=wix.map(file=>JSON.stringify(load(file))).join('\n');assert.match(text,new RegExp(siteId));assert.match(text,/\/api\/webhooks\/\{provider\}/);assert.match(text,/slot.?[: ]?8/);});
+test('Wix public commerce mappings keep provisional pricing and deny internal roles',()=>{const text=files('config/wix').map(file=>JSON.stringify(load(file))).join('\n');assert.match(text,/(provisional|placeholder|founding_member|not_applicable)/);assert.doesNotMatch(text,/public_checkout[^\n]{0,120}(internal_operator|administrator)/i);});

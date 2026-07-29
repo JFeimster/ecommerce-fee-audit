@@ -1,0 +1,4 @@
+const fs=require('node:fs');const path=require('node:path');const{execFileSync}=require('node:child_process');const root=path.resolve(__dirname,'..','..');const cache=new Map();
+function files(dir,pattern=/\.(json|ya?ml)$/i){return fs.readdirSync(path.join(root,dir),{withFileTypes:true}).sort((a,b)=>a.name.localeCompare(b.name)).flatMap(e=>e.isDirectory()?files(path.join(dir,e.name),pattern):(pattern.test(e.name)?[path.join(dir,e.name).split(path.sep).join('/')]:[]));}
+function load(relative){if(cache.has(relative))return cache.get(relative);const full=path.join(root,relative);const script='import json,pathlib,sys,yaml;p=pathlib.Path(sys.argv[1]);print(json.dumps(json.load(p.open()) if p.suffix==".json" else yaml.safe_load(p.open())))';const value=JSON.parse(execFileSync('python',['-c',script,full],{encoding:'utf8'}));cache.set(relative,value);return value;}
+module.exports={root,files,load};
