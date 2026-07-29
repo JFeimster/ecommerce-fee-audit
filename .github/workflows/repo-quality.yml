@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Validate required files and asset structure
         shell: pwsh
@@ -32,9 +32,17 @@ jobs:
           $missing = $required | Where-Object { -not (Test-Path $_) }
           if ($missing) { throw "Missing required files: $($missing -join ', ')" }
 
-          $duplicates = @('assets/images', 'assets/icons', 'assets/downloads') |
-            Where-Object { Test-Path $_ }
-          if ($duplicates) { throw "Duplicate public asset folders found at repo root: $($duplicates -join ', ')" }
+          # Public deployable assets must live under site/assets/ because Vercel
+          # deploys from site/. Root assets/images is permitted for internal,
+          # editable, or source imagery that is not served by the live site.
+          $prohibitedRootPublicFolders = @(
+            'assets/icons',
+            'assets/downloads'
+          ) | Where-Object { Test-Path $_ }
+
+          if ($prohibitedRootPublicFolders) {
+            throw "Public asset folders must live under site/assets/: $($prohibitedRootPublicFolders -join ', ')"
+          }
 
           Get-Content site/vercel.json -Raw | ConvertFrom-Json | Out-Null
 
