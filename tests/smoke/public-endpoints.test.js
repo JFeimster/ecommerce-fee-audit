@@ -1,1 +1,2 @@
-const test=require('node:test');const assert=require('node:assert');test('public-endpoints',()=>assert.ok(true));
+const test=require('node:test');const assert=require('node:assert/strict');const handler=require('../../site/api/public');const{request,response}=require('../helpers/http-mocks');
+test('public handler returns only public-safe documented resources and rejects private operations',()=>{const good=response();handler(request({query:{operationId:'getProductCatalog'}}),good);assert.equal(good.statusCode,200);assert.equal(good.body.operation_id,'getProductCatalog');assert.ok(!JSON.stringify(good.body).match(/api_key|token|entitlement|audit_findings/i));const bad=response();handler(request({query:{operationId:'getAudit'}}),bad);assert.equal(bad.statusCode,404);});
