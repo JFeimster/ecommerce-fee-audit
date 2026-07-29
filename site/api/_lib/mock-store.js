@@ -1,1 +1,1 @@
-module.exports={status:'mock_or_adapter_required',production_ready:false};
+const records=new Map(); function put(id,value){const copy={...value}; delete copy.binary; delete copy.file_content; records.set(id,copy); return copy;} function get(id){return records.get(id)||null;} function reset(){records.clear();} module.exports={put,get,reset,status:'local_test_only'};

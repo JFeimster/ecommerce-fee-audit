@@ -1,1 +1,2 @@
-module.exports={status:'mock_or_adapter_required',production_ready:false};
+function evaluate(policy, request) { const body = (request && request.body) || {}; const requested = body.execution_mode || (request.headers && request.headers['x-execution-mode']) || policy.execution_mode; if (requested !== policy.execution_mode) return { ok:false, code:'execution_mode_not_permitted' }; if (policy.execution_mode === 'autonomous' || policy.execution_mode === 'internal_only') return { ok:true }; if (body.confirmation === true || (request.headers && request.headers['x-confirmation-token'])) return { ok:true }; return { ok:false, code:'confirmation_required' }; }
+module.exports = { evaluate };

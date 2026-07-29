@@ -1,1 +1,1 @@
-module.exports={status:'mock_or_adapter_required',production_ready:false};
+const states=new Set(['queued','running','completed','partially_completed','failed','retry_scheduled','dead_lettered']); function dispatch(job){if(!job||!states.has(job.state||'queued'))return{ok:false,code:'job_state_invalid'};if(!job.type)return{ok:false,code:'job_type_unknown'};if(job.ambiguous_external_response)return{ok:false,code:'ambiguous_external_retry_blocked'};return{ok:true,status:'queued',adapter:'mock_disabled'};} module.exports={dispatch,states};

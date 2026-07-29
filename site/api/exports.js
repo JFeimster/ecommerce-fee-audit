@@ -1,2 +1,2 @@
 const { handle } = require('./_lib/http');
-module.exports=(req,res)=>handle(req,res,{route:'/api/exports',publicSafe:false});
+module.exports=(req,res)=>handle(req,res,'/api/exports');

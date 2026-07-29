@@ -1,1 +1,4 @@
-module.exports={status:'mock_or_adapter_required',production_ready:false};
+const fs=require('node:fs'); const path=require('node:path'); const root=path.resolve(__dirname,'../../../api/schemas');
+function loadSchema(relative) { const decoded=decodeURIComponent(relative || ''); if (!decoded || path.isAbsolute(decoded) || /(^|[\\/])\.\.([\\/]|$)/.test(decoded) || decoded.includes('\\')) throw Object.assign(new Error('schema_path_invalid'),{code:'schema_path_invalid'}); const resolved=path.resolve(root,decoded); if (!resolved.startsWith(root+path.sep) || !resolved.endsWith('.schema.json')) throw Object.assign(new Error('schema_path_invalid'),{code:'schema_path_invalid'}); return JSON.parse(fs.readFileSync(resolved,'utf8')); }
+function validateRequired(payload, schema) { const missing=(schema.required||[]).filter((key)=>payload==null || payload[key]===undefined); return missing.length?{ok:false,errors:missing.map((key)=>({field:key,code:'required'}))}:{ok:true}; }
+module.exports={loadSchema,validateRequired,schema_root:root};
