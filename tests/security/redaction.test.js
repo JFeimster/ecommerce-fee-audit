@@ -1,1 +1,2 @@
-const test=require('node:test');const assert=require('node:assert');test('redaction',()=>assert.ok(true));
+const test=require('node:test');const assert=require('node:assert/strict');const{redact}=require('../../site/api/_lib/redaction');
+test('redaction recursively masks sensitive keys while preserving ordinary values',()=>{const value=redact({Authorization:'Bearer x',nested:{apiKey:'x',name:'safe'},items:[{routing_number:'1',label:'keep'}]});assert.equal(value.Authorization,'[REDACTED]');assert.equal(value.nested.apiKey,'[REDACTED]');assert.equal(value.items[0].routing_number,'[REDACTED]');assert.equal(value.nested.name,'safe');assert.equal(value.items[0].label,'keep');});

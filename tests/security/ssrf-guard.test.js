@@ -1,1 +1,2 @@
-const test=require('node:test');const assert=require('node:assert');test('ssrf-guard',()=>assert.ok(true));
+const test=require('node:test');const assert=require('node:assert/strict');const{validateDestination}=require('../../site/api/_lib/destination-validation');
+test('destination guard blocks private, unsupported, credentialed, and unregistered targets',()=>{for(const url of ['http://localhost','http://127.0.0.1','http://127.1','http://0.0.0.0','http://[::1]','http://169.254.169.254','file:///etc/passwd','ftp://example.com','gopher://example.com','https://user:pass@partner.example','https://unregistered.example'])assert.equal(validateDestination(url).ok,false,url);assert.equal(validateDestination('https://partner.example/path').ok,true);});

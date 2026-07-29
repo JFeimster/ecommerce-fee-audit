@@ -1,1 +1,2 @@
-const test=require('node:test');const assert=require('node:assert');test('secret-scan',()=>assert.ok(true));
+const test=require('node:test');const assert=require('node:assert/strict');const{spawnSync}=require('node:child_process');
+test('repository secret scanner passes and reports no raw credential material',()=>{const result=spawnSync('node',['scripts/check-secrets.js'],{encoding:'utf8'});assert.equal(result.status,0,result.stderr);assert.match(result.stdout,/Secret scan passed/);assert.ok(!/sk-[a-z0-9]{20}/i.test(result.stdout));});

@@ -1,1 +1,2 @@
-const test=require('node:test');const assert=require('node:assert');test('webhook-replay',()=>assert.ok(true));
+const test=require('node:test');const assert=require('node:assert/strict');const registry=require('../../site/api/_lib/provider-registry');
+test('webhook replay store rejects duplicate and conflicting provider event IDs',()=>{registry.reset();assert.equal(registry.remember('test_hmac','evt_1','{}').ok,true);assert.equal(registry.remember('test_hmac','evt_1','{}').code,'webhook_replay');assert.equal(registry.remember('test_hmac','evt_1','{"changed":true}').code,'webhook_replay_conflict');});

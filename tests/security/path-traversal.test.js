@@ -1,1 +1,2 @@
-const test=require('node:test');const assert=require('node:assert');test('path-traversal',()=>assert.ok(true));
+const test=require('node:test');const assert=require('node:assert/strict');const{loadSchema}=require('../../site/api/_lib/schema-validation');
+test('schema loader confines reads to approved schema files',()=>{assert.throws(()=>loadSchema('/etc/passwd'));assert.throws(()=>loadSchema('../package.json'));assert.throws(()=>loadSchema('%2e%2e/package.json'));assert.throws(()=>loadSchema('audit-intake.schema.json/../../package.json'));assert.ok(loadSchema('audit-intake.schema.json').$id);});
